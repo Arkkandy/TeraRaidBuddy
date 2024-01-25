@@ -313,7 +313,12 @@ const UIElements = {
         // ========================================================================
         // Post Search Filters Section
         PSFContainer: getUIElement('postSearchFilters'),
+        PSFFilterLearnMove: getUIElement<HTMLInputElement>('psfFilterLearnMove'),
         PSFLearnMoveSelect: getUIElement<HTMLSelectElement>('psfLearnMoveSelect'),
+        PSFLearnMoveAdd: getUIElement<HTMLButtonElement>('psfLearnMoveAdd'),
+        PSFLearnMoveClear: getUIElement<HTMLButtonElement>('psfLearnMoveClear'),
+        PSFLearnMoveList: getUIElement<HTMLUListElement>('psfLearnMoveList'),
+        PSFBaseSTAB: getUIElement<HTMLInputElement>('psfBaseSTAB'),
         PSFApplyButton: getUIElement<HTMLButtonElement>('psfApplyButton'),
         PSFClearButton: getUIElement<HTMLButtonElement>('psfClearButton'),
 

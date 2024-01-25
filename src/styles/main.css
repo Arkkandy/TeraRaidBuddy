@@ -855,7 +855,7 @@ body.dark-mode {
     text-align: center;
   }
   
-  #filterWhitelist {
+  .whitelist-area {
     min-height: 34px;
     list-style: none;
     padding-left: 2px;
@@ -868,7 +868,7 @@ body.dark-mode {
     border: 1px solid lightgrey;
   }
   
-  #filterWhitelist li {
+  .whitelist-area li {
     background-color: rgb(235, 235, 235);
     border: 1px solid lightgrey;
     border-radius: 8px;
@@ -882,7 +882,7 @@ body.dark-mode {
     align-items: center;
   }
   
-  #filterWhitelist li button {
+  .whitelist-area li button {
     margin-left: 10px;
     padding: 2px 8px;
     background-color: #f12626c0;
@@ -893,11 +893,11 @@ body.dark-mode {
     font-size: 8pt;
   }
 
-  #filterWhitelist li button:hover {
+  .whitelist-area li button:hover {
     background-color: #581a1acb;
   }
 
-  #filterWhitelist li button:active {
+  .whitelist-area li button:active {
     background-color: #581a1acb;
     color: grey;
   }

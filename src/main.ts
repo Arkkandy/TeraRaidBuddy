@@ -1383,6 +1383,8 @@ function readFieldParameters() {
   newField.defenderSide.isAuroraVeil = UIElements.SearchParams.FieldDefenderAuroraVeil.checked;
   newField.defenderSide.isTailwind = UIElements.SearchParams.FieldDefenderTailwind.checked;
 
+  newField.gameType = 'TeraRaid';
+
   return newField;
 }
 
@@ -1882,18 +1884,96 @@ UIElements.Results.ResultItemsPerPageSelect.addEventListener( 'change', () => {
   }
 } );
 
-function applyPostSearchFilters() {
-  if ( currentSearchResult ) {
-    // Apply filter from original data
-    let moveLearnset = moveLearnsetDictionary.get(UIElements.Results.PSFLearnMoveSelect.value);
-    if ( moveLearnset ) {
-      currentSearchResult.filteredData = currentSearchResult.rankingData.originalData.filter( (val) => {
-        return moveLearnset!.includes( val.species );
+
+
+/**/
+UIElements.Results.PSFLearnMoveAdd.addEventListener('click', () => {
+  // Can't add more than 4 moves
+  if ( UIElements.Results.PSFLearnMoveList.children.length == 4 ) {
+    return;
+  }
+  const selectedEntry = UIElements.Results.PSFLearnMoveSelect.value;
+  if (selectedEntry) {
+    // Check if the selected entry already exists in the whitelist
+    const isDuplicate = Array.from(UIElements.Results.PSFLearnMoveList.children).some((item) => {
+        return (item as HTMLElement).dataset.originalValue == selectedEntry;
+    });
+
+    // If not duplicate then we add to the whitelist
+    if ( !isDuplicate ) {
+      const listItem = document.createElement('li');
+      listItem.dataset.originalValue = selectedEntry;
+      listItem.innerHTML = `${selectedEntry} <button class="llistRemoveButton">x</button>`;
+      UIElements.Results.PSFLearnMoveList.appendChild(listItem);
+
+      // Add click event listener to remove button
+      const removeButton = listItem.querySelector('.llistRemoveButton') as HTMLButtonElement;
+      removeButton.addEventListener('click', () => {
+        UIElements.Results.PSFLearnMoveList.removeChild(listItem);
       });
     }
-    // If no filters are applied just reset to original data
-    else {
-      currentSearchResult.filteredData = currentSearchResult.rankingData.originalData;
+  }
+
+  UIElements.Results.PSFLearnMoveSelect.focus();
+});
+UIElements.Results.PSFLearnMoveClear.addEventListener('click', () => {
+  UIElements.Results.PSFLearnMoveList.innerHTML = "";
+});
+
+
+
+
+
+
+function applyPostSearchFilters() {
+  if ( currentSearchResult ) {
+    // Reset filtered data
+    currentSearchResult.filteredData = currentSearchResult.rankingData.originalData;
+
+    // Apply filters
+
+    // Learnable move filter
+    if ( UIElements.Results.PSFFilterLearnMove.checked) {
+      // If whitelist is populated
+      if ( UIElements.Results.PSFLearnMoveList.childElementCount > 0 ) {
+        // Filter for each move selected
+        for ( let index = 0; index < UIElements.Results.PSFLearnMoveList.childElementCount; ++index ) {
+          // Get move name from chosen
+          let moveName = (UIElements.Results.PSFLearnMoveList.children[index] as HTMLElement).dataset.originalValue!;
+          let moveLearnset = moveLearnsetDictionary.get(moveName);
+
+          // If valid move learnset (should always be valid)
+          if ( moveLearnset ) {
+            // Filter out all entries which do not learn this move
+            currentSearchResult.filteredData = currentSearchResult.filteredData.filter( (val) => {
+              return moveLearnset!.includes( val.species );
+            });
+          } 
+        } 
+      }
+    }
+
+    // STAB filter
+    let teraType = currentSearchResult?.rankingData.raidBoss.teraType;
+    if ( UIElements.Results.PSFBaseSTAB.checked ) {
+      currentSearchResult.filteredData = currentSearchResult.filteredData.filter( (val) => {
+
+        let type1 = gen.types.get(toID(val.type1));
+        let type2 = gen.types.get(toID(val.type2));
+
+        let isStab1 = false;
+        let isStab2 = false;
+        if ( type1!.effectiveness[teraType!]! > 1 ) {
+            isStab1 = true;
+        }
+        if ( type2!.effectiveness[teraType!]! > 1 ) {
+            isStab2 = true;
+        }
+
+        // Check if immune via ability
+
+        return isStab1 || isStab2;
+      });
     }
 
     // Update table starting from page 1

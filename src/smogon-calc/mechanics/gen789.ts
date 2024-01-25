@@ -615,8 +615,8 @@ if (defender.hasAbility('Tera Shell') &&
   const finalMod = chainMods(finalMods, 41, 131072);
   desc.finalMod = finalMod;
 
-  const isSpread = field.gameType !== 'Singles' &&
-     ['allAdjacent', 'allAdjacentFoes'].includes(move.target);
+  const isSpread = ( field.gameType !== 'Singles' && field.gameType !== 'TeraRaid' && ['allAdjacent', 'allAdjacentFoes'].includes(move.target) ) ||
+  ( move.forceDamageSpread && ['allAdjacent', 'allAdjacentFoes'].includes(move.target) );
 
   let childDamage: number[] | undefined;
   if (attacker.hasAbility('Parental Bond') && move.hits === 1 && !isSpread) {
@@ -1614,7 +1614,7 @@ function calculateBaseDamageSMSSSV(
   isCritical = false,
 ) {
   let baseDamage = getBaseDamage(attacker.level, basePower, attack, defense);
-  const isSpread = ( field.gameType !== 'Singles' && ['allAdjacent', 'allAdjacentFoes'].includes(move.target) ) ||
+  const isSpread = ( field.gameType !== 'Singles' && field.gameType !== 'TeraRaid' && ['allAdjacent', 'allAdjacentFoes'].includes(move.target) ) ||
     ( move.forceDamageSpread && ['allAdjacent', 'allAdjacentFoes'].includes(move.target) );
   if (isSpread) {
     baseDamage = pokeRound(OF32(baseDamage * 3072) / 4096);

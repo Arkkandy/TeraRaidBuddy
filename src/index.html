@@ -500,11 +500,11 @@
                                 </div>
                                 <div>
                                     <div class="whitelist-display">Whitelisted Entries</div>
-                                    <ul id="filterWhitelist">
-                                    <!-- Whitelisted entries will be dynamically added here -->
+                                    <ul id="filterWhitelist" class="whitelist-area">
+                                        <!-- Whitelisted entries will be dynamically added here -->
                                     </ul>
                                 </div>
-                                </div>
+                            </div>
                             <div class="parameter-sequence-row-even top-line-border">
                                 <div class="parameter-section-title">Pokedex Filter</div>
                                 <div id="filterDexDescription" class="parameter-spacing">(Show all)</div>
@@ -1129,12 +1129,39 @@
                         <fieldset class="inner-fieldset parameter-centered">
                             <legend class="fieldset-custom-legend">Post-Search Filters</legend>
                             <div class="parameter-sequence-row-even">
+                                <div class="boss-vertical-fields parameter-centered">
+                                    <div class="parameter-sequence-row">
+                                        <div class="parameter-sequence-row custom-tooltip">
+                                            <label for="">Learnable Move</label>
+                                            <input type="checkbox" id="psfFilterLearnMove">
+                                            <select id="psfLearnMoveSelect">
+                                            </select>
+                                            <div class="tooltip-text">
+                                                Filter results by moves learned.
+                                            </div>
+                                        </div>
+                                        <div class="whitelist-container">
+                                            <div class="whitelist-left">
+                                                <button id="psfLearnMoveAdd">Add</button>                                            
+                                            </div>
+                                            <div class="whitelist-right">
+                                                <button id="psfLearnMoveClear">Clear</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <ul id="psfLearnMoveList" class="whitelist-area">
+                                            <!-- Whitelisted entries will be dynamically added here -->
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="parameter-sequence-row-even">
                                 <div class="parameter-centered custom-tooltip">
-                                    <label for="">Learnable Move</label>
-                                    <select id="psfLearnMoveSelect">
-                                    </select>
+                                    <label for="">Super-Effective STAB</label>
+                                    <input type="checkbox" id="psfBaseSTAB">
                                     <div class="tooltip-text">
-                                        Filter results by moves learned.
+                                        Show only counters that have a super-effective STAB base type.
                                     </div>
                                 </div>
                             </div>
