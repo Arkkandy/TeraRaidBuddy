@@ -16,7 +16,7 @@ import * as Ranking from './ranking/ranking'
 import { EVSpread } from './ranking/util'
 import * as FilteringData from './ranking/filteringdata'
 import { DefensiveNaturePreference, PrintVisibleDamage, RankingParameters, SearchRankingType } from './ranking/searchparameters';
-import { RaidBossPreset,
+import { ExtraAction, RaidBossPreset,
         T5Raids_IndigoDisk, T5Raids_Paldea, T5Raids_TealMask,
         T6Raids_IndigoDisk, T6Raids_Paldea, T6Raids_TealMask,
         tier5EventRaidBossPresets, tier5RaidBossPresets, tier6RaidBossPresets, tier7EventRaidBossPresets } from './presets/raidpreset';
@@ -482,6 +482,37 @@ function reselectPresetDefaults() {
   else {
     UIElements.RaidBoss.BossHeldItem.value = "";
   }
+
+  // Set Extra Actions
+  showExtraActions( preset.extraActions );
+}
+
+function showExtraActions( actions: ExtraAction[] | undefined ) {
+  // Clear previous contents
+  let actiontbody = UIElements.RaidBoss.BossActionTable.tBodies[0];
+  actiontbody.innerHTML = "";
+
+  if ( actions ) {
+    actions.forEach( (action) => {
+      let actionRow = actiontbody.insertRow();  
+      let actionDesc = createTableBodyCell( actionRow, action.description, 1);
+      if ( action.description.startsWith("Move:")) {
+        let move = gen.moves.get( toID(action.description.slice(6)));
+        if ( move ) {
+          setTypeBackgroundColor( actionDesc, move.type );
+          actionDesc.textContent = move.name;
+        }
+      }
+      actionDesc.style.paddingLeft = "8px";
+
+      createTableBodyCell( actionRow, action.hp ? action.hp.toString() : "-", 1 ).style.textAlign = 'center';
+      createTableBodyCell( actionRow, action.time ? action.time.toString() : "-", 1 ).style.textAlign = 'center';
+    });
+  }
+  else {
+    let defaultRow = actiontbody.insertRow();
+    createTableBodyCell( defaultRow, "No extra actions", 3 ).style.textAlign = 'center';
+  }
 }
 
 function overwriteStats() {
@@ -795,7 +826,9 @@ function createResultTableHead( search: SearchResult ) {
 
   // Shortcut variables to the original data
   let rankingParameters = search.rankingData.originalParameters;
-  let mainMoves = search.rankingData.mainMoves;
+  let useExtraMoves = rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.BestMainExtraPoolBoth ||
+  rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.BestMainExtraPoolSelect;
+  let movepool = (useExtraMoves ? search.rankingData.extraMoves : search.rankingData.mainMoves );
 
   let raidCounterColspan = 1;
   if ( rankingParameters.advanced.defenderTeraType != '' ) {
@@ -816,7 +849,8 @@ function createResultTableHead( search: SearchResult ) {
     bestMoveSize = 2;
   }
   let bestMoveBoth = false;
-  if ( rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.BestMoveBoth || rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.BothMoveBoth ) {
+  if ( rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.BestMoveBoth || rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.BothMoveBoth ||
+    rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.BestMainExtraPoolBoth ) {
     bestMoveBoth = true;
     bestMoveSize++;
   }
@@ -829,20 +863,23 @@ function createResultTableHead( search: SearchResult ) {
   
   let mainMoveSize = 0;
   if ( rankingParameters.results.moveDamageVisibility != PrintVisibleDamage.BestMoveBoth && rankingParameters.results.moveDamageVisibility != PrintVisibleDamage.BestMoveSelect ) {
-    mainMoveSize = mainMoves.length;
+    mainMoveSize = movepool.length;
   }
   let mainMoveBoth = false;
-  if ( rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.MainMoveBoth || rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.BothMoveBoth ) {
+  if ( rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.MainMoveBoth || rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.BothMoveBoth ||
+    rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.BestMainExtraPoolBoth ) {
     mainMoveBoth = true;
     mainMoveSize *= 2;
   }
+  
   if ( mainMoveSize > 0 ) {
-    createTableHeadCell(hrow1,'Main Movepool', mainMoveSize ).classList.add('Limiter', 'TopRow');
+    let movepoolTitle = (useExtraMoves ? 'Extra Moves' : 'Main Movepool');
+    createTableHeadCell(hrow1, movepoolTitle, mainMoveSize ).classList.add('Limiter', 'TopRow');
 
-    for ( let m = 0; m < mainMoves.length; ++m ) {
-      let moveCell = createTableHeadCell(hrow2, mainMoves[m].name, mainMoveBoth? 2 : 1 );
+    for ( let m = 0; m < movepool.length; ++m ) {
+      let moveCell = createTableHeadCell(hrow2, movepool[m].name, mainMoveBoth? 2 : 1 );
       // Add limiter if last move
-      if ( m == mainMoves.length-1) {
+      if ( m == movepool.length-1) {
         moveCell.classList.add('Limiter')
       }
     }
@@ -892,6 +929,9 @@ function createResultTableEntries( search: SearchResult, page: number ) {
   // #TODO: Change to filtered data when implemented
   let rankResultData = search.filteredData;
   let rankingParameters = search.rankingData.originalParameters;
+
+  let useExtraMoves = rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.BestMainExtraPoolBoth ||
+  rankingParameters.results.moveDamageVisibility == PrintVisibleDamage.BestMainExtraPoolSelect;
   let mainMoves = search.rankingData.mainMoves;
 
   // Update viewable entries and limits
@@ -932,6 +972,12 @@ function createResultTableEntries( search: SearchResult, page: number ) {
         let maxDamage = result.getMaxDamagePercent() * 100;
         cellBestDmg.textContent = (maxDamage).toFixed(2) + '%';
         cellBestDmg.classList.add('Righthand');
+
+        /*let simpleRedLerp = Math.round( 255 * ( Math.max( Math.min(maxDamage, 100), 0 )/100 ) );
+        let simpleGreenLerp = Math.round( 255 * ((100 - Math.max( Math.min(maxDamage, 100), 0 ))/100) );
+        let colorString = `rgb(${simpleRedLerp},${simpleGreenLerp},0)`;
+        cellBestDmg.style.backgroundColor = colorString;*/
+        
         setDamageBackgroundColor( cellBestDmg, maxDamage );
         // Placeholder for other damage value
         if ( search.bestMoveBoth ) {
@@ -947,30 +993,62 @@ function createResultTableEntries( search: SearchResult, page: number ) {
       }
 
       if ( search.mainMoveSize > 0  ) {
-        for ( let moveIndex = 0; moveIndex < mainMoves.length; ++moveIndex ) {
-          const moveCell = row.insertCell();
 
-          let damageValue = result.damage[moveIndex].hpPercent * 100;
-          moveCell.textContent = damageValue.toFixed(2) + '%';
-          setDamageBackgroundColor( moveCell, damageValue );
+        if ( useExtraMoves ) {
+          let extraMoves = search.rankingData.extraMoves;
+          for ( let moveIndex = 0; moveIndex < extraMoves.length; ++moveIndex ) {
+            const moveCell = row.insertCell();
 
-          moveCell.classList.add('Righthand');
+            let damageValue = result.extraDamage[moveIndex].hpPercent * 100;
+            moveCell.textContent = damageValue.toFixed(2) + '%';
+            setDamageBackgroundColor( moveCell, damageValue );
 
-          // Placeholder for other damage value
-          if ( search.mainMoveBoth ) {
-            const moveCell2nd = row.insertCell();
+            moveCell.classList.add('Righthand');
 
-            let secDamageValue = result.secondaryDamage[moveIndex].hpPercent * 100;
-            moveCell2nd.textContent = secDamageValue.toFixed(2) + '%';
-            setDamageBackgroundColor( moveCell2nd, secDamageValue );
-            moveCell2nd.classList.add('Righthand');
+            // Placeholder for other damage value
+            if ( search.mainMoveBoth ) {
+              const moveCell2nd = row.insertCell();
 
-            if ( moveIndex == (mainMoves.length-1)) {
-              moveCell2nd.classList.add('Limiter');
+              let secDamageValue = result.secondaryExtraDamage[moveIndex].hpPercent * 100;
+              moveCell2nd.textContent = secDamageValue.toFixed(2) + '%';
+              setDamageBackgroundColor( moveCell2nd, secDamageValue );
+              moveCell2nd.classList.add('Righthand');
+
+              if ( moveIndex == (extraMoves.length-1)) {
+                moveCell2nd.classList.add('Limiter');
+              }
+            }
+            else if ( moveIndex == (extraMoves.length-1)) {
+              moveCell.classList.add('Limiter');
             }
           }
-          else if ( moveIndex == (mainMoves.length-1)) {
-            moveCell.classList.add('Limiter');
+        }
+        else {
+          for ( let moveIndex = 0; moveIndex < mainMoves.length; ++moveIndex ) {
+            const moveCell = row.insertCell();
+
+            let damageValue = result.damage[moveIndex].hpPercent * 100;
+            moveCell.textContent = damageValue.toFixed(2) + '%';
+            setDamageBackgroundColor( moveCell, damageValue );
+
+            moveCell.classList.add('Righthand');
+
+            // Placeholder for other damage value
+            if ( search.mainMoveBoth ) {
+              const moveCell2nd = row.insertCell();
+
+              let secDamageValue = result.secondaryDamage[moveIndex].hpPercent * 100;
+              moveCell2nd.textContent = secDamageValue.toFixed(2) + '%';
+              setDamageBackgroundColor( moveCell2nd, secDamageValue );
+              moveCell2nd.classList.add('Righthand');
+
+              if ( moveIndex == (mainMoves.length-1)) {
+                moveCell2nd.classList.add('Limiter');
+              }
+            }
+            else if ( moveIndex == (mainMoves.length-1)) {
+              moveCell.classList.add('Limiter');
+            }
           }
         }
       }
@@ -1044,24 +1122,24 @@ function createBossInfoSummary( search: SearchResult, preset: string )  {
   clearTypeBackground(UIElements.Results.BossInfoMain4);
 
   UIElements.Results.BossInfoMain1.textContent = search.rankingData.mainMoves[0].name;
-  colorBossInfoMove(UIElements.Results.BossInfoMain1, search.rankingData.mainMoves[0] );
+  colorBossInfoMove(UIElements.Results.BossInfoMain1, search.rankingData.mainMoves[0], search.rankingData.raidBoss );
   if ( search.rankingData.mainMoves.length >= 2 ) {
     UIElements.Results.BossInfoMain2.textContent = search.rankingData.mainMoves[1].name;
-    colorBossInfoMove(UIElements.Results.BossInfoMain2, search.rankingData.mainMoves[1] );
+    colorBossInfoMove(UIElements.Results.BossInfoMain2, search.rankingData.mainMoves[1], search.rankingData.raidBoss );
   }
   else {
     UIElements.Results.BossInfoMain2.textContent = "-";
   }
   if ( search.rankingData.mainMoves.length >= 3 ) {
     UIElements.Results.BossInfoMain3.textContent = search.rankingData.mainMoves[2].name;
-    colorBossInfoMove(UIElements.Results.BossInfoMain3, search.rankingData.mainMoves[2] );
+    colorBossInfoMove(UIElements.Results.BossInfoMain3, search.rankingData.mainMoves[2], search.rankingData.raidBoss );
   }
   else {
     UIElements.Results.BossInfoMain3.textContent = "-";
   }
   if ( search.rankingData.mainMoves.length >= 4 ) {
     UIElements.Results.BossInfoMain4.textContent = search.rankingData.mainMoves[3].name;
-    colorBossInfoMove(UIElements.Results.BossInfoMain4, search.rankingData.mainMoves[3] );
+    colorBossInfoMove(UIElements.Results.BossInfoMain4, search.rankingData.mainMoves[3], search.rankingData.raidBoss );
   }
   else {
     UIElements.Results.BossInfoMain4.textContent = "-";
@@ -1075,28 +1153,28 @@ function createBossInfoSummary( search: SearchResult, preset: string )  {
 
   if ( search.rankingData.extraMoves.length >= 1 ) {
     UIElements.Results.BossInfoExtra1.textContent = search.rankingData.extraMoves[0].name;
-    colorBossInfoMove(UIElements.Results.BossInfoExtra1, search.rankingData.extraMoves[0] );
+    colorBossInfoMove(UIElements.Results.BossInfoExtra1, search.rankingData.extraMoves[0], search.rankingData.raidBoss );
   }
   else {
     UIElements.Results.BossInfoExtra1.textContent = "-";
   }
   if ( search.rankingData.extraMoves.length >= 2 ) {
     UIElements.Results.BossInfoExtra2.textContent = search.rankingData.extraMoves[1].name;
-    colorBossInfoMove(UIElements.Results.BossInfoExtra2, search.rankingData.extraMoves[1] );
+    colorBossInfoMove(UIElements.Results.BossInfoExtra2, search.rankingData.extraMoves[1], search.rankingData.raidBoss );
   }
   else {
     UIElements.Results.BossInfoExtra2.textContent = "-";
   }
   if ( search.rankingData.extraMoves.length >= 3 ) {
     UIElements.Results.BossInfoExtra3.textContent = search.rankingData.extraMoves[2].name;
-    colorBossInfoMove(UIElements.Results.BossInfoExtra3, search.rankingData.extraMoves[2] );
+    colorBossInfoMove(UIElements.Results.BossInfoExtra3, search.rankingData.extraMoves[2], search.rankingData.raidBoss );
   }
   else {
     UIElements.Results.BossInfoExtra3.textContent = "-";
   }
   if ( search.rankingData.extraMoves.length >= 4 ) {
     UIElements.Results.BossInfoExtra4.textContent = search.rankingData.extraMoves[3].name;
-    colorBossInfoMove(UIElements.Results.BossInfoExtra4, search.rankingData.extraMoves[3] );
+    colorBossInfoMove(UIElements.Results.BossInfoExtra4, search.rankingData.extraMoves[3], search.rankingData.raidBoss );
   }
   else {
     UIElements.Results.BossInfoExtra4.textContent = "-";
@@ -1117,9 +1195,14 @@ function clearTypeBackground( element: HTMLElement ) {
     }
   });
 }
-function colorBossInfoMove( moveElement: HTMLElement, move: Move ) {
+function colorBossInfoMove( moveElement: HTMLElement, move: Move, boss: Pokemon ) {
   // Set background color matching the type
-  setTypeBackgroundColor( moveElement, move.type );
+  if ( move.name == "Tera Blast") {
+    setTypeBackgroundColor( moveElement, boss.teraType! );
+  }
+  else {
+    setTypeBackgroundColor( moveElement, move.type );
+  }
 }
 
 function retrievePokemonSpecies() : string {
@@ -1859,6 +1942,30 @@ for ( const entry in sortedData ) {
 document.body.appendChild( tarea );*/
 
 // REFORMAT POKEMON MOVES IN TEXT
+/*let tarea = document.createElement("textarea");
+tarea.rows = 50;
+tarea.cols = 100;
+let partialMoveFilter: string[] = [...gen.moves].map(
+  move => move.name
+);
+let sortedMoves = partialMoveFilter.sort( (a,b) => { 
+  if ( a < b ) {
+    return -1;
+  }
+  if ( a > b ) {
+    return 1;
+  }
+  return 0;
+});
+for ( const move in sortedMoves ) {
+  let originalName = sortedMoves[move];//.toLowerCase();
+  let convName = sortedMoves[move].toLowerCase();
+  convName = convName.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()\s]/g,"");
+  tarea.textContent += convName + ': \"' + originalName + '\",\n';
+}
+document.body.appendChild( tarea );*/
+
+// REFORMAT RAID EXTRA ACTIONS IN TEXT
 /*let tarea = document.createElement("textarea");
 tarea.rows = 50;
 tarea.cols = 100;

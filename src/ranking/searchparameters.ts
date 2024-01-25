@@ -93,7 +93,7 @@ class FilteringParameters {
 }
 
 /**
- * asdasd
+ * Determine which damage entries will be visible/calculated by the ranking function
 */
 export enum PrintVisibleDamage {
     /** Show best move and main movepool. Show both normal and critical damage. */
@@ -108,6 +108,10 @@ export enum PrintVisibleDamage {
     MainMoveBoth,
     /** Show only main movepool. Show normal or critical damage as selected by rank. */
     MainMoveSelect,
+    /** Show best main move and the extra move pool. Show normal or critical damage as selected by rank. **/
+    BestMainExtraPoolBoth,
+    /** Show best main move and the extra move pool. Show both normal and critical damage. **/
+    BestMainExtraPoolSelect,
 }
 
 export enum PrintResultNumber {

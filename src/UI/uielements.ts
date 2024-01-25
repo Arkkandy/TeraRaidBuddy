@@ -156,7 +156,7 @@ const UIElements = {
         BossAddMoveClearButton : getUIElement<HTMLButtonElement>('pokemonBossAddMoveClear'),
 
         // Raid boss extra actions
-        //// #TODO
+        BossActionTable: getUIElement<HTMLTableElement>('pokemonBossActionTable'),
 
     },
 
@@ -357,7 +357,6 @@ const UIElements = {
 
         FullTable: getUIElement<HTMLDivElement>('resultTableContents'),
 
-        //BossInfoTable: getUIElement<HTMLTableElement>('bossInfoTable'), // Deprecated
         SearchSummary: getUIElement<HTMLHeadingElement>("ResultSummary"),
         ResultsTable: getUIElement<HTMLTableElement>('resultsTable')
     }

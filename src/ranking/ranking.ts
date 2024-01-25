@@ -18,10 +18,14 @@ import { getFinalSpeed, getMoveEffectiveness, isQPActive } from '../smogon-calc/
 import { recalculateFinalDamage } from './fastdamage';
 
 import {FilterDataEntry, RarityFlag, filteringData} from './filteringdata'
+import getOptimalDefensiveSpread from './optimalspreadcalc';
+import getOptimalDefensiveSpread_PQ from './optimalspreadpqcalc';
+import getOptimalDefensiveThresholdSpread from './optimalthresholdcalc';
+import getOptimalDefensiveThreshold_PQ from './optimalthresholdpqcalc';
 import {DefensiveNaturePreference, PrintVisibleDamage, RankingParameters, SearchRankingType } from './searchparameters';
 import { DefenseStatOptimizer } from './statoptimization';
 import { DefenseStatOptimizerPQ } from './statoptimizationpq';
-import { BattlefieldSide, EVSpread, calcModifiedDefenseStat, calcModifiedSpDefenseStat, evsToStringShowAll, findDefEvPQThreshold, findSpdEvPQThreshold, getHighestStat_PQ, getNatureFromStats, getTotalEVInvestment, statToNatureIndex } from './util';
+import { BattlefieldSide, EVSpread, calcModifiedDefenseStat, calcModifiedSpDefenseStat, evsToStringShowAll, findDefEvPQThreshold, findSpdEvPQThreshold, getHighestStat_PQ, getMinimumOutspeedEV, getNatureFromStats, getTotalEVInvestment, selectDefensiveNaturePreference, statToNatureIndex } from './util';
 //import { recalculatableDamage } from './fastdamage.js';
 
 
@@ -192,7 +196,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
     }
 
     let isCalculateSecondaryDamage =
-        parameters.results.moveDamageVisibility == PrintVisibleDamage.BestMoveBoth || PrintVisibleDamage.BothMoveBoth || PrintVisibleDamage.MainMoveBoth;
+        parameters.results.moveDamageVisibility == PrintVisibleDamage.BestMoveBoth || PrintVisibleDamage.BothMoveBoth || PrintVisibleDamage.MainMoveBoth || PrintVisibleDamage.BestMainExtraPoolBoth;
 
     
     
@@ -249,30 +253,42 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
             filtered++;
             continue;
         }
-        // Ogerpon forms can only have the Tera type of their respective mask
-        if ( useDefenderTeraType ) {
-            if ( data.name == 'Ogerpon' && defenderTeraType != 'Grass') {
-                continue;
-            }
-            if ( data.name == 'Ogerpon-Cornerstone' && defenderTeraType != 'Rock') {
-                continue;
-            }
-            if ( data.name == 'Ogerpon-Hearthflame' && defenderTeraType != 'Fire') {
-                continue;
-            }
-            if ( data.name == 'Ogerpon-Wellspring' && defenderTeraType != 'Water') {
-                continue;
-            }
-            // Terapagos changes form when terastalizing, skip entry
-            if ( data.name == 'Terapagos-Terastal' ) {
+
+        // Ogerpon tera forms cannot be used if not terastalized
+        if ( !useDefenderTeraType ) {
+            if ( data.name == 'Ogerpon-Teal-Tera' || data.name == 'Ogerpon-Cornerstone-Tera' || data.name == 'Ogerpon-Hearthflame-Tera' || data.name == 'Ogerpon-Wellspring-Tera' ) {
                 continue;
             }
         }
-        // If Terapagos-Stellar is only possible with Stellar terastalization
+        // Ogerpon forms can only have the Tera type of their respective mask
+        // Terapagos-Terastal is the unterastalized form
+        if ( useDefenderTeraType ) {
+            if ( data.name == 'Ogerpon' || data.name == 'Ogerpon-Cornerstone' || data.name == 'Ogerpon-Hearthflame' || data.name == 'Ogerpon-Wellspring' || data.name == 'Terapagos-Terastal' ) {
+                continue;
+            }
+
+            // Ogerpon terastal forms are only available with their respective mask types
+            if ( data.name == 'Ogerpon-Teal-Tera' && parameters.advanced.defenderTeraType != 'Grass' ) {
+                continue;
+            }
+            
+            if ( data.name == 'Ogerpon-Cornerstone-Tera' && parameters.advanced.defenderTeraType != 'Rock' ) {
+                continue;
+            }
+            
+            if ( data.name == 'Ogerpon-Hearthflame-Tera' && parameters.advanced.defenderTeraType != 'Fire' ) {
+                continue;
+            }
+            
+            if ( data.name == 'Ogerpon-Wellspring-Tera' && parameters.advanced.defenderTeraType != 'Water' ) {
+                continue;
+            }
+        }
+        // Terapagos-Stellar is only possible with Stellar terastalization
         if ( speciesEntry.name == "Terapagos-Stellar" && !(useDefenderTeraType && parameters.advanced.defenderTeraType == 'Stellar')) {
             continue;
         }
-        if ( speciesEntry)
+
         // Count entries
         entriesAnalyzed++;
 
@@ -295,7 +311,11 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
 
         // Assign held items
         let heldItem = parameters.items.defaultAttackerItem;
+        
+        // Give mandatory form items to respective pokemon (Arceus plates, Ogerpon masks, Gen4 Origin items, ..)
+        // These should never be disabled or modified in any way
         let specialItem = checkSpecialItem( data.name );
+
         // If special item, dont do any more checks
         if ( specialItem != undefined ) {
             heldItem = specialItem;
@@ -314,9 +334,6 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                 }
             }
         }
-
-        // #TODO: Give mandatory form items to respective pokemon (Arceus plates, Ogerpon masks, Gen4 Origin items)
-        // These should never be disabled or modified in any way
 
         /* Results are stored for each:
          * - Ability
@@ -774,6 +791,56 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
             }
         }
 
+        // Calculate additional damage?
+        if ( parameters.results.moveDamageVisibility == PrintVisibleDamage.BestMainExtraPoolBoth ||
+            parameters.results.moveDamageVisibility == PrintVisibleDamage.BestMainExtraPoolSelect ) {
+            for ( let m = 0; m < eMoves.length; ++m ) {
+                const damageResult = Smogon.calculate(
+                    gen,
+                    bestResult.originalAttacker!,
+                    bestResult.originalDefender!,
+                    eMoves[m],
+                    bestResult.originalField
+                );
+
+                // Add damage values to result
+                let rawValue = damageResult.range()[1];
+                let hpPercent = rawValue / damageResult.defender.stats.hp;
+                /*if ( damageResult.defender.hasItem('Leftovers')) {
+                    // Deduce healing % from HP (unless hit is over 100%)
+                    if ( hpPercent < 1 ) {
+                        hpPercent -= ( Math.floor( 0.0625 * damageResult.defender.rawStats.hp ) / damageResult.defender.rawStats.hp );
+                        bestResult.addModifier('Leftovers');
+                    }
+                }*/
+                bestResult.extraDamage.push( new DamagePair(rawValue,hpPercent) );
+            }
+            
+            if ( isCalculateSecondaryDamage ) {
+                for ( let m = 0; m < eMovesSecondaryDamage.length; ++m ) {
+                    const damageResult = Smogon.calculate(
+                        gen,
+                        bestResult.originalAttacker!,
+                        bestResult.originalDefender!,
+                        eMovesSecondaryDamage[m],
+                        bestResult.originalField
+                    );
+
+                    // Add damage values to result
+                    let rawValue = damageResult.range()[1];
+                    let hpPercent = rawValue / damageResult.defender.stats.hp;
+                    /*if ( damageResult.defender.hasItem('Leftovers')) {
+                        // Deduce healing % from HP (unless hit is over 100%)
+                        if ( hpPercent < 1 ) {
+                            hpPercent -= ( Math.floor( 0.0625 * damageResult.defender.rawStats.hp ) / damageResult.defender.rawStats.hp );
+                            bestResult.addModifier('Leftovers');
+                        }
+                    }*/
+                    bestResult.secondaryExtraDamage.push( new DamagePair(rawValue,hpPercent) );
+                }
+            }
+        }
+
         // Original data not needed anymore
         bestResult.originalAttacker = undefined;
         bestResult.originalDefender = undefined;
@@ -914,7 +981,6 @@ function filterAbilities( abilities: string[], side: BattlefieldSide, parameters
             continue;
         }
         
-
         reviewedAbilities.push(ability);
     }
 
@@ -1268,1220 +1334,4 @@ function calcOptimalOutspeedInvestment(gen: Generation, raidBoss: Smogon.Pokemon
     }
 
     return eligibleSpreads;
-}
-
-
-/** Optimal Defensive Spread
- * --------------------------
- * Find the most efficient EV spread to meet the most balanced defensive investment for the defender.
- * Against Pokemon with only one category of moves (physical or special) this will calculate the lowest investment
- * for the minimum amount of damage taken, where often the defensive stat can be several EVs below 252 while providing
- * the same effect.
- * For mixed damage the algorithm will find the EV spread that minimizes overall damage the best, which typically
- * results in equalizing highest damage taken from physical and special moves.
-*/
-function getOptimalDefensiveSpread( gen: Generation, raidBoss: Smogon.Pokemon, raidDefender: Smogon.Pokemon,
-    moves: Smogon.Move[], field: Smogon.Field, useGivenNature: boolean, parameters: RankingParameters) : EVSpread {
-    let finalEVSpread: Smogon.StatsTable<number> = (raidDefender.evs ? raidDefender.evs : {hp:0,atk:0,def:0,spa:0,spd:0,spe:0});
-
-    // Set neutral nature for most accurate predictions
-    if (!useGivenNature) {
-        raidDefender.nature = "Hardy";
-    }
-
-    // Perform preliminary damage check for each move
-    let preResults : Smogon.Result[] = [];
-    let eligibleIndices : number[] = [];
-    for ( let i = 0; i < moves.length; ++i ) {
-        let move = moves[i];
-        let result = Smogon.calculate(gen, raidBoss, raidDefender, move, field );
-        if (result.range()[1] > 0 ) {
-            eligibleIndices.push(i);
-        }
-        preResults.push(result);
-    }
-
-    // Check if all moves deal damage, if not the defender is immune and needs no defensive investment
-    if ( eligibleIndices.length == 0 ) {
-        return new EVSpread( raidDefender.nature, finalEVSpread );
-    }    
-
-    // Separate physical moves from special moves (Keep track of initial indices?)
-    let physMoves : number[] = [];
-    let specMoves : number[] = [];
-    let highestPhysHit : number = 0;
-    let highestSpecHit : number = 0;
-    let highestHit : number = 0;
-    let isHighestHitPhysical : boolean = false;
-    eligibleIndices.forEach( moveIndex => {
-        const moveDamage = preResults[moveIndex].range()[1];
-        if ( preResults[moveIndex].rawDesc.hitsPhysical ) {
-            physMoves.push( moveIndex );
-            highestPhysHit = Math.max( moveDamage, highestPhysHit );
-        }
-        else {
-            specMoves.push( moveIndex );
-            highestSpecHit = Math.max( moveDamage, highestSpecHit );
-        }
-        if ( moveDamage > highestHit ) {
-            highestHit = moveDamage;
-            isHighestHitPhysical = preResults[moveIndex].rawDesc.hitsPhysical!;
-        }
-    });
-
-    // Predict best defensive nature based on the hardest hitting move
-    if ( !useGivenNature ) {
-        if ( isHighestHitPhysical ) {
-            // Suggest defensive nature
-            raidDefender.nature = "Bold";
-        }
-        else {
-            // Suggest specially defensive nature
-            raidDefender.nature = "Calm";
-        }
-    }
-
-    // Discard low hitting physical moves
-    if ( physMoves.length > 1 ) {
-        let newPhysMoves : number[] = [];
-        physMoves.forEach( moveIndex => {
-            const moveDamage = preResults[moveIndex].range()[1];
-            // Include if damage is near the highest hit
-            if ( (highestPhysHit - moveDamage ) < 0.01 ) {
-                newPhysMoves.push( moveIndex );
-            }
-        });
-        physMoves = newPhysMoves;
-    }
-    // Discard low hitting special moves
-    if ( specMoves.length > 1 ) {
-        let newSpecMoves : number[] = [];
-        specMoves.forEach( moveIndex => {
-            const moveDamage = preResults[moveIndex].range()[1];
-            // Include if damage is near the highest hit
-            if ( (highestSpecHit - moveDamage ) < 0.01 ) {
-                newSpecMoves.push( moveIndex );
-            }
-        });
-        specMoves = newSpecMoves;
-    }
-
-    // Recalculate damage for the relevant moves with the updated defensive nature
-    let physResults : Smogon.Result[] = [];
-    let specResults : Smogon.Result[] = [];
-    if ( useGivenNature ) {
-        // Reuse previous results if must use given nature
-        physMoves.forEach( moveIndex => 
-            physResults.push( preResults[moveIndex])
-        );
-        specMoves.forEach( moveIndex => 
-            specResults.push( preResults[moveIndex])
-        );
-    }
-    else {
-        // Recalculate results for updated nature
-        physMoves.forEach( moveIndex => 
-            physResults.push( Smogon.calculate(gen, raidBoss, raidDefender, moves[moveIndex], field ))
-        );
-        specMoves.forEach( moveIndex => 
-            specResults.push( Smogon.calculate(gen, raidBoss, raidDefender, moves[moveIndex], field ))
-        );
-    }
-
-    // Setup nodes with all possible EV values / damage for the top-hitting moves
-    // -- Keep only nodes with new damage values, in the format (EV, Damage)
-    // -- For categories with multiple moves: Damage = Max(Damage1,Damage2,..)
-    let optimizer : DefenseStatOptimizer = new DefenseStatOptimizer();
-
-    // Setup Def nodes
-    if ( physResults.length == 0 ) {
-        optimizer.addDefNode( finalEVSpread.def, 0 );
-    }
-    else {
-        let initialDefEV = finalEVSpread.def;
-
-        let previousDamageTaken = Number.POSITIVE_INFINITY;
-        // Do not assume what value DefEV might have.
-        // We'll use the initial value as is, next value is the closest multiple of 4 and so on.
-        let nextDefEV = initialDefEV;
-        do {
-            let maxDamage = 0;
-            physResults.forEach( result => {
-                let damage = recalculateFinalDamage( result, nextDefEV );
-                maxDamage = Math.max( damage[15], maxDamage );
-            });
-
-            if ( maxDamage < previousDamageTaken ) {
-                optimizer.addDefNode( nextDefEV, maxDamage );
-                previousDamageTaken = maxDamage;
-            }
-
-            nextDefEV = ( nextDefEV - (nextDefEV % 4) ) + 4;
-        } while ( nextDefEV <= 252 );
-    }
-
-    // Setup SpD nodes
-    if ( specResults.length == 0 ) {
-        optimizer.addSpDNode( finalEVSpread.spd, 0 );
-    }
-    else {
-        let initialSpdEV = finalEVSpread.spd;
-
-        let previousDamageTaken = Number.POSITIVE_INFINITY;
-        // Do not assume what value DefEV might have.
-        // We'll use the initial value as is, next value is the closest multiple of 4 and so on.
-        let nextSpdEV = initialSpdEV;
-        do {
-            let maxDamage = 0;
-            specResults.forEach( result => {
-                let damage = recalculateFinalDamage( result, nextSpdEV );
-                maxDamage = Math.max( damage[15], maxDamage );
-            });
-
-            if ( maxDamage < previousDamageTaken ) {
-                optimizer.addSpDNode( nextSpdEV, maxDamage );
-                previousDamageTaken = maxDamage;
-            }
-
-            nextSpdEV = ( nextSpdEV - (nextSpdEV % 4) ) + 4;
-        } while ( nextSpdEV <= 252 );
-    }
-
-    // #DEBUG
-    /*console.log('Def Nodes');
-    optimizer.defNodes.forEach( item => {
-        console.log('EV: %d',item.ev);
-    });
-    console.log('------------------------')
-    console.log('SpD Nodes');
-    optimizer.spdNodes.forEach( item => {
-        console.log('EV: %d',item.ev);
-    });*/
-
-    // Check pairs for all combinations of Def and SpD nodes
-    // Find pairs that have matching damage values
-    // Try all combinations by test-allocating as much HP as possible
-    // -- think of ways to cull obvious bad nodes in this step?
-    // ---- look ahead to the next node
-    // ---- if allocating next node would leave 252+ remaining EVs
-    // ---- then we haven't exhausted all EVs in Defenses yet
-
-
-
-    // Select the combination with the lowest max percent
-    let bestCombo = optimizer.findBestCombination(
-        raidDefender.species.baseStats.hp,
-        raidDefender.ivs.hp,
-        finalEVSpread.hp, // Initial HP investment, if any
-        510 - (finalEVSpread.hp + finalEVSpread.atk + finalEVSpread.def + finalEVSpread.spa + finalEVSpread.spd + finalEVSpread.spe),
-        raidDefender.level);
-
-    finalEVSpread.hp = bestCombo.hpEV;
-    finalEVSpread.def = bestCombo.defEV;
-    finalEVSpread.spd = bestCombo.spdEV;
-
-    // NOTE: MUST TAKE INTO ACCOUNT ANY PRE-EXISTING EVS
-    // 1 - Def/SpD nodes must start at the EV given in the defender's spread
-    // 2 - Cull Def/SpD pairs that would on their own exceed the EV limit
-    // 3 - 
-
-    // #DEBUG CHECK IF VALUES ARE OK
-    /*let damageMinEV = recalculateFinalDamage( results[0], 0 );
-    let damageMaxEV = recalculateFinalDamage( results[0], 252 );
-
-    let damageRange : number[] = [damageMinEV[15], damageMaxEV[15]]; 
-
-    finalEVSpread.atk = damageRange[0];
-    finalEVSpread.spa = damageRange[1];*/
-
-    return new EVSpread( raidDefender.nature, finalEVSpread );
-}
-
-
-
-/** Optimal Defensive Spread (Proto/Quark)
- * --------------------------
- * Find the most efficient EV spread to meet the most balanced defensive investment for defenders with enabled Protoynthesis / Quark Drive.
- * Against Pokemon with only one category of moves (physical or special) this will calculate the lowest investment
- * for the minimum amount of damage taken, where often the defensive stat can be several EVs below 252 while providing
- * the same effect.
- * For mixed damage the algorithm will find the EV spread that minimizes overall damage the best, which typically
- * results in equalizing highest damage taken from physical and special moves.
-*/
-function getOptimalDefensiveSpread_PQ( gen: Generation, raidBoss: Smogon.Pokemon, raidDefender: Smogon.Pokemon,
-    moves: Smogon.Move[], field: Smogon.Field, useGivenNature: boolean, parameters: RankingParameters) : EVSpread {
-    let finalEVSpread: Smogon.StatsTable<number> = (raidDefender.evs ? raidDefender.evs : {hp:0,atk:0,def:0,spa:0,spd:0,spe:0});
-
-    // Set neutral nature for most accurate predictions
-    let noAbilityDefender = raidDefender.clone();
-    if ( !useGivenNature ) {
-        noAbilityDefender.nature = "Hardy";
-    }
-    noAbilityDefender.ability = undefined;
-
-    // Perform preliminary damage check for each move
-    let preResults : Smogon.Result[] = [];
-    let eligibleIndices : number[] = [];
-    for ( let i = 0; i < moves.length; ++i ) {
-        let move = moves[i];
-        let result = Smogon.calculate(gen, raidBoss, noAbilityDefender, move, field );
-        if (result.range()[1] > 0 ) {
-            eligibleIndices.push(i);
-        }
-        preResults.push(result);
-    }
-
-    // Check if all moves deal damage, if not the defender is immune and needs no defensive investment
-    if ( eligibleIndices.length == 0 ) {
-        return new EVSpread( raidDefender.nature, finalEVSpread );
-    }    
-
-    // Separate physical moves from special moves (Keep track of initial indices?)
-    let physMoves : number[] = [];
-    let specMoves : number[] = [];
-    let highestPhysHit : number = 0;
-    let highestSpecHit : number = 0;
-    let highestHit : number = 0;
-    let isHighestHitPhysical : boolean = false;
-    eligibleIndices.forEach( moveIndex => {
-        const moveDamage = preResults[moveIndex].range()[1];
-        if ( preResults[moveIndex].rawDesc.hitsPhysical ) {
-            physMoves.push( moveIndex );
-            highestPhysHit = Math.max( moveDamage, highestPhysHit );
-        }
-        else {
-            specMoves.push( moveIndex );
-            highestSpecHit = Math.max( moveDamage, highestSpecHit );
-        }
-        if ( moveDamage > highestHit ) {
-            highestHit = moveDamage;
-            isHighestHitPhysical = preResults[moveIndex].rawDesc.hitsPhysical!;
-        }
-    });
-
-    // Discard low hitting physical moves
-    if ( physMoves.length > 1 ) {
-        let newPhysMoves : number[] = [];
-        physMoves.forEach( moveIndex => {
-            const moveDamage = preResults[moveIndex].range()[1];
-            // Include if damage is near the highest hit
-            if ( (highestPhysHit - moveDamage ) < 0.01 ) {
-                newPhysMoves.push( moveIndex );
-            }
-        });
-        physMoves = newPhysMoves;
-    }
-    // Discard low hitting special moves
-    if ( specMoves.length > 1 ) {
-        let newSpecMoves : number[] = [];
-        specMoves.forEach( moveIndex => {
-            const moveDamage = preResults[moveIndex].range()[1];
-            // Include if damage is near the highest hit
-            if ( (highestSpecHit - moveDamage ) < 0.01 ) {
-                newSpecMoves.push( moveIndex );
-            }
-        });
-        specMoves = newSpecMoves;
-    }
-
-    // Predict best defensive nature based on the hardest hitting move
-    // #TODO: Apply PQ nature preference
-    if (!useGivenNature ) {
-        noAbilityDefender.nature = selectDefensiveNaturePreference( noAbilityDefender, isHighestHitPhysical, physMoves.length>0, specMoves.length>0, parameters.search.defNaturePreferencePQ ) as NatureName;
-        /*if ( isHighestHitPhysical ) {
-            // Suggest defensive nature
-            noAbilityDefender.nature = "Bold";
-        }
-        else {
-            // Suggest specially defensive nature
-            noAbilityDefender.nature = "Calm";
-        }*/
-    }
-    // Update stats, ugly
-    noAbilityDefender = noAbilityDefender.clone();
-
-    let physResults : Smogon.Result[] = [];
-    let specResults : Smogon.Result[] = [];
-    // Reuse previous results if must use given nature
-    if ( useGivenNature ) {
-        physMoves.forEach( moveIndex => 
-            physResults.push( preResults[moveIndex])
-        );
-        specMoves.forEach( moveIndex => 
-            specResults.push( preResults[moveIndex])
-        );
-    }
-    // Recalculate damage for the relevant moves with the updated defensive nature
-    else {
-        physMoves.forEach( moveIndex => 
-            physResults.push( Smogon.calculate(gen, raidBoss, noAbilityDefender, moves[moveIndex], field ))
-        );
-        specMoves.forEach( moveIndex => 
-            specResults.push( Smogon.calculate(gen, raidBoss, noAbilityDefender, moves[moveIndex], field ))
-        );
-    }
-
-    // Setup nodes with all possible EV values / damage for the top-hitting moves
-    // -- Keep only nodes with new damage values, in the format (EV, Damage)
-    // -- For categories with multiple moves: Damage = Max(Damage1,Damage2,..)
-    let optimizer : DefenseStatOptimizerPQ = new DefenseStatOptimizerPQ();
-
-    // Setup Def nodes
-    if ( physResults.length == 0 ) {
-        let defStat = calcModifiedDefenseStat(gen, noAbilityDefender, noAbilityDefender.evs.def );
-        optimizer.addDefNode( finalEVSpread.def, defStat, 0 );
-        //console.log('Adding default defense node -> EV:%d  Stat:%d', finalEVSpread.def, defStat ); // #TODO: Delete this line
-    }
-    else {
-        let initialDefEV = finalEVSpread.def;
-
-        let previousDamageTaken = Number.POSITIVE_INFINITY;
-        // Do not assume what value DefEV might have.
-        // We'll use the initial value as is, next value is the closest multiple of 4 and so on.
-        let nextDefEV = initialDefEV;
-        do {
-            let maxDamage = 0;
-            physResults.forEach( result => {
-                let damage = recalculateFinalDamage( result, nextDefEV );
-                maxDamage = Math.max( damage[15], maxDamage );
-            });
-
-            if ( maxDamage < previousDamageTaken ) {
-                let defStat = calcModifiedDefenseStat(gen, noAbilityDefender, nextDefEV);
-                optimizer.addDefNode( nextDefEV, defStat, maxDamage );
-                previousDamageTaken = maxDamage;
-            }
-
-            nextDefEV = ( nextDefEV - (nextDefEV % 4) ) + 4;
-        } while ( nextDefEV <= 252 );
-    }
-
-    // Setup SpD nodes
-    if ( specResults.length == 0 ) {
-        let spdStat = calcModifiedSpDefenseStat(gen, noAbilityDefender, noAbilityDefender.evs.spd );
-        optimizer.addSpDNode( finalEVSpread.spd, spdStat, 0 );
-    }
-    else {
-        let initialSpdEV = finalEVSpread.spd;
-
-        let previousDamageTaken = Number.POSITIVE_INFINITY;
-        // Do not assume what value SpDEV might have.
-        // We'll use the initial value as is, next value is the closest multiple of 4 and so on.
-        let nextSpdEV = initialSpdEV;
-        do {
-            let maxDamage = 0;
-            specResults.forEach( result => {
-                let damage = recalculateFinalDamage( result, nextSpdEV );
-                maxDamage = Math.max( damage[15], maxDamage );
-            });
-
-            if ( maxDamage < previousDamageTaken ) {
-                let spdStat = calcModifiedSpDefenseStat(gen, noAbilityDefender, nextSpdEV);
-                optimizer.addSpDNode( nextSpdEV, spdStat, maxDamage );
-                previousDamageTaken = maxDamage;
-            }
-
-            nextSpdEV = ( nextSpdEV - (nextSpdEV % 4) ) + 4;
-        } while ( nextSpdEV <= 252 );
-    }
-
-    // #DEBUG
-    /*console.log('Def Nodes');
-    optimizer.defNodes.forEach( item => {
-        console.log('EV: %d, Stat: %d, Dmg: %d', item.ev, item.stat, item.damage );
-    });
-    console.log('------------------------')
-    console.log('SpD Nodes');
-    optimizer.spdNodes.forEach( item => {
-        console.log('EV: %d, Stat: %d, Dmg: %d', item.ev, item.stat, item.damage );
-    });*/
-
-    // Re-enable Quark Drive / Protosynthesis - UGLY
-    noAbilityDefender.ability = raidDefender.ability;
-    let abilityDefender = noAbilityDefender.clone();
-
-    // Find best stat for both PQ Def and SpD thresholds
-    let bestStat = getHighestStat_PQ(gen, abilityDefender);
-
-    // #DEBUG
-    //console.log('PQ Threshold Stat: %s - %d', bestStat.stat, bestStat.val);
-
-    // Setup nodes for Defense PQ damage calculations
-    // -- First find the lowest stat/ev value where defense becomes the elected QP stat
-    //   >> If such a value is found, we enable Quark Drive
-    //   >> Otherwise defense is never chosen, skip calcs
-
-    let defThresholdEV = findDefEvPQThreshold( gen, abilityDefender, bestStat );
-    if ( defThresholdEV != undefined ) {
-        if ( physMoves.length > 0 ) {
-            // Precalc phys damage
-            let physResultsPQ : Smogon.Result[] = [];
-            abilityDefender.evs.def = defThresholdEV.statEV;
-            physMoves.forEach( moveIndex => 
-                physResultsPQ.push( Smogon.calculate(gen, raidBoss, abilityDefender, moves[moveIndex], field ))
-            );
-
-            let previousDamageTaken = Number.POSITIVE_INFINITY;
-            for ( let defEV = defThresholdEV.statEV; defEV <= 252; defEV = defEV - (defEV%4)+4 ) {
-                let maxDamage = 0;
-                physResultsPQ.forEach( result => {
-                    let damage = recalculateFinalDamage( result, defEV );
-                    maxDamage = Math.max( damage[15], maxDamage );
-                });
-
-                // Calculate defense stat
-                let defStat = calcModifiedDefenseStat(gen, abilityDefender, defEV);
-                // Create new node if we reached a new damage value
-                if ( maxDamage < previousDamageTaken ) {
-                    optimizer.addDefNodePQ( defEV, defStat, maxDamage );
-                    previousDamageTaken = maxDamage;
-                }
-                // Increase node range if we got the same damage value
-                else {
-                    optimizer.increaseDefNodePQRange(defEV, defStat );
-                }
-            }
-        }
-    }
-
-    // Setup nodes for Special Defense PQ damage calculations
-    // -- First find the lowest stat/ev value where defense becomes the elected QP stat
-    //   >> If such a value is found, we enable Quark Drive
-    //   >> Otherwise defense is never chosen, skip calcs
-
-    let spdThresholdEV = findSpdEvPQThreshold( gen, abilityDefender, bestStat );
-    if ( spdThresholdEV != undefined ) {
-        if ( specMoves.length > 0 ) {
-            // Precalc spec damage
-            let specResultsPQ : Smogon.Result[] = [];
-            abilityDefender.evs.spd = spdThresholdEV.statEV;
-            specMoves.forEach( moveIndex => 
-                specResultsPQ.push( Smogon.calculate(gen, raidBoss, abilityDefender, moves[moveIndex], field ))
-            );
-
-            let previousDamageTaken = Number.POSITIVE_INFINITY;
-            for ( let spdEV = spdThresholdEV.statEV; spdEV <= 252; spdEV = spdEV - (spdEV%4)+4 ) {
-                let maxDamage = 0;
-                specResultsPQ.forEach( result => {
-                    let damage = recalculateFinalDamage( result, spdEV );
-                    maxDamage = Math.max( damage[15], maxDamage );
-                });
-
-                // Calculate defense stat
-                let spdStat = calcModifiedSpDefenseStat(gen, abilityDefender, spdEV);
-                // Create new node if we reached a new damage value
-                if ( maxDamage < previousDamageTaken ) {
-                    optimizer.addSpDNodePQ( spdEV, spdStat, maxDamage );
-                    previousDamageTaken = maxDamage;
-                }
-                // Increase node range if we got the same damage value
-                else {
-                    optimizer.increaseSpDNodePQRange(spdEV, spdStat );
-                }
-            }
-        }
-    }
-
-    // #DEBUG
-    /*console.log('Def PQ Nodes');
-    optimizer.defNodesPQ.forEach( item => {
-        console.log('Min EV: %d, Stat: %d, Dmg: %d', item.getMinimumEV(), item.getMinimumStat(), item.damageValue );
-    });
-    console.log('------------------------')
-    console.log('SpD PQ Nodes');
-    optimizer.spdNodesPQ.forEach( item => {
-        console.log('Min EV: %d, Stat: %d, Dmg: %d', item.getMinimumEV(), item.getMinimumStat(), item.damageValue );
-    });*/
-
-    // Check pairs for all combinations of Def and SpD nodes
-    // Find pairs that have matching damage values
-    // Try all combinations by test-allocating as much HP as possible
-
-    // Select the combination with the lowest max percent
-    let bestCombo = optimizer.findBestSpread(
-        abilityDefender.species.baseStats.hp,
-        abilityDefender.ivs.hp,
-        finalEVSpread.hp, // Initial HP investment, if any
-        510 - (finalEVSpread.hp + finalEVSpread.atk + finalEVSpread.def + finalEVSpread.spa + finalEVSpread.spd + finalEVSpread.spe),
-        abilityDefender.level);
-
-    finalEVSpread.hp = bestCombo.hpEV;
-    finalEVSpread.def = bestCombo.defEV;
-    finalEVSpread.spd = bestCombo.spdEV;
-
-    // #DEBUG
-    //console.log('Best Spread(HP:%d, Def:%d , Spd:%d)', finalEVSpread.hp, finalEVSpread.def, finalEVSpread.spd );
-
-    return new EVSpread( abilityDefender.nature, finalEVSpread );
-}
-
-
-
-
-
-
-/** Optimal Defensive Threshold
- * --------------------------
- * Find the best EV spread to meet the maximum defensive threshold the raid defender Pokemon can invest into.
- * This EV spread is the minimum defensive investment needed to reach the best defensive threshold,
- * where the threshold is directly given by the number of consecutive turns the Pokemon can survive
- * to the given set of moves if being consistently targeted by the hardest hitting move.
-*/
-function getOptimalDefensiveThresholdSpread( gen: Generation, raidBoss: Smogon.Pokemon, raidDefender: Smogon.Pokemon, moves: Smogon.Move[], field: Smogon.Field, useGivenNature: boolean, parameters: RankingParameters) : EVSpread {
-    let finalEVSpread: Smogon.StatsTable<number> = (raidDefender.evs ? raidDefender.evs : {hp:0,atk:0,def:0,spa:0,spd:0,spe:0});
-
-    // Set neutral nature for most accurate predictions
-    if (!useGivenNature) {
-        raidDefender.nature = "Hardy";
-    }
-
-    // Perform preliminary damage check for each move
-    let preResults : Smogon.Result[] = [];
-    let eligibleIndices : number[] = [];
-    for ( let i = 0; i < moves.length; ++i ) {
-        let move = moves[i];
-        let result = Smogon.calculate(gen, raidBoss, raidDefender, move, field );
-        if (result.range()[1] > 0 ) {
-            eligibleIndices.push(i);
-        }
-        preResults.push(result);
-    }
-
-    // Check if all moves deal damage, if not the defender is immune and needs no defensive investment
-    if ( eligibleIndices.length == 0 ) {
-        return new EVSpread( raidDefender.nature, finalEVSpread );
-    }    
-
-    // Separate physical moves from special moves (Keep track of initial indices?)
-    let physMoves : number[] = [];
-    let specMoves : number[] = [];
-    let highestPhysHit : number = 0;
-    let highestSpecHit : number = 0;
-    let highestHit : number = 0;
-    let isHighestHitPhysical : boolean = false;
-    eligibleIndices.forEach( moveIndex => {
-        const moveDamage = preResults[moveIndex].range()[1];
-        if ( preResults[moveIndex].rawDesc.hitsPhysical ) {
-            physMoves.push( moveIndex );
-            highestPhysHit = Math.max( moveDamage, highestPhysHit );
-        }
-        else {
-            specMoves.push( moveIndex );
-            highestSpecHit = Math.max( moveDamage, highestSpecHit );
-        }
-        if ( moveDamage > highestHit ) {
-            highestHit = moveDamage;
-            isHighestHitPhysical = preResults[moveIndex].rawDesc.hitsPhysical!;
-        }
-    });
-
-    // Predict best defensive nature based on the hardest hitting move
-    if ( !useGivenNature ) {
-        if ( isHighestHitPhysical ) {
-            // Suggest defensive nature
-            raidDefender.nature = "Bold";
-        }
-        else {
-            // Suggest specially defensive nature
-            raidDefender.nature = "Calm";
-        }
-    }
-
-    // Discard low hitting physical moves
-    if ( physMoves.length > 1 ) {
-        let newPhysMoves : number[] = [];
-        physMoves.forEach( moveIndex => {
-            const moveDamage = preResults[moveIndex].range()[1];
-            // Include if damage is near the highest hit
-            if ( (highestPhysHit - moveDamage ) < 0.01 ) {
-                newPhysMoves.push( moveIndex );
-            }
-        });
-        physMoves = newPhysMoves;
-    }
-    // Discard low hitting special moves
-    if ( specMoves.length > 1 ) {
-        let newSpecMoves : number[] = [];
-        specMoves.forEach( moveIndex => {
-            const moveDamage = preResults[moveIndex].range()[1];
-            // Include if damage is near the highest hit
-            if ( (highestSpecHit - moveDamage ) < 0.01 ) {
-                newSpecMoves.push( moveIndex );
-            }
-        });
-        specMoves = newSpecMoves;
-    }
-
-    // Recalculate damage for the relevant moves with the updated defensive nature
-    let physResults : Smogon.Result[] = [];
-    let specResults : Smogon.Result[] = [];
-    if ( useGivenNature ) {
-        // Reuse previous results if must use given nature
-        physMoves.forEach( moveIndex => 
-            physResults.push( preResults[moveIndex])
-        );
-        specMoves.forEach( moveIndex => 
-            specResults.push( preResults[moveIndex])
-        );
-    }
-    else {
-        // Recalculate results for updated nature
-        physMoves.forEach( moveIndex => 
-            physResults.push( Smogon.calculate(gen, raidBoss, raidDefender, moves[moveIndex], field ))
-        );
-        specMoves.forEach( moveIndex => 
-            specResults.push( Smogon.calculate(gen, raidBoss, raidDefender, moves[moveIndex], field ))
-        );
-    }
-
-    // Setup nodes with all possible EV values / damage for the top-hitting moves
-    // -- Keep only nodes with new damage values, in the format (EV, Damage)
-    // -- For categories with multiple moves: Damage = Max(Damage1,Damage2,..)
-    let optimizer : DefenseStatOptimizer = new DefenseStatOptimizer();
-
-    // Setup Def nodes
-    if ( physResults.length == 0 ) {
-        optimizer.addDefNode( finalEVSpread.def, 0 );
-    }
-    else {
-        let initialDefEV = finalEVSpread.def;
-
-        let previousDamageTaken = Number.POSITIVE_INFINITY;
-        // Do not assume what value DefEV might have.
-        // We'll use the initial value as is, next value is the closest multiple of 4 and so on.
-        let nextDefEV = initialDefEV;
-        do {
-            let maxDamage = 0;
-            physResults.forEach( result => {
-                let damage = recalculateFinalDamage( result, nextDefEV );
-                maxDamage = Math.max( damage[15], maxDamage );
-            });
-
-            if ( maxDamage < previousDamageTaken ) {
-                optimizer.addDefNode( nextDefEV, maxDamage );
-            }
-
-            nextDefEV = ( nextDefEV - (nextDefEV % 4) ) + 4;
-        } while ( nextDefEV <= 252 );
-    }
-
-    // Setup SpD nodes
-    if ( specResults.length == 0 ) {
-        optimizer.addSpDNode( finalEVSpread.spd, 0 );
-    }
-    else {
-        let initialSpdEV = finalEVSpread.def;
-
-        let previousDamageTaken = Number.POSITIVE_INFINITY;
-        // Do not assume what value DefEV might have.
-        // We'll use the initial value as is, next value is the closest multiple of 4 and so on.
-        let nextSpdEV = initialSpdEV;
-        do {
-            let maxDamage = 0;
-            specResults.forEach( result => {
-                let damage = recalculateFinalDamage( result, nextSpdEV );
-                maxDamage = Math.max( damage[15], maxDamage );
-            });
-
-            if ( maxDamage < previousDamageTaken ) {
-                optimizer.addSpDNode( nextSpdEV, maxDamage );
-            }
-
-            nextSpdEV = ( nextSpdEV - (nextSpdEV % 4) ) + 4;
-        } while ( nextSpdEV <= 252 );
-    }
-
-    // #DEBUG: Print all nodes
-
-    // Check pairs for all combinations of Def and SpD nodes
-    // Find pairs that have matching damage values
-    // Try all combinations by test-allocating as much HP as possible
-    // -- think of ways to cull obvious bad nodes in this step?
-    // ---- look ahead to the next node
-    // ---- if allocating next node would leave 252+ remaining EVs
-    // ---- then we haven't exhausted all EVs in Defenses yet
-
-
-
-    // Select the combination with the lowest max percent
-    let bestCombo = optimizer.findBestThresholdCombination(
-        raidDefender.species.baseStats.hp,
-        raidDefender.ivs.hp,
-        finalEVSpread.hp, // Initial HP investment, if any
-        510 - (finalEVSpread.hp + finalEVSpread.atk + finalEVSpread.def + finalEVSpread.spa + finalEVSpread.spd + finalEVSpread.spe),
-        raidDefender.level);
-
-    finalEVSpread.hp = bestCombo.hpEV;
-    finalEVSpread.def = bestCombo.defEV;
-    finalEVSpread.spd = bestCombo.spdEV;
-
-    // NOTE: MUST TAKE INTO ACCOUNT ANY PRE-EXISTING EVS
-    // 1 - Def/SpD nodes must start at the EV given in the defender's spread
-    // 2 - Cull Def/SpD pairs that would on their own exceed the EV limit
-    // 3 - 
-
-    // #DEBUG CHECK IF VALUES ARE OK
-    /*let damageMinEV = recalculateFinalDamage( results[0], 0 );
-    let damageMaxEV = recalculateFinalDamage( results[0], 252 );
-
-    let damageRange : number[] = [damageMinEV[15], damageMaxEV[15]]; 
-
-    finalEVSpread.atk = damageRange[0];
-    finalEVSpread.spa = damageRange[1];*/
-
-    return new EVSpread( raidDefender.nature, finalEVSpread );
-}
-
-
-
-
-/** Optimal Defensive Threshold (Proto/Quark)
- * --------------------------
- * Find the most efficient EV spread to meet maximum defensive threshold for defenders with enabled Protoynthesis / Quark Drive.
- * This EV spread is the minimum defensive investment needed to reach the best defensive threshold,
- * where the threshold is directly given by the number of consecutive turns the Pokemon can survive
- * to the given set of moves if being consistently targeted by the hardest hitting move.
-*/
-function getOptimalDefensiveThreshold_PQ( gen: Generation, raidBoss: Smogon.Pokemon, raidDefender: Smogon.Pokemon, moves: Smogon.Move[], field: Smogon.Field, useGivenNature: boolean, parameters: RankingParameters) : EVSpread {
-    let finalEVSpread: Smogon.StatsTable<number> = (raidDefender.evs ? raidDefender.evs : {hp:0,atk:0,def:0,spa:0,spd:0,spe:0});
-
-    // Set neutral nature for most accurate predictions
-    let noAbilityDefender = raidDefender.clone();
-    if ( !useGivenNature ) {
-        noAbilityDefender.nature = "Hardy";
-    }
-    noAbilityDefender.ability = undefined;
-
-    // Perform preliminary damage check for each move
-    let preResults : Smogon.Result[] = [];
-    let eligibleIndices : number[] = [];
-    for ( let i = 0; i < moves.length; ++i ) {
-        let move = moves[i];
-        let result = Smogon.calculate(gen, raidBoss, noAbilityDefender, move, field );
-        if (result.range()[1] > 0 ) {
-            eligibleIndices.push(i);
-        }
-        preResults.push(result);
-    }
-
-    // Check if all moves deal damage, if not the defender is immune and needs no defensive investment
-    if ( eligibleIndices.length == 0 ) {
-        return new EVSpread( raidDefender.nature, finalEVSpread );
-    }    
-
-    // Separate physical moves from special moves (Keep track of initial indices?)
-    let physMoves : number[] = [];
-    let specMoves : number[] = [];
-    let highestPhysHit : number = 0;
-    let highestSpecHit : number = 0;
-    let highestHit : number = 0;
-    let isHighestHitPhysical : boolean = false;
-    eligibleIndices.forEach( moveIndex => {
-        const moveDamage = preResults[moveIndex].range()[1];
-        if ( preResults[moveIndex].rawDesc.hitsPhysical ) {
-            physMoves.push( moveIndex );
-            highestPhysHit = Math.max( moveDamage, highestPhysHit );
-        }
-        else {
-            specMoves.push( moveIndex );
-            highestSpecHit = Math.max( moveDamage, highestSpecHit );
-        }
-        if ( moveDamage > highestHit ) {
-            highestHit = moveDamage;
-            isHighestHitPhysical = preResults[moveIndex].rawDesc.hitsPhysical!;
-        }
-    });
-
-    // Discard low hitting physical moves
-    if ( physMoves.length > 1 ) {
-        let newPhysMoves : number[] = [];
-        physMoves.forEach( moveIndex => {
-            const moveDamage = preResults[moveIndex].range()[1];
-            // Include if damage is near the highest hit
-            if ( (highestPhysHit - moveDamage ) < 0.01 ) {
-                newPhysMoves.push( moveIndex );
-            }
-        });
-        physMoves = newPhysMoves;
-    }
-    // Discard low hitting special moves
-    if ( specMoves.length > 1 ) {
-        let newSpecMoves : number[] = [];
-        specMoves.forEach( moveIndex => {
-            const moveDamage = preResults[moveIndex].range()[1];
-            // Include if damage is near the highest hit
-            if ( (highestSpecHit - moveDamage ) < 0.01 ) {
-                newSpecMoves.push( moveIndex );
-            }
-        });
-        specMoves = newSpecMoves;
-    }
-
-    // Predict best defensive nature based on the hardest hitting move
-    // #TODO: Apply PQ nature preference
-    if (!useGivenNature ) {
-        noAbilityDefender.nature = selectDefensiveNaturePreference( noAbilityDefender, isHighestHitPhysical, physMoves.length>0, specMoves.length>0, parameters.search.defNaturePreferencePQ ) as NatureName;
-        /*if ( isHighestHitPhysical ) {
-            // Suggest defensive nature
-            noAbilityDefender.nature = "Bold";
-        }
-        else {
-            // Suggest specially defensive nature
-            noAbilityDefender.nature = "Calm";
-        }*/
-    }
-    // Update stats, ugly
-    noAbilityDefender = noAbilityDefender.clone();
-
-    // Recalculate damage for the relevant moves with the updated defensive nature
-    let physResults : Smogon.Result[] = [];
-    let specResults : Smogon.Result[] = [];
-    if ( useGivenNature ) {
-        // Reuse previous results if must use given nature
-        physMoves.forEach( moveIndex => 
-            physResults.push( preResults[moveIndex])
-        );
-        specMoves.forEach( moveIndex => 
-            specResults.push( preResults[moveIndex])
-        );
-    }
-    else {
-        physMoves.forEach( moveIndex => 
-            physResults.push( Smogon.calculate(gen, raidBoss, noAbilityDefender, moves[moveIndex], field ))
-        );
-        specMoves.forEach( moveIndex => 
-            specResults.push( Smogon.calculate(gen, raidBoss, noAbilityDefender, moves[moveIndex], field ))
-        );
-    }
-
-    // Setup nodes with all possible EV values / damage for the top-hitting moves
-    // -- Keep only nodes with new damage values, in the format (EV, Damage)
-    // -- For categories with multiple moves: Damage = Max(Damage1,Damage2,..)
-    let optimizer : DefenseStatOptimizerPQ = new DefenseStatOptimizerPQ();
-
-    // Setup Def nodes
-    if ( physResults.length == 0 ) {
-        let defStat = calcModifiedDefenseStat(gen, noAbilityDefender, noAbilityDefender.evs.def );
-        optimizer.addDefNode( finalEVSpread.def, defStat, 0 );
-    }
-    else {
-        let initialDefEV = finalEVSpread.def;
-
-        let previousDamageTaken = Number.POSITIVE_INFINITY;
-        // Do not assume what value DefEV might have.
-        // We'll use the initial value as is, next value is the closest multiple of 4 and so on.
-        let nextDefEV = initialDefEV;
-        do {
-            let maxDamage = 0;
-            physResults.forEach( result => {
-                let damage = recalculateFinalDamage( result, nextDefEV );
-                maxDamage = Math.max( damage[15], maxDamage );
-            });
-
-            if ( maxDamage < previousDamageTaken ) {
-                let defStat = calcModifiedDefenseStat(gen, noAbilityDefender, nextDefEV);
-                optimizer.addDefNode( nextDefEV, defStat, maxDamage );
-                previousDamageTaken = maxDamage;
-            }
-
-            nextDefEV = ( nextDefEV - (nextDefEV % 4) ) + 4;
-        } while ( nextDefEV <= 252 );
-    }
-
-    // Setup SpD nodes
-    if ( specResults.length == 0 ) {
-        let spdStat = calcModifiedSpDefenseStat(gen, noAbilityDefender, noAbilityDefender.evs.spd );
-        optimizer.addSpDNode( finalEVSpread.spd, spdStat, 0 );
-    }
-    else {
-        let initialSpdEV = finalEVSpread.def;
-
-        let previousDamageTaken = Number.POSITIVE_INFINITY;
-        // Do not assume what value DefEV might have.
-        // We'll use the initial value as is, next value is the closest multiple of 4 and so on.
-        let nextSpdEV = initialSpdEV;
-        do {
-            let maxDamage = 0;
-            specResults.forEach( result => {
-                let damage = recalculateFinalDamage( result, nextSpdEV );
-                maxDamage = Math.max( damage[15], maxDamage );
-            });
-
-            if ( maxDamage < previousDamageTaken ) {
-                let spdStat = calcModifiedSpDefenseStat(gen, noAbilityDefender, nextSpdEV);
-                optimizer.addSpDNode( nextSpdEV, spdStat, maxDamage );
-                previousDamageTaken = maxDamage;
-            }
-
-            nextSpdEV = ( nextSpdEV - (nextSpdEV % 4) ) + 4;
-        } while ( nextSpdEV <= 252 );
-    }
-
-    // #DEBUG
-    /*console.log('Def Nodes');
-    optimizer.defNodes.forEach( item => {
-        console.log('EV: %d, Stat: %d, Dmg: %d', item.ev, item.stat, item.damage );
-    });
-    console.log('------------------------')
-    console.log('SpD Nodes');
-    optimizer.spdNodes.forEach( item => {
-        console.log('EV: %d, Stat: %d, Dmg: %d', item.ev, item.stat, item.damage );
-    });*/
-
-    // Re-enable Quark Drive / Protosynthesis - UGLY
-    noAbilityDefender.ability = raidDefender.ability;
-    let abilityDefender = noAbilityDefender.clone();
-
-    // Find best stat for both PQ Def and SpD thresholds
-    let bestStat = getHighestStat_PQ(gen, abilityDefender);
-
-    // #DEBUG
-    //console.log('PQ Threshold Stat: %s - %d', bestStat.stat, bestStat.val);
-
-    // Setup nodes for Defense PQ damage calculations
-    // -- First find the lowest stat/ev value where defense becomes the elected QP stat
-    //   >> If such a value is found, we enable Quark Drive
-    //   >> Otherwise defense is never chosen, skip calcs
-
-    let defThresholdEV = findDefEvPQThreshold( gen, abilityDefender, bestStat );
-    if ( defThresholdEV != undefined ) {
-        if ( physMoves.length > 0 ) {
-            // Precalc phys damage
-            let physResultsPQ : Smogon.Result[] = [];
-            abilityDefender.evs.def = defThresholdEV.statEV;
-            physMoves.forEach( moveIndex => 
-                physResultsPQ.push( Smogon.calculate(gen, raidBoss, abilityDefender, moves[moveIndex], field ))
-            );
-
-            let previousDamageTaken = Number.POSITIVE_INFINITY;
-            for ( let defEV = defThresholdEV.statEV; defEV <= 252; defEV = defEV - (defEV%4)+4 ) {
-                let maxDamage = 0;
-                physResultsPQ.forEach( result => {
-                    let damage = recalculateFinalDamage( result, defEV );
-                    maxDamage = Math.max( damage[15], maxDamage );
-                });
-
-                // Calculate defense stat
-                let defStat = calcModifiedDefenseStat(gen, abilityDefender, defEV);
-                // Create new node if we reached a new damage value
-                if ( maxDamage < previousDamageTaken ) {
-                    optimizer.addDefNodePQ( defEV, defStat, maxDamage );
-                    previousDamageTaken = maxDamage;
-                }
-                // Increase node range if we got the same damage value
-                else {
-                    optimizer.increaseDefNodePQRange(defEV, defStat );
-                }
-            }
-        }
-    }
-
-    // Setup nodes for Special Defense PQ damage calculations
-    // -- First find the lowest stat/ev value where defense becomes the elected QP stat
-    //   >> If such a value is found, we enable Quark Drive
-    //   >> Otherwise defense is never chosen, skip calcs
-
-    let spdThresholdEV = findSpdEvPQThreshold( gen, abilityDefender, bestStat );
-    if ( spdThresholdEV != undefined ) {
-        if ( specMoves.length > 0 ) {
-            // Precalc spec damage
-            let specResultsPQ : Smogon.Result[] = [];
-            abilityDefender.evs.spd = spdThresholdEV.statEV;
-            specMoves.forEach( moveIndex => 
-                specResultsPQ.push( Smogon.calculate(gen, raidBoss, abilityDefender, moves[moveIndex], field ))
-            );
-
-            let previousDamageTaken = Number.POSITIVE_INFINITY;
-            for ( let spdEV = spdThresholdEV.statEV; spdEV <= 252; spdEV = spdEV - (spdEV%4)+4 ) {
-                let maxDamage = 0;
-                specResultsPQ.forEach( result => {
-                    let damage = recalculateFinalDamage( result, spdEV );
-                    maxDamage = Math.max( damage[15], maxDamage );
-                });
-
-                // Calculate defense stat
-                let spdStat = calcModifiedSpDefenseStat(gen, abilityDefender, spdEV);
-                // Create new node if we reached a new damage value
-                if ( maxDamage < previousDamageTaken ) {
-                    optimizer.addSpDNodePQ( spdEV, spdStat, maxDamage );
-                    previousDamageTaken = maxDamage;
-                }
-                // Increase node range if we got the same damage value
-                else {
-                    optimizer.increaseSpDNodePQRange(spdEV, spdStat );
-                }
-            }
-        }
-    }
-
-    // #DEBUG
-    /*console.log('Def PQ Nodes');
-    optimizer.defNodesPQ.forEach( item => {
-        console.log('Min EV: %d, Stat: %d, Dmg: %d', item.getMinimumEV(), item.getMinimumStat(), item.damageValue );
-    });
-    console.log('------------------------')
-    console.log('SpD PQ Nodes');
-    optimizer.spdNodesPQ.forEach( item => {
-        console.log('Min EV: %d, Stat: %d, Dmg: %d', item.getMinimumEV(), item.getMinimumStat(), item.damageValue );
-    });*/
-
-    // Check pairs for all combinations of Def and SpD nodes
-    // Find pairs that have matching damage values
-    // Try all combinations by test-allocating as much HP as possible
-
-    // Select the combination with the lowest max percent
-    let bestCombo = optimizer.findBestThreshold(
-        abilityDefender.species.baseStats.hp,
-        abilityDefender.ivs.hp,
-        finalEVSpread.hp, // Initial HP investment, if any
-        510 - (finalEVSpread.hp + finalEVSpread.atk + finalEVSpread.def + finalEVSpread.spa + finalEVSpread.spd + finalEVSpread.spe),
-        abilityDefender.level);
-
-    finalEVSpread.hp = bestCombo.hpEV;
-    finalEVSpread.def = bestCombo.defEV;
-    finalEVSpread.spd = bestCombo.spdEV;
-
-    // #DEBUG
-    //console.log('Best Spread(HP:%d, Def:%d , Spd:%d)', finalEVSpread.hp, finalEVSpread.def, finalEVSpread.spd );
-
-    return new EVSpread( abilityDefender.nature, finalEVSpread );
-}
-
-
-function getMinimumOutspeedEV(targetSpeed: number, gen: Generation, pokemon: Smogon.Pokemon, field: Smogon.Field, side: Smogon.Side ) {
-    let minEV = pokemon.evs.spe;
-    let initialCheck = getFinalSpeed(gen, pokemon, field, side );
-    if ( initialCheck > targetSpeed ) {
-        return minEV;
-    }
-    pokemon.evs.spe = 252;
-    recalcRawStat(gen, pokemon, 'spe');
-    let endCheck = getFinalSpeed(gen,pokemon,field,side);
-    //console.log('End check: %d | Target Speed: %d', endCheck, targetSpeed );
-    if ( endCheck > targetSpeed ) {
-        //console.log('How did we get here?');
-        for ( let speEV = minEV-(minEV%4)+4; speEV <= 252; speEV +=4 ) {
-            pokemon.evs.spe = speEV;
-            recalcRawStat(gen, pokemon, 'spe');
-            let finalSpeed = getFinalSpeed(gen,pokemon,field,side);
-            if ( finalSpeed > targetSpeed ) {
-                return speEV;
-            }
-        }
-    }
-    pokemon.evs.spe = minEV;
-    return undefined;
-}
-function recalcRawStat(gen: Generation, pokemon: Smogon.Pokemon, stat: Smogon.StatID ) {
-    pokemon.rawStats[stat] = pokemon.stats[stat] = Smogon.Stats.calcStatADV(gen.natures, stat, pokemon.species.baseStats[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, pokemon.nature);
-}
-
-function selectDefensiveNaturePreference( pokemon: Smogon.Pokemon, isHighestHitPhysical: boolean, hasPhysicalDamage: boolean, hasSpecialDamage: boolean, pref: DefensiveNaturePreference) {
-    let raisedStat = ( isHighestHitPhysical ? 'def' : 'spd' );
-    let loweredStat = '';
-    switch (pref) {
-        case DefensiveNaturePreference.HinderHighestStat:
-            // Def is the raised stat, don't lower it
-            // Only lower SpDef if there is no special damage
-            if ( isHighestHitPhysical ) {
-                loweredStat = getHighestBaseStat( pokemon.species.baseStats, false, true, false, true, !hasSpecialDamage, true );
-            }
-            // Spd is the raised stat, don't lower it
-            // Only lower Def if there is no physical damage
-            else {
-                loweredStat = getHighestBaseStat( pokemon.species.baseStats, false, true, !hasPhysicalDamage, true, false, true );
-            }
-            break;
-        case DefensiveNaturePreference.HinderHighestOfAtkSpa:
-            loweredStat = getHighestBaseStat( pokemon.species.baseStats, false, true, false, true, false, false );
-            break;
-        case DefensiveNaturePreference.HinderHighestOfAtkSpaSpe:
-            loweredStat = getHighestBaseStat( pokemon.species.baseStats, false, true, false, true, false, true );
-            break;
-        case DefensiveNaturePreference.HinderLowestOfAtkSpa:
-            loweredStat = getLowestBaseStat( pokemon.species.baseStats, false, true, false, true, false, false );
-            break;
-        case DefensiveNaturePreference.HinderLowestOfAtkSpaSpe:
-            loweredStat = getLowestBaseStat( pokemon.species.baseStats, false, true, false, true, false, true );
-            break;
-        case DefensiveNaturePreference.HinderOnlyAtk:
-            loweredStat = 'atk';
-            break;
-        case DefensiveNaturePreference.HinderOnlyDefense:
-            loweredStat = 'def';
-            break;
-        case DefensiveNaturePreference.HinderOnlySpa:
-            loweredStat = 'spa';
-            break;
-        case DefensiveNaturePreference.HinderOnlySpd:
-            loweredStat = 'spd';
-            break;
-        case DefensiveNaturePreference.HinderOnlySpe:
-            loweredStat = 'spe';
-            break;
-    }
-
-    return getNatureFromStats( raisedStat, loweredStat );
-}
-
-function getHighestBaseStat( baseStats: StatsTable<number>, hp: boolean, atk: boolean, def: boolean, spa: boolean, spd: boolean, spe: boolean ) {
-    let highestStat = '';
-    let highest = 0;
-    if ( hp ) { 
-        highestStat = 'hp';
-        highest = baseStats.hp;
-    }
-    if ( atk && ( baseStats.atk > highest ) ) {
-        highestStat = 'atk';
-        highest = baseStats.atk;
-    }
-    if ( def && ( baseStats.def > highest ) ) {
-        highestStat = 'def';
-        highest = baseStats.def;
-    }
-    if ( spa && ( baseStats.spa > highest ) ) {
-        highestStat = 'spa';
-        highest = baseStats.spa;
-    }
-    if ( spd && ( baseStats.spd > highest ) ) {
-        highestStat = 'spd';
-        highest = baseStats.spd;
-    }
-    if ( spe && ( baseStats.spe > highest ) ) {
-        highestStat = 'spe';
-        highest = baseStats.spe;
-    }
-
-    return highestStat;
-}
-
-function getLowestBaseStat( baseStats: StatsTable<number>, hp: boolean, atk: boolean, def: boolean, spa: boolean, spd: boolean, spe: boolean ) {
-    let lowestStat = '';
-    let lowest = 256;
-    if ( hp ) { 
-        lowestStat = 'hp';
-        lowest = baseStats.hp;
-    }
-    if ( atk && ( baseStats.atk < lowest ) ) {
-        lowestStat = 'atk';
-        lowest = baseStats.atk;
-    }
-    if ( def && ( baseStats.def < lowest ) ) {
-        lowestStat = 'def';
-        lowest = baseStats.def;
-    }
-    if ( spa && ( baseStats.spa < lowest ) ) {
-        lowestStat = 'spa';
-        lowest = baseStats.spa;
-    }
-    if ( spd && ( baseStats.spd < lowest ) ) {
-        lowestStat = 'spd';
-        lowest = baseStats.spd;
-    }
-    if ( spe && ( baseStats.spe < lowest ) ) {
-        lowestStat = 'spe';
-        lowest = baseStats.spe;
-    }
-
-    return lowestStat;
 }

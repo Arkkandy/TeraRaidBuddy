@@ -1,6 +1,7 @@
-import { NATURES, Pokemon, Stats } from "../smogon-calc";
-import { Generation, StatsTable } from "../smogon-calc/data/interface";
-import { getModifiedStat } from "../smogon-calc/mechanics/util";
+import { Field, NATURES, Pokemon, Side, Stats } from "../smogon-calc";
+import { Generation, StatID, StatsTable } from "../smogon-calc/data/interface";
+import { getFinalSpeed, getModifiedStat } from "../smogon-calc/mechanics/util";
+import { DefensiveNaturePreference } from "./searchparameters";
 
 export enum BattlefieldSide {
     Attacker,
@@ -270,6 +271,144 @@ export function findSpdEvPQThreshold( gen: Generation, pokemon: Pokemon, bestSta
         }
     }
     return undefined;
+}
+
+export function getMinimumOutspeedEV(targetSpeed: number, gen: Generation, pokemon: Pokemon, field: Field, side: Side ) {
+    let minEV = pokemon.evs.spe;
+    let initialCheck = getFinalSpeed(gen, pokemon, field, side );
+    if ( initialCheck > targetSpeed ) {
+        return minEV;
+    }
+    pokemon.evs.spe = 252;
+    recalcRawStat(gen, pokemon, 'spe');
+    let endCheck = getFinalSpeed(gen,pokemon,field,side);
+    //console.log('End check: %d | Target Speed: %d', endCheck, targetSpeed );
+    if ( endCheck > targetSpeed ) {
+        //console.log('How did we get here?');
+        for ( let speEV = minEV-(minEV%4)+4; speEV <= 252; speEV +=4 ) {
+            pokemon.evs.spe = speEV;
+            recalcRawStat(gen, pokemon, 'spe');
+            let finalSpeed = getFinalSpeed(gen,pokemon,field,side);
+            if ( finalSpeed > targetSpeed ) {
+                return speEV;
+            }
+        }
+    }
+    pokemon.evs.spe = minEV;
+    return undefined;
+}
+export function recalcRawStat(gen: Generation, pokemon: Pokemon, stat: StatID ) {
+    pokemon.rawStats[stat] = pokemon.stats[stat] = Stats.calcStatADV(gen.natures, stat, pokemon.species.baseStats[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, pokemon.nature);
+}
+
+export function getHighestBaseStat( baseStats: StatsTable<number>, hp: boolean, atk: boolean, def: boolean, spa: boolean, spd: boolean, spe: boolean ) {
+    let highestStat = '';
+    let highest = 0;
+    if ( hp ) { 
+        highestStat = 'hp';
+        highest = baseStats.hp;
+    }
+    if ( atk && ( baseStats.atk > highest ) ) {
+        highestStat = 'atk';
+        highest = baseStats.atk;
+    }
+    if ( def && ( baseStats.def > highest ) ) {
+        highestStat = 'def';
+        highest = baseStats.def;
+    }
+    if ( spa && ( baseStats.spa > highest ) ) {
+        highestStat = 'spa';
+        highest = baseStats.spa;
+    }
+    if ( spd && ( baseStats.spd > highest ) ) {
+        highestStat = 'spd';
+        highest = baseStats.spd;
+    }
+    if ( spe && ( baseStats.spe > highest ) ) {
+        highestStat = 'spe';
+        highest = baseStats.spe;
+    }
+
+    return highestStat;
+}
+
+export function getLowestBaseStat( baseStats: StatsTable<number>, hp: boolean, atk: boolean, def: boolean, spa: boolean, spd: boolean, spe: boolean ) {
+    let lowestStat = '';
+    let lowest = 256;
+    if ( hp ) { 
+        lowestStat = 'hp';
+        lowest = baseStats.hp;
+    }
+    if ( atk && ( baseStats.atk < lowest ) ) {
+        lowestStat = 'atk';
+        lowest = baseStats.atk;
+    }
+    if ( def && ( baseStats.def < lowest ) ) {
+        lowestStat = 'def';
+        lowest = baseStats.def;
+    }
+    if ( spa && ( baseStats.spa < lowest ) ) {
+        lowestStat = 'spa';
+        lowest = baseStats.spa;
+    }
+    if ( spd && ( baseStats.spd < lowest ) ) {
+        lowestStat = 'spd';
+        lowest = baseStats.spd;
+    }
+    if ( spe && ( baseStats.spe < lowest ) ) {
+        lowestStat = 'spe';
+        lowest = baseStats.spe;
+    }
+
+    return lowestStat;
+}
+
+export function selectDefensiveNaturePreference( pokemon: Pokemon, isHighestHitPhysical: boolean, hasPhysicalDamage: boolean, hasSpecialDamage: boolean, pref: DefensiveNaturePreference) {
+    let raisedStat = ( isHighestHitPhysical ? 'def' : 'spd' );
+    let loweredStat = '';
+    switch (pref) {
+        case DefensiveNaturePreference.HinderHighestStat:
+            // Def is the raised stat, don't lower it
+            // Only lower SpDef if there is no special damage
+            if ( isHighestHitPhysical ) {
+                loweredStat = getHighestBaseStat( pokemon.species.baseStats, false, true, false, true, !hasSpecialDamage, true );
+            }
+            // Spd is the raised stat, don't lower it
+            // Only lower Def if there is no physical damage
+            else {
+                loweredStat = getHighestBaseStat( pokemon.species.baseStats, false, true, !hasPhysicalDamage, true, false, true );
+            }
+            break;
+        case DefensiveNaturePreference.HinderHighestOfAtkSpa:
+            loweredStat = getHighestBaseStat( pokemon.species.baseStats, false, true, false, true, false, false );
+            break;
+        case DefensiveNaturePreference.HinderHighestOfAtkSpaSpe:
+            loweredStat = getHighestBaseStat( pokemon.species.baseStats, false, true, false, true, false, true );
+            break;
+        case DefensiveNaturePreference.HinderLowestOfAtkSpa:
+            loweredStat = getLowestBaseStat( pokemon.species.baseStats, false, true, false, true, false, false );
+            break;
+        case DefensiveNaturePreference.HinderLowestOfAtkSpaSpe:
+            loweredStat = getLowestBaseStat( pokemon.species.baseStats, false, true, false, true, false, true );
+            break;
+        case DefensiveNaturePreference.HinderOnlyAtk:
+            loweredStat = 'atk';
+            break;
+        case DefensiveNaturePreference.HinderOnlyDefense:
+            loweredStat = 'def';
+            break;
+        case DefensiveNaturePreference.HinderOnlySpa:
+            loweredStat = 'spa';
+            break;
+        case DefensiveNaturePreference.HinderOnlySpd:
+            loweredStat = 'spd';
+            break;
+        case DefensiveNaturePreference.HinderOnlySpe:
+            loweredStat = 'spe';
+            break;
+    }
+
+    return getNatureFromStats( raisedStat, loweredStat );
 }
 
 //function calcStatValue( base: number, iv: number, ev: number,  )
