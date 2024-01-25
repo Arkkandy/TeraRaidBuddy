@@ -139,12 +139,6 @@ if ( UIElements.RaidBoss.R7ESelect ) {
   );
   
   populateDropdown( UIElements.RaidBoss.R7ESelect, partialSpeciesFilter );
-  partialSpeciesFilter.forEach( element => {
-    const newOption = document.createElement('option');
-    newOption.value = element;
-    newOption.text = element;
-    UIElements.RaidBoss.R7ESelect.add(newOption);
-  });
 }
 
 // Populate default item selection for raid defenders
@@ -331,34 +325,40 @@ function onPresetChange( newPreset : RaidPresetMode ) : void {
     UIElements.RaidBoss.CustomPresetButton.classList.add("active");
 
     UIElements.RaidBoss.CustomSelect.focus();
+
+    UIElements.RaidBoss.BossActionSection.classList.add('collapsed');
   }
-  else if ( currentPresetMode == RaidPresetMode.FiveStar ) {
-    UIElements.RaidBoss.R5Group.classList.remove("collapsed");
+  // If it's a non custom preset
+  else {
+    UIElements.RaidBoss.BossActionSection.classList.remove('collapsed');
+    if ( currentPresetMode == RaidPresetMode.FiveStar ) {
+      UIElements.RaidBoss.R5Group.classList.remove("collapsed");
 
-    UIElements.RaidBoss.R5PresetButton.classList.add("active");
+      UIElements.RaidBoss.R5PresetButton.classList.add("active");
 
-    UIElements.RaidBoss.R5Select.focus();
-  }
-  else if ( currentPresetMode == RaidPresetMode.FiveStarEvent ) {
-    UIElements.RaidBoss.R5EGroup.classList.remove("collapsed");
+      UIElements.RaidBoss.R5Select.focus();
+    }
+    else if ( currentPresetMode == RaidPresetMode.FiveStarEvent ) {
+      UIElements.RaidBoss.R5EGroup.classList.remove("collapsed");
 
-    UIElements.RaidBoss.R5EPresetButton.classList.add("active");
+      UIElements.RaidBoss.R5EPresetButton.classList.add("active");
 
-    UIElements.RaidBoss.R5ESelect.focus();
-  }
-  else if ( currentPresetMode == RaidPresetMode.SixStar ) {
-    UIElements.RaidBoss.R6Group.classList.remove("collapsed");
+      UIElements.RaidBoss.R5ESelect.focus();
+    }
+    else if ( currentPresetMode == RaidPresetMode.SixStar ) {
+      UIElements.RaidBoss.R6Group.classList.remove("collapsed");
 
-    UIElements.RaidBoss.R6PresetButton.classList.add("active");
+      UIElements.RaidBoss.R6PresetButton.classList.add("active");
 
-    UIElements.RaidBoss.R6Select.focus();
-  }
-  else if ( currentPresetMode == RaidPresetMode.SevenStarEvent ) {
-    UIElements.RaidBoss.R7EGroup.classList.remove("collapsed");
+      UIElements.RaidBoss.R6Select.focus();
+    }
+    else if ( currentPresetMode == RaidPresetMode.SevenStarEvent ) {
+      UIElements.RaidBoss.R7EGroup.classList.remove("collapsed");
 
-    UIElements.RaidBoss.R7EPresetButton.classList.add("active");
+      UIElements.RaidBoss.R7EPresetButton.classList.add("active");
 
-    UIElements.RaidBoss.R7ESelect.focus();
+      UIElements.RaidBoss.R7ESelect.focus();
+    }
   }
 
   // Update other boss data elements
@@ -484,12 +484,12 @@ function reselectPresetDefaults() {
   }
 
   // Set Extra Actions
-  showExtraActions( preset.extraActions );
+  showExtraActions( preset.extraActions, UIElements.RaidBoss.BossActionTable );
 }
 
-function showExtraActions( actions: ExtraAction[] | undefined ) {
+function showExtraActions( actions: ExtraAction[] | undefined, table: HTMLTableElement ) {
   // Clear previous contents
-  let actiontbody = UIElements.RaidBoss.BossActionTable.tBodies[0];
+  let actiontbody = table.tBodies[0];
   actiontbody.innerHTML = "";
 
   if ( actions ) {
@@ -1186,6 +1186,15 @@ function createBossInfoSummary( search: SearchResult, preset: string )  {
   }
   else {
     UIElements.Results.BossInfoBurned.classList.add('collapsed');
+  }
+
+  /* Show action table */
+  if ( currentPresetMode == RaidPresetMode.Custom ) {
+    UIElements.Results.BossInfoExtraSection.classList.add('collapsed');
+  }
+  else {
+    showExtraActions( getSelectedBossPreset()?.extraActions, UIElements.Results.BossInfoExtraTable );
+    UIElements.Results.BossInfoExtraSection.classList.remove('collapsed');
   }
 }
 function clearTypeBackground( element: HTMLElement ) {

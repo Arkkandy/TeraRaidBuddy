@@ -156,6 +156,7 @@ const UIElements = {
         BossAddMoveClearButton : getUIElement<HTMLButtonElement>('pokemonBossAddMoveClear'),
 
         // Raid boss extra actions
+        BossActionSection: getUIElement<HTMLElement>('pokemonBossExtraActionSection'),
         BossActionTable: getUIElement<HTMLTableElement>('pokemonBossActionTable'),
 
     },
@@ -349,6 +350,8 @@ const UIElements = {
         BossInfoExtra2: getUIElement('bossSummaryExtra2'),
         BossInfoExtra3: getUIElement('bossSummaryExtra3'),
         BossInfoExtra4: getUIElement('bossSummaryExtra4'),
+        BossInfoExtraSection: getUIElement('bossSummaryActionSection'),
+        BossInfoExtraTable: getUIElement<HTMLTableElement>('bossSummaryActionTable'),
 
         // ========================================================================
         // Results section

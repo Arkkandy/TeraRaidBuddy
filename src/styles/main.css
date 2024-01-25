@@ -609,7 +609,7 @@ body.dark-mode {
     width: 250px;
     font-size: 15px;
     border-collapse: separate;
-    border-spacing: 4px;
+    border-spacing: 2px;
   }
 
   /*.action-table tbody {
@@ -978,9 +978,9 @@ body.dark-mode {
   }
 
   .boss-summary-blockD {
-    width: 200px;
-    height: 120px;
-    border: 1px solid black;
+    /*width: 200px;*/
+    /*height: 120px;*/
+    /*border: 1px solid black;*/
     display: flex;
     flex-direction: column;
     margin-left: 10px;
