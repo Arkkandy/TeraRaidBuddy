@@ -366,18 +366,26 @@
                                 </select>
                                 <div class="tooltip-text">Calculate damage using normal damage or critical hits.</div>
                             </div>
-                            <div>
+                            <!--div>
                                 <label>Ranking</label>
                                 <select>
                                     <option value="1">Damage: Low to High</option>
                                     <option value="2">National Dex #</option>
                                 </select>
-                            </div>
+                            </div-->
                         </div>
                         <div class="parameter-row top-line-border">
                             <div class="parameter-section-title">Defender Parameters</div>
                         </div>
                         <div class="parameter-sequence-row-even">
+                            <div class="parameter-spacing">
+                                <label for="parameterSearchDefNature">Nature Preference</label>
+                                <select id="parameterSearchDefNature">
+                                    <option value="HinderLowestOfAtkSpa">Hinder Lowest of Atk/Spa</option>
+                                    <option value="HinderOnlyAtk">Hinder Only Atk</option>
+                                    <option value="HinderOnlySpa">Hinder Only Spa</option>
+                                </select>
+                            </div>
                             <div class="parameter-spacing">
                                 <label for="parameterSearchDefNaturePQ">Nature Preference PQ</label>
                                 <select id="parameterSearchDefNaturePQ">
@@ -643,7 +651,7 @@
                                 </div>
                                 <div class="search-parameter-item">
                                     <label for="parameterFieldBossFocusEnergy">Focus Energy</label>
-                                    <input type="checkbox" id="parameterFieldBossFocusEnergy" disabled>
+                                    <input type="checkbox" id="parameterFieldBossFocusEnergy">
                                 </div>
                             </div>
                             <div class="parameter-row top-line-border">
@@ -1244,7 +1252,7 @@
                                                 <div id="bossSummaryExtra4" class="boss-summary-valueC">-</div>
                                             </div>
                                         </div>
-                                        <div id="bossSummaryActionSection" class="boss-summary-blockD">
+                                        <div id="bossSummaryActionSection" class="boss-summary-blockD collapsed">
                                             <table id="bossSummaryActionTable" class="action-table">
                                                 <thead>
                                                     <tr>
@@ -1257,28 +1265,28 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <!--div class="boss-vertical-fields">
-                                            <div class="boss-summary-labelC parameter-centered">Extra Actions</div>
-                                            <div class="boss-summary-blockD">
-                                                <div class="boss-summary-valueC ghost-type">Raging Fist</div>
-                                                <div class="boss-summary-valueC fighting-type">Bulk Up</div>
-                                            </div>                                            
-                                        </div-->
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div id="resultsEffectsAndFilters" class="result-effects-info collapsed">
+                            Effects: Defense Cheer, Locked Sun, Locked Electric Terrain
+                        </div>
+                        <div id="resultsPSFSummary" class="result-filters-info collapsed">
+                            (Filter) => Learn: Acid Spray, STAB only
                         </div>
                         <div>
                             <div class="versus">VS</div>
                         </div>
                         <div id="resultTablePagination">
                             <button id="resultPrevButton">Prev</button>
-                            Page:
+                            <span>Page:</span>
                             <select id="resultPageSelect">
                                 <option>1</option>
                             </select>
+                            <span id="resultTotalPages">/ 1</span>
                             <button id="resultNextButton">Next</button>
-                            Entries per page:
+                            <span>Entries per page:</span>
                             <select id="resultItemsPerPageSelect">
                                 <option value="10">10</option>
                                 <option value="20" selected>20</option>

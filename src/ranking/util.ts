@@ -301,6 +301,17 @@ export function recalcRawStat(gen: Generation, pokemon: Pokemon, stat: StatID ) 
     pokemon.rawStats[stat] = pokemon.stats[stat] = Stats.calcStatADV(gen.natures, stat, pokemon.species.baseStats[stat], pokemon.ivs[stat], pokemon.evs[stat], pokemon.level, pokemon.nature);
 }
 
+/**
+ * Get the highest base stat out of the subset of stats desired. Do not set all stats to false!
+ * @param baseStats Base stats of the pokemon
+ * @param hp Include HP in the comparison?
+ * @param atk Include Atk in the comparison?
+ * @param def Include Def in the comparison?
+ * @param spa Include SpA in the comparison?
+ * @param spd Include SpD in the comparison?
+ * @param spe Include Spe in the comparison?
+ * @returns The highest base stat from the group.
+ */
 export function getHighestBaseStat( baseStats: StatsTable<number>, hp: boolean, atk: boolean, def: boolean, spa: boolean, spd: boolean, spe: boolean ) {
     let highestStat = '';
     let highest = 0;
@@ -332,6 +343,17 @@ export function getHighestBaseStat( baseStats: StatsTable<number>, hp: boolean, 
     return highestStat;
 }
 
+/**
+ * Get the lowest base stat out of the subset of stats desired. Do not set all stats to false!
+ * @param baseStats Base stats of the pokemon
+ * @param hp Include HP in the comparison?
+ * @param atk Include Atk in the comparison?
+ * @param def Include Def in the comparison?
+ * @param spa Include SpA in the comparison?
+ * @param spd Include SpD in the comparison?
+ * @param spe Include Spe in the comparison?
+ * @returns The lowest base stat from the group.
+ */
 export function getLowestBaseStat( baseStats: StatsTable<number>, hp: boolean, atk: boolean, def: boolean, spa: boolean, spd: boolean, spe: boolean ) {
     let lowestStat = '';
     let lowest = 256;
@@ -406,6 +428,25 @@ export function selectDefensiveNaturePreference( pokemon: Pokemon, isHighestHitP
         case DefensiveNaturePreference.HinderOnlySpe:
             loweredStat = 'spe';
             break;
+    }
+
+    return getNatureFromStats( raisedStat, loweredStat );
+}
+
+export function selectSpeedNaturePreference( pokemon: Pokemon, pref: DefensiveNaturePreference) {
+    let raisedStat = 'spe';
+    let loweredStat = '';
+    switch (pref) {
+        case DefensiveNaturePreference.HinderLowestOfAtkSpa:
+            loweredStat = getLowestBaseStat( pokemon.species.baseStats, false, true, false, true, false, false );
+            break;
+        case DefensiveNaturePreference.HinderOnlyAtk:
+            loweredStat = 'atk';
+            break;
+        case DefensiveNaturePreference.HinderOnlySpa:
+            loweredStat = 'spa';
+            break;
+        default: loweredStat = 'atk';
     }
 
     return getNatureFromStats( raisedStat, loweredStat );

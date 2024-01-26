@@ -132,6 +132,9 @@ export interface Move extends Data<MoveName> {
     basePower: number;
   };
   readonly multihit?: number | number[];
+
+  // Custom for Tera Raid Buddy
+  readonly isHighBaseCrit?: boolean;
 }
 
 export interface Species {

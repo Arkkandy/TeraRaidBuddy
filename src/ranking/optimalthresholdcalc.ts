@@ -1,7 +1,7 @@
-import { Generation } from '../smogon-calc/data/interface';
+import { Generation, NatureName } from '../smogon-calc/data/interface';
 import { StatsTable, Pokemon, Move, Field, Result, calculate } from '../smogon-calc';
 import { RankingParameters } from './searchparameters';
-import { EVSpread } from './util';
+import { EVSpread, selectDefensiveNaturePreference } from './util';
 import { DefenseStatOptimizer } from './statoptimization';
 import { recalculateFinalDamage } from './fastdamage';
 
@@ -70,14 +70,7 @@ export default function getOptimalDefensiveThresholdSpread( gen: Generation, rai
 
     // Predict best defensive nature based on the hardest hitting move
     if ( !useGivenNature ) {
-        if ( isHighestHitPhysical ) {
-            // Suggest defensive nature
-            raidDefender.nature = "Bold";
-        }
-        else {
-            // Suggest specially defensive nature
-            raidDefender.nature = "Calm";
-        }
+        raidDefender.nature = selectDefensiveNaturePreference( raidDefender, isHighestHitPhysical, physMoves.length>0, specMoves.length>0, parameters.search.defNaturePreferenceNonPQ ) as NatureName;
     }
 
     // Discard low hitting physical moves

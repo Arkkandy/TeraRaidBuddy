@@ -170,11 +170,37 @@ export function calculateSMSSSV(
   // Merciless does not ignore Shell Armor, damage dealt to a poisoned Pokemon with Shell Armor
   // will not be a critical hit (UltiMario)
   // Modified by Arkandy for TeraRaidBuddy
-  let isCritical =
-    (move.isCrit || (attacker.hasAbility('Merciless') && defender.hasStatus('psn', 'tox')))
-    && move.timesUsed === 1;
+  let isCritical = move.isCrit || move.guaranteedCrit; //&& move.timesUsed === 1
+  let immuneToCritical = defender.hasAbility('Battle Armor','Shell Armor');
+  // If the move is not set to critical strike, test other forms of guaranteed critical hit
+  if ( !isCritical ) {
+    if ( attacker.hasAbility('Merciless') && defender.hasStatus('psn', 'tox')) {
+      isCritical = true;
+      if ( !immuneToCritical ) {
+        desc.attackerAbility = 'Merciless';
+      }
+    }
+    else if ( field.attackerSide.isFocusEnergy && move.highBaseCrit ) {
+      isCritical = true;
+    }
+    else if ( field.attackerSide.isFocusEnergy && attacker.ability == 'Super Luck' ) {
+      isCritical = true;
+      if ( !immuneToCritical ) {
+        desc.attackerAbility = 'Super Luck';
+      }
+    }
+    else if ( field.attackerSide.isFocusEnergy && attacker.hasItem('Scope Lens', 'Razor Claw') ) {
+      isCritical = true;
+    }
+    else if ( move.highBaseCrit && attacker.ability == 'Super Luck' && attacker.hasItem('Scope Lens', 'Razor Claw') ) {
+      isCritical = true;
+      if ( !immuneToCritical ) {
+        desc.attackerAbility = 'Super Luck';
+      }
+    }
+  }
   
-  if ( isCritical && defender.hasAbility('Battle Armor','Shell Armor')) {
+  if ( isCritical && immuneToCritical) {
     isCritical = false;
     desc.defenderAbility = defender.ability;
   }

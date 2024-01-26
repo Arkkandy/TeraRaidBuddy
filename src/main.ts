@@ -502,11 +502,24 @@ function showExtraActions( actions: ExtraAction[] | undefined, table: HTMLTableE
           setTypeBackgroundColor( actionDesc, move.type );
           actionDesc.textContent = move.name;
         }
+        else {
+          actionDesc.style.paddingLeft = "8px";
+        }
       }
-      actionDesc.style.paddingLeft = "8px";
+      else {
+        actionDesc.style.paddingLeft = "8px";
+        actionDesc.style.backgroundColor = "white";
+      }
 
-      createTableBodyCell( actionRow, action.hp ? action.hp.toString() : "-", 1 ).style.textAlign = 'center';
-      createTableBodyCell( actionRow, action.time ? action.time.toString() : "-", 1 ).style.textAlign = 'center';
+      // HP
+      let hpCell = createTableBodyCell( actionRow, action.hp ? action.hp.toString() : "-", 1 );
+      hpCell.style.textAlign = 'center';
+      hpCell.style.backgroundColor = "white";
+
+      // TIME
+      let timeCell = createTableBodyCell( actionRow, action.time ? action.time.toString() : "-", 1 );
+      timeCell.style.textAlign = 'center';
+      timeCell.style.backgroundColor = "white";
     });
   }
   else {
@@ -785,6 +798,10 @@ function performRaidSearch() {
     // Create table head with currently viewable entries
     createResultTableEntries( currentSearchResult, 1 );
 
+    // Show notable settings and effects
+    updateEffectsInfo( currentSearchResult );
+    hidePSFInfo();
+
     // Boss Summary
     createBossInfoSummary( currentSearchResult, getPresetModeString( currentPresetMode ) );
 
@@ -797,7 +814,7 @@ function performRaidSearch() {
 
       // Determine time elapsed since beginning of ranking operation
       const elapsed = (new Date().getTime())-startTime;
-      UIElements.Results.SearchSummary.textContent += 'Execution time: ' + (elapsed/1000).toFixed(3) + "s" + "| Viewing: " + rankResultData.originalData.length.toString() + " | Scanned: " + rankResultData.entriesAnalyzed.toString() + " | Filtered: " + rankResultData.filtered.toString();
+      UIElements.Results.SearchSummary.textContent += 'Execution time: ' + (elapsed/1000).toFixed(3) + "s" + " | Calculated: " + rankResultData.entriesAnalyzed.toString() + " | Skipped: " + rankResultData.entriesSkipped.toString();
     }
     catch(e: any) {
       UIElements.Results.SearchSummary.textContent = "Exception";
@@ -908,6 +925,7 @@ function updatePaging( search: SearchResult ) {
 
   // Calc number of pages
   let numPages = Math.ceil( search.filteredData.length / search.itemsPerPage );
+  UIElements.Results.ResultTotalPages.textContent = `/ ${numPages}`;
 
   // Remake options, one per page
   for ( let i = 1; i <= numPages; ++i ) {
@@ -1085,6 +1103,52 @@ function createResultTableEntries( search: SearchResult, page: number ) {
     const row = tbody.insertRow();
     createTableBodyCell( row, "All results were filtered!", search.maxColspan ).classList.add("NoResults");
   }
+}
+
+function updateEffectsInfo( search: SearchResult ) {
+  let infoPanel = UIElements.Results.InfoEffectsAndSettings;
+  infoPanel.textContent = "EV Method: " + search.rankingData.originalParameters.search.rankingType.toString();
+  let bossSide : string[] = [];
+  if ( search.rankingData.originalField.attackerSide.isFocusEnergy ) {
+    bossSide.push("Focus Energy");
+  }
+  if ( search.rankingData.originalField.attackerSide.isTailwind ) {
+    bossSide.push('Tailwind');
+  }
+  let defenderSide : string[] = [];
+  if ( search.rankingData.originalField.defenderSide.isDefenseCheer ) {
+    defenderSide.push("Defense Cheer");
+  }
+  if ( search.rankingData.originalField.defenderSide.isAuroraVeil ) {
+    defenderSide.push('Aurora Veil');
+  }
+  else {
+    if ( search.rankingData.originalField.defenderSide.isReflect ) {
+      defenderSide.push('Reflect');
+    }
+    if ( search.rankingData.originalField.defenderSide.isLightScreen ) {
+      defenderSide.push('Light Screen');
+    }
+  }
+  if ( search.rankingData.originalField.defenderSide.isTailwind ) {
+    defenderSide.push('Tailwind');
+  }
+  if ( bossSide.length > 0 ) {
+    infoPanel.textContent += " | Boss: " + bossSide.join(", ");
+  }
+  if ( defenderSide.length > 0 ) {
+    infoPanel.textContent += " | Defender: " + defenderSide.join(", ");
+  }
+  UIElements.Results.InfoEffectsAndSettings.classList.remove('collapsed');
+  //if ( search.rankingData.)
+  // EV Method, Focus Energy, Defense Cheer, Reflect, Light Screen, Aurora Veil, Tailwind
+}
+
+function hidePSFInfo() {
+  UIElements.Results.InfoFilters.classList.add('collapsed');
+}
+function showPSFInfo() {
+  UIElements.Results.InfoFilters.classList.remove('collapsed');
 }
 
 function createBossInfoSummary( search: SearchResult, preset: string )  {
@@ -1384,6 +1448,7 @@ function readFieldParameters() {
 
   // Attacker side (Raid Boss) parameters
   newField.attackerSide.isTailwind = UIElements.SearchParams.FieldBossTailwind.checked;
+  newField.attackerSide.isFocusEnergy = UIElements.SearchParams.FieldBossFocusEnergy.checked;
 
   // Defender side (Raid Counters) parameters
   newField.defenderSide.isDefenseCheer = UIElements.SearchParams.FieldDefenderDefCheer.checked;
@@ -1407,6 +1472,8 @@ function readSearchParameters() {
   parameters.search.rankingType =
     SearchRankingType[ UIElements.MainParams.parameterSearchType.value as keyof typeof SearchRankingType ];
   parameters.search.isRankByCritical = UIElements.MainParams.parameterSearchDamageRank.value == 'C';
+  parameters.search.defNaturePreferenceNonPQ =
+    DefensiveNaturePreference[ UIElements.MainParams.parameterSearchDefNaturePref.value as keyof typeof DefensiveNaturePreference ];
   parameters.search.defNaturePreferencePQ =
     DefensiveNaturePreference[ UIElements.MainParams.parameterSearchDefNaturePrefPQ.value as keyof typeof DefensiveNaturePreference ];
 
@@ -1919,6 +1986,9 @@ UIElements.Results.PSFLearnMoveAdd.addEventListener('click', () => {
       const removeButton = listItem.querySelector('.llistRemoveButton') as HTMLButtonElement;
       removeButton.addEventListener('click', () => {
         UIElements.Results.PSFLearnMoveList.removeChild(listItem);
+        if ( UIElements.Results.PSFFilterLearnMove.checked ) {
+          applyPostSearchFilters();
+        }
       });
     }
   }
@@ -1942,6 +2012,7 @@ function applyPostSearchFilters() {
     // Apply filters
 
     // Learnable move filter
+    let infoLearnMoves : string[] = [];
     if ( UIElements.Results.PSFFilterLearnMove.checked) {
       // If whitelist is populated
       if ( UIElements.Results.PSFLearnMoveList.childElementCount > 0 ) {
@@ -1950,6 +2021,8 @@ function applyPostSearchFilters() {
           // Get move name from chosen
           let moveName = (UIElements.Results.PSFLearnMoveList.children[index] as HTMLElement).dataset.originalValue!;
           let moveLearnset = moveLearnsetDictionary.get(moveName);
+
+          infoLearnMoves.push( moveName );
 
           // If valid move learnset (should always be valid)
           if ( moveLearnset ) {
@@ -1988,8 +2061,50 @@ function applyPostSearchFilters() {
     // Update table starting from page 1
     updatePaging( currentSearchResult );
     createResultTableEntries( currentSearchResult, 1 );
+
+    /* Summarize PSF info */
+
+    let counter = 0;
+    UIElements.Results.InfoFilters.textContent = "[Active Filter]";
+    if ( infoLearnMoves.length > 0 ) {
+      UIElements.Results.InfoFilters.textContent += " <=> Can Learn: \"" + infoLearnMoves.join("\", \"") + "\"";
+      counter++;
+    }
+
+    if ( UIElements.Results.PSFBaseSTAB.checked ) {
+      UIElements.Results.InfoFilters.textContent += " <=> STAB Only"
+      counter++;
+    }
+
+    if ( counter == 0 ) {
+      hidePSFInfo();
+    }
+    else {
+      showPSFInfo();
+    }
   }
 }
+
+
+
+UIElements.Results.PSFLearnMoveAdd.addEventListener( 'click', () => {
+  if ( UIElements.Results.PSFFilterLearnMove.checked ) {
+    applyPostSearchFilters();
+  }
+});
+UIElements.Results.PSFLearnMoveClear.addEventListener( 'click', () => {
+  if ( UIElements.Results.PSFFilterLearnMove.checked ) {
+    applyPostSearchFilters();
+  }
+});
+
+UIElements.Results.PSFFilterLearnMove.addEventListener( 'change', () => {
+  applyPostSearchFilters();
+} );
+UIElements.Results.PSFBaseSTAB.addEventListener( 'change', () => {
+  applyPostSearchFilters();
+} );
+
 UIElements.Results.PSFApplyButton.addEventListener( 'click', () => {
   applyPostSearchFilters();
 });
@@ -2003,6 +2118,8 @@ function clearPostSearchFilters() {
     // Update table starting from page 1
     updatePaging( currentSearchResult );
     createResultTableEntries( currentSearchResult, 1 );
+
+    hidePSFInfo();
   }
 }
 UIElements.Results.PSFClearButton.addEventListener( 'click', () => {

@@ -169,7 +169,7 @@ const UIElements = {
 
         parameterSearchType: getUIElement<HTMLSelectElement>('searchtype'),
         parameterSearchDamageRank: getUIElement<HTMLSelectElement>('parameterSearchDamageRank'),
-
+        parameterSearchDefNaturePref: getUIElement<HTMLSelectElement>('parameterSearchDefNature'),
         parameterSearchDefNaturePrefPQ: getUIElement<HTMLSelectElement>('parameterSearchDefNaturePQ'),
         parameterDefenderTeraType: getUIElement<HTMLSelectElement>('parameterDefenderTeraType'),
 
@@ -296,6 +296,7 @@ const UIElements = {
         FieldBossLightScreen: getUIElement<HTMLInputElement>('parameterFieldBossLightScreen'),
         FieldBossAuroraVeil: getUIElement<HTMLInputElement>('parameterFieldBossAuroraVeil'),
         FieldBossTailwind: getUIElement<HTMLInputElement>('parameterFieldBossTailwind'),
+        FieldBossFocusEnergy: getUIElement<HTMLInputElement>('parameterFieldBossFocusEnergy'),
 
         FieldDefenderDefCheer: getUIElement<HTMLInputElement>('parameterFieldDefenderDefCheer'),
         FieldDefenderReflect: getUIElement<HTMLInputElement>('parameterFieldDefenderReflect'),
@@ -310,6 +311,9 @@ const UIElements = {
     // RESULTS SECTION
 
     Results: {
+
+        InfoEffectsAndSettings: getUIElement('resultsEffectsAndFilters'),
+        InfoFilters: getUIElement('resultsPSFSummary'),
 
         // ========================================================================
         // Post Search Filters Section
@@ -358,6 +362,7 @@ const UIElements = {
         ResultPrevButton: getUIElement<HTMLButtonElement>('resultPrevButton'),
         ResultNextButton: getUIElement<HTMLButtonElement>('resultNextButton'),
         ResultPageSelect: getUIElement<HTMLSelectElement>('resultPageSelect'),
+        ResultTotalPages: getUIElement<HTMLSelectElement>('resultTotalPages'),
         ResultItemsPerPageSelect: getUIElement<HTMLSelectElement>('resultItemsPerPageSelect'),
 
         ResultTableContainer: getUIElement('resultTableContainer'), // Unused

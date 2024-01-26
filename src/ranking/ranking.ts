@@ -25,7 +25,7 @@ import getOptimalDefensiveThreshold_PQ from './optimalthresholdpqcalc';
 import {DefensiveNaturePreference, PrintVisibleDamage, RankingParameters, SearchRankingType } from './searchparameters';
 import { DefenseStatOptimizer } from './statoptimization';
 import { DefenseStatOptimizerPQ } from './statoptimizationpq';
-import { BattlefieldSide, EVSpread, calcModifiedDefenseStat, calcModifiedSpDefenseStat, evsToStringShowAll, findDefEvPQThreshold, findSpdEvPQThreshold, getHighestStat_PQ, getMinimumOutspeedEV, getNatureFromStats, getTotalEVInvestment, selectDefensiveNaturePreference, statToNatureIndex } from './util';
+import { BattlefieldSide, EVSpread, calcModifiedDefenseStat, calcModifiedSpDefenseStat, evsToStringShowAll, findDefEvPQThreshold, findSpdEvPQThreshold, getHighestStat_PQ, getMinimumOutspeedEV, getNatureFromStats, getTotalEVInvestment, selectDefensiveNaturePreference, selectSpeedNaturePreference, statToNatureIndex } from './util';
 //import { recalculatableDamage } from './fastdamage.js';
 
 
@@ -42,19 +42,21 @@ export class DamagePair {
 export class RankingResult {
     public originalData: RankingResultEntry[] = [];
     public originalParameters: RankingParameters;
+    public originalField: Smogon.Field;
     public mainMoves: Smogon.Move[];
     public extraMoves: Smogon.Move[];
     public raidBoss: Smogon.Pokemon;
 
     // May delete these
     public entriesAnalyzed: number = 0;
-    public filtered: number = 0;
+    public entriesSkipped: number = 0;
 
-    constructor( parameters: RankingParameters, mainMoves: Smogon.Move[], extraMoves: Smogon.Move[], raidBoss: Smogon.Pokemon ) {
+    constructor( parameters: RankingParameters, mainMoves: Smogon.Move[], extraMoves: Smogon.Move[], raidBoss: Smogon.Pokemon, originalField: Smogon.Field ) {
         this.originalParameters = parameters;
         this.mainMoves = mainMoves;
         this.extraMoves = extraMoves;
         this.raidBoss = raidBoss;
+        this.originalField = originalField;
     }
 }
 
@@ -238,7 +240,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
     }
 
     // #TODO: Extra Moves
-    let finalResult: RankingResult = new RankingResult( parameters, moves, eMoves, raidBoss );
+    let finalResult: RankingResult = new RankingResult( parameters, moves, eMoves, raidBoss, field );
 
     // Perform damage checks against all filterable species
     /*let subFilteringData: FilterDataEntry[] = [ filteringData.find( item => item.name == 'Scream Tail' || item.name == 'Flutter Mane') as FilterDataEntry];
@@ -375,7 +377,6 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
             // With "Imposter" we do not require stat optimization
             if ( prospectAbility == "Imposter") {
                 evSpreadProspects.push( new EVSpread('Timid', {hp:252,atk:0,def:0,spa:0,spd:0,spe:0}));
-
             }
             // Wonder Guard?
             else
@@ -384,13 +385,47 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                 evSpreadProspects.push( new EVSpread( 'Bashful', {hp:0, atk:0, def:0, spa:0, spd:0, spe:0} ));
             }
             else if ( parameters.search.rankingType == SearchRankingType.FullDef ) {
-                evSpreadProspects.push( new EVSpread( 'Bold', {hp:252, atk:0, def:252, spa:0, spd:0, spe:0} ));
+                let prefPhys = false;
+                if ( parameters.search.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderLowestOfAtkSpa) {
+                    prefPhys = speciesEntry.baseStats.atk > speciesEntry.baseStats.spa
+                }
+                else if ( parameters.search.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderOnlySpa ) {
+                    prefPhys = true;
+                }
+
+                if ( prefPhys ) {
+                    evSpreadProspects.push( new EVSpread( 'Impish', {hp:252, atk:0, def:252, spa:0, spd:0, spe:0} ));
+                }
+                else {
+                    evSpreadProspects.push( new EVSpread( 'Bold', {hp:252, atk:0, def:252, spa:0, spd:0, spe:0} ));
+                }               
             }
             else if ( parameters.search.rankingType == SearchRankingType.FullSpD ) {
-                evSpreadProspects.push( new EVSpread( 'Calm', {hp:252, atk:0, def:0, spa:0, spd:252, spe:0} ));
+                let prefPhys = false;
+                if ( parameters.search.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderLowestOfAtkSpa) {
+                    prefPhys = speciesEntry.baseStats.atk > speciesEntry.baseStats.spa
+                }
+                else if ( parameters.search.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderOnlySpa ) {
+                    prefPhys = true;
+                }
+
+                if ( prefPhys ) {
+                    evSpreadProspects.push( new EVSpread( 'Careful', {hp:252, atk:0, def:0, spa:0, spd:252, spe:0} ));
+                }
+                else {
+                    evSpreadProspects.push( new EVSpread( 'Calm', {hp:252, atk:0, def:0, spa:0, spd:252, spe:0} ));
+                }
             }
             else if ( parameters.search.rankingType == SearchRankingType.SimpleOffense ) {
-                if ( speciesEntry.baseStats.atk > speciesEntry.baseStats.spa ) {
+                let prefPhys = false;
+                if ( parameters.search.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderLowestOfAtkSpa) {
+                    prefPhys = speciesEntry.baseStats.atk > speciesEntry.baseStats.spa
+                }
+                else if ( parameters.search.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderOnlySpa ) {
+                    prefPhys = true;
+                }
+                
+                if ( prefPhys ) {
                     evSpreadProspects.push( new EVSpread( 'Adamant', {hp:252, atk:252, def:0, spa:0, spd:0, spe:0 }));
                 }
                 else {
@@ -451,9 +486,10 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     abilityOn: true,
                     status: defaultStatus,
                 });
+                let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.search.defNaturePreferenceNonPQ );
                 let positiveDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
-                    nature: 'Timid', // <--- preference
+                    nature: prefNature,
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
                     ability: prospectAbility,
@@ -493,9 +529,10 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     abilityOn: true,
                     status: defaultStatus,
                 });
+                let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.search.defNaturePreferenceNonPQ );
                 let positiveDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
-                    nature: 'Timid', // <--- preference
+                    nature: prefNature,
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
                     ability: prospectAbility,
@@ -575,9 +612,10 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     abilityOn: true,
                     status: defaultStatus,
                 });
+                let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.search.defNaturePreferenceNonPQ );
                 let positiveDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
-                    nature: 'Timid', // <--- preference
+                    nature: prefNature,
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
                     ability: prospectAbility,
@@ -618,9 +656,10 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     abilityOn: true,
                     status: defaultStatus,
                 });
+                let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.search.defNaturePreferenceNonPQ );
                 let positiveDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
-                    nature: 'Timid', // <--- preference
+                    nature: prefNature,
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
                     ability: prospectAbility,
@@ -872,7 +911,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
     });
 
     finalResult.entriesAnalyzed = entriesAnalyzed;
-    finalResult.filtered = filtered;
+    finalResult.entriesSkipped = filtered;
 
     return finalResult;   
 }

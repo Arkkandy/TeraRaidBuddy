@@ -45,6 +45,8 @@ export class Move implements State.Move {
 
   /* Modified for Tera Raid Buddy*/
   forceDamageSpread: boolean;
+  highBaseCrit?: boolean;
+  guaranteedCrit?: boolean;
 
   constructor(
     gen: I.Generation,
@@ -58,6 +60,8 @@ export class Move implements State.Move {
     name = options.name || name;
     this.originalName = name;
     let data: I.Move = extend(true, {name}, gen.moves.get(toID(name)), options.overrides);
+    
+    this.highBaseCrit = data.isHighBaseCrit;
 
     this.hits = 1;
     // If isZMove but there isn't a corresponding z-move, use the original move
@@ -141,9 +145,12 @@ export class Move implements State.Move {
     this.hasCrashDamage = !!data.hasCrashDamage;
     this.mindBlownRecoil = !!data.mindBlownRecoil;
     this.struggleRecoil = !!data.struggleRecoil;
-    this.isCrit = !!options.isCrit || !!data.willCrit ||
+
+    this.guaranteedCrit = !!data.willCrit; // Separate willCrit from isCrit #Tera Raid Buddy
+    this.isCrit = !!options.isCrit ||
       // These don't *always* crit (255/256 chance), but for the purposes of the calc they do
       gen.num === 1 && ['crabhammer', 'razorleaf', 'slash', 'karate chop'].includes(data.id);
+    
     this.isStellarFirstUse = !!options.isStellarFirstUse;
     this.drain = data.drain;
     this.flags = data.flags;
