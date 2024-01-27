@@ -1,6 +1,6 @@
 //import { TypeName } from "@smogon/calc/dist/data/interface";
 
-import { StatsTable } from "../smogon-calc";
+import { Move, Pokemon, StatsTable } from "../smogon-calc";
 import { NatureName } from "../smogon-calc/data/interface";
 
 // Populate various <select> dropdown elements
@@ -72,6 +72,13 @@ export function setTypeBackgroundColor(cell: HTMLElement, type: string ) : void 
         cell.classList.add('stellar-type');
     }
 }
+export function clearTypeBackground( element: HTMLElement ) {
+    element.classList.forEach( className => {
+      if ( className.includes('-type')) {
+        element.classList.remove(className);
+      }
+    });
+  }
 
 export function stringFromEVSpread(nature: string, evspread: StatsTable<number> ) {
     let spread: string = nature;
@@ -129,4 +136,57 @@ export function setValidBackgroundColor(cell: HTMLTableCellElement, state: boole
     else {
         cell.classList.add('result-invalid');
     }
+}
+
+
+export function getImagePath(pokeName: string) {
+    let path = "../assets/sprites/";
+    let extension = ".png";
+    return path + pokeName.toLowerCase() + extension;
+}
+
+
+/**
+ * Create a new header cell for the given header row.
+ * @param headRow Header row to append new cell
+ * @param content Text content given to the cell
+ * @param colSpan Cell column span
+ * @returns The newly created cell is returned.
+ */
+export function createTableHeadCell( headRow: HTMLTableRowElement, content: string, colSpan: number = 1 ) {
+    const newHeadCell = document.createElement('th');
+    newHeadCell.colSpan = colSpan;
+    newHeadCell.textContent = content;
+  
+    headRow.appendChild(newHeadCell);
+  
+    return newHeadCell;
+  }
+
+/**
+ * Create a new table cell for the given table body row.
+ * @param bodyRow Body row to append new cell
+ * @param content Text content given to the cell
+ * @param colSpan Cell column span
+ * @returns The newly created cell is returned.
+ */
+export function createTableBodyCell( bodyRow: HTMLTableRowElement, content: string, colSpan: number = 1 ) {
+    const newBodyCell = document.createElement('td');
+    newBodyCell.colSpan = colSpan;
+    newBodyCell.textContent = content;
+  
+    bodyRow.appendChild(newBodyCell);
+  
+    return newBodyCell;
+  }
+
+
+export function colorBossInfoMove( moveElement: HTMLElement, move: Move, boss: Pokemon ) {
+// Set background color matching the type
+if ( move.name == "Tera Blast") {
+    setTypeBackgroundColor( moveElement, boss.teraType! );
+}
+else {
+    setTypeBackgroundColor( moveElement, move.type );
+}
 }

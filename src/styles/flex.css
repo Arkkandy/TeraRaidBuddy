@@ -1,0 +1,1332 @@
+:root {
+    --page-background-color: #eaeaea;
+    --bg-panel-color: #eef;
+    --front-panel-color: #ccf;
+    --header-panel-color: rgb(170, 200, 255);
+    --footer-panel-color: var(--header-panel-color);
+    --top-fieldset-border-color: rgb(0, 0, 116);
+    --table-background-color: var(--front-panel-color);
+    --table-header-default-color: #dde;
+    --table-row-default-color: white;
+  }
+  
+  body {
+    width: 100vw;
+    margin: 0px;
+    background-color: var(--page-background-color);
+    /*scroll-padding-top: 0px;*/
+  }
+  
+  html {
+    scroll-padding-top: 82px;
+  }
+  
+  .page-wrapper {
+    min-width: fit-content;
+    max-width: 100vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: calc(100vh - 91px);
+  
+  }
+  
+  /* ============================================================================= */
+  /* LOADING OVERLAY */
+  
+  #loadingOverlay {
+    position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.7);
+        display: none; /*flex - changed by the app*/
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+  }
+  
+  #loadingSymbol {
+    border-radius: 10px;
+    padding: 20px;
+    background-color: white;
+  
+    border: 2px solid black;
+    color: black;
+    font-weight: bold;
+    font-size: 24px;
+  
+    position: relative;
+    overflow: hidden;
+  }
+  
+  #loadingAnimation {
+    position: absolute;
+    display: flex;
+    bottom: 5;
+    right: 5;
+    width: 20px; /* Start with the same width as the parent button */
+    height: 20px;
+    transform-origin: center center; /* Adjust transform-origin for horizontal shrinking */
+    animation: loadAnimation 3s linear infinite;
+    /*background-color: rgba(120, 0, 0, 0.5);*/
+    background: conic-gradient( rgb(0, 0, 167), white );
+      /*rgb(4, 121, 255),
+      blue );*/
+    border-radius: 50%;
+  }
+  
+  @keyframes loadAnimation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  
+    
+  /* ============================================================================= */
+  /* PAGE HEADER STYLES */
+  
+  .header-container {
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+  
+    box-shadow: 0px 1px 2px darkgrey;
+    border-bottom: 1px solid grey;
+    background-color: var(--header-panel-color);
+    margin-bottom: 10px;
+  
+    min-width: 50%;
+    max-width: 100vw;
+    position: sticky;
+    top:0;
+    left:0;
+    right:0;
+    padding-left: 20px;
+    padding-right: 20px;
+    max-height: 80px;
+    z-index: 1000;
+  }
+  
+  .header-title-container {
+    display: flex;
+    align-items: center;
+  }
+  
+  /* Style for the dark mode toggle button & others */
+  .header-toggle-button {
+    background-color: #4caf50;
+    color: #fff;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  body.dark-mode {
+    background-color: #333;
+    /*color: #fff;*/
+  }
+  
+  /* ============================================================================= */
+  /* MAIN BODY SECTIONS STYLES */
+  
+  /*.page-wrapper {
+    margin-top: 100px;
+  }*/
+  
+  /* ============================================================================= */
+  /* PAGE FOOTER STYLES */
+  
+  .page-footer {
+    width: 100%;
+    /*align-self: flex-end;*/
+  }
+  
+  .footer-container {
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    /*padding: 10px;*/
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-top: 10px;
+    border-top: 1px solid grey;
+    box-shadow: 0px -1px 2px darkgrey;
+    background-color: var(--footer-panel-color);
+  }
+  
+  /* ============================================================================= */
+  /* SPECIAL CONTAINERS */
+  
+  .even-container {
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    
+    /*padding: 10px;
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-top: 10px;
+    border-top: 1px solid grey;
+    box-shadow: 0px -1px 2px darkgrey;
+    background-color: var(--bg-panel-color);*/
+  }
+  
+  .sprite-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+  }
+  
+  .sprite-raid-boss {
+    width: 128;
+    height: 128;
+    border: 1px solid black;
+    background-color: white;
+  }
+  
+  .boss-vertical-fields {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .pokemon-selector-container {
+    width: 180px;
+    align-items: center;
+  }
+  
+  .pokemon-selector {
+    display: flex; 
+    flex-direction: column;
+    justify-content: center;
+    line-height: 30px;
+    text-align: center;
+  }
+  
+  /*.pokemon-selector option {
+    
+  }*/
+  
+  .pokemon-selector optgroup {
+    color: white;
+    background-color: black;
+    font-size: 14px;
+    text-align: center;
+    padding-left: 0px;
+  }
+  
+  .table-sprite-div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+    height: 48px;
+  }
+  
+  .table-sprite-div img {
+    /*position: relative;
+    bottom: 10px;*/
+    width: 48px;
+    height: 48px;
+  }
+  
+  /* ============================================================================= */
+  /* TOOLTIP STYLES */
+    
+    .custom-tooltip {
+      position: relative;
+      display: inline-block;
+      cursor: pointer;
+    }
+  
+    .custom-tooltip .tooltip-text {
+      visibility: hidden;
+      width: 240px;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      position: absolute;
+      z-index: 9000;
+      bottom: 125%; /* Position above the element */
+      left: 50%;
+      margin-left: -120px; /* Center horizontally */
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+  
+    .custom-tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+  /* ============================================================================= */
+  /* PARAMETER CONTAINERS */
+  
+    .post-search-filter-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    .test-container {
+      display: flex;
+      
+    }
+  
+    .evenly-spaced-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    .evenly-spaced-element {
+      flex: 1;
+      /*padding: 2px;*/
+      /*border: 1px solid #000;*/
+    }
+  
+  
+    .moveset-container {
+      display:flex;
+      flex-direction: column;
+    }
+  
+    .moveset-selector {
+      margin-top: 0px;
+      width: 150px;
+      margin-bottom: 2px;
+    }
+  
+    /*.container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }*/
+  
+  
+    /*.vertical-container {
+      display: vertically;
+      align-items:center;
+      justify-content: center;
+    }*/
+  
+  
+    /*.MainBorderTop {
+      border-top: 1px solid grey;
+      box-shadow: 0px -1px 2px darkgrey;
+    }
+  
+    .MainBorderBottom {
+      border-bottom: 1px solid grey;
+      box-shadow: 0px 1px 2px darkgrey;
+    }*/
+  
+    /*.MainBorderTopAndBottom {
+  
+    }*/
+  
+  
+    /**/
+  
+    .top-line-border {
+      border-top: 1px solid #888;
+    }
+  
+    .top-level-fieldset {
+      background-color: var(--bg-panel-color);
+      width:fit-content;
+      margin-top: 15px;
+      margin-bottom: 20px;
+      border-radius: 20px;
+      border: 4px solid var(--top-fieldset-border-color);
+    }
+  
+    @media (width < 1260px ) {
+      .top-level-fieldset {
+        width:min-content;
+      }
+    }
+  
+    .inner-fieldset {
+      background-color: #ccf;
+      margin-bottom: 40px;
+      border-radius: 20px;
+      border: 0px;
+      /*position:relative;*/
+    }
+  
+    .inner-fieldset-low-spacing {
+      background-color: #ccf;
+      margin-bottom: 10px;
+      border-radius: 20px;
+      border: 0px;
+      /*position:relative;*/
+    }
+    
+    .search-parameter-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  
+    /*.container-hidden-keyframe {
+      transform-origin: top;
+      transform: scaleY(0);
+      transition: transform 0.5s ease;
+    
+      visibility: collapse;
+    }
+    
+    .container-visible-keyframe {
+      transform: scaleY(1);
+    
+      visibility: visible;
+    }*/
+  
+    .search-parameter-inner-fieldset {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      margin: 10px;
+      
+      /*align-items: stretch;*/
+      min-width: 500px;
+    }
+  
+    @media (max-width: 768px ) {
+      .main-parameter-container {
+        flex-direction: column;
+      }
+    }
+  
+    .fieldset-top-legend {
+      background-color: var(--header-panel-color);
+      padding: 4px;
+      border-radius: 10px;
+      font-size: 28px;
+  
+      text-align: left;
+      margin-left: 20px;
+    }
+  
+    .fieldset-custom-legend {
+      background-color: var(--header-panel-color);
+      padding: 4px;
+      border-radius: 10px;
+  
+      text-align: center;
+    }
+  
+    .text-pseudo-outline {
+      color: black;
+      text-shadow:
+        -2px -2px 0 white, /* Top-left */
+        2px -2px 0 white, /* Top-right */
+        -2px 2px 0 white, /* Bot-left */
+        2px 2px 0 white; /* Bot-right */
+    }
+  
+  
+    .parameter-section-title {
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+  
+    /* Arrange elements evenly in the horizontal space */
+    .parameter-sequence-row-even {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    /* Arrange elements sequentially in a row */
+    .parameter-sequence-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+  
+    /* Add spacing for elements within a container */
+    .parameter-spacing {
+      margin-left: 5px;
+    }
+  
+    /* Bias elements in a the "parameter-sequence-row-even" container to be centered horizontally */
+    .parameter-centered {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  
+    /* Styles applied to the Label / Checkbox / Select combos */
+    .checkbox-combo {
+      /*border: 1px solid black;*/
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .checkbox-combo-row {
+      display: flex;
+      align-items: center;
+    }
+    /*.checkbox-combo-select {
+      width: 100%;
+    }*/
+  
+  
+  
+  
+    /*.search-params-scroller {
+      overflow:auto;
+      height: 85%;
+      border-top: 1px solid #888;
+      border-bottom: 1px solid #888;
+      margin-top: 15px;
+      margin-bottom: 10px;
+    }*/
+    
+    .boss-parameter-collection {
+      display: flex;
+      width: fit-content;
+      flex-direction: row;
+      flex-wrap: wrap;
+      margin-top: 5px;
+    }
+  
+    .boss-parameter-item {
+      flex: 1;
+      height: 100%;
+    }
+  
+    .top-level-parameter {
+      display: flex;
+      align-items: center;
+      justify-items: center;
+    }
+  
+    .top-parameter-fieldset {
+      height: 400px;
+      width: 50%;
+    }
+  
+    .parameter-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+  
+    .search-parameter-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill,minmax(150px,1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+      /*grid-template-columns: repeat(4, 25%);
+      grid-template-rows: repeat(auto-fill, 50px);*/
+    }
+  
+    .search-parameter-item {
+      /*width: 100%;
+      height: 100%;*/
+      display:flex;
+      justify-content: flex-end;
+      align-items: center;
+    }
+  
+    /*.search-parameter-container {
+      display:flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }*/
+  
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 35px 46px 40px 46px 40px 40px;
+      grid-template-rows: repeat(7,30px);
+      gap: 2px;
+      align-items: center;
+    }
+    .stat-header {
+      text-align: center;
+    }
+    .stat-field {
+      text-align: left;
+    }
+    .stat-field-input {
+      width: 100%;
+      height: 100%;
+      padding: 3px;
+      margin-left: 0px;
+      margin-right: 0px;
+    }
+  
+    .boss_property-container {
+      height: 100%;
+    }
+  
+    .boss-property-grid {
+      display: grid;
+      grid-template-columns: 50px 140px;
+      line-height: 30px;
+      gap: 2px;
+      align-items: center;
+      margin-left: 10px;
+      align-self: flex-end;
+    }
+    
+    .empty {
+      min-width: 1px;
+      min-height: 1px;
+    }
+  
+    /* Style for each group */
+    .group {
+      margin: 10px; /* Add spacing between the groups */
+      display: flex;
+      flex-direction: column; /* Arrange label and selects vertically */
+      border: 1px solid #ccc; /* Optional: Add borders for visual separation */
+      padding: 10px; /* Optional: Add padding for spacing within the groups */
+    }
+  
+    /*.expanded {
+      display: block;
+    }*/
+  
+  
+    .action-table {
+      /*border-right: 1px solid black;
+      border-left: 1px solid black;*/
+      width: 250px;
+      font-size: 15px;
+      border-collapse: separate;
+      border-spacing: 2px;
+    }
+  
+    /*.action-table tbody {
+      border-right: 1px solid black;
+      border-left: 1px solid black;
+    }*/
+  
+    /*.action-table tbody tr {
+      background-color: white; 
+    }*/
+  
+    .action-table tr td {
+      border-radius: 8px;
+      /*background-color: white;*/
+      border: 1px solid black;
+      /*padding-left: 30xp;
+      padding-right: 10px;*/
+  
+      /*border-top: 1px solid black;
+      border-bottom: 1px solid black;*/
+    }
+  
+  
+  /* ============================================================================= */
+  /* RAID PRESET TABS */
+  
+  /* Style the tab */
+  .raid-preset-tab {
+    overflow: hidden;
+  }
+  
+  /* Style the buttons inside the tab */
+  .raid-preset-tab button {
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    color: #0008;
+  }
+  
+  /* Change background color of buttons on hover */
+  .raid-preset-tab button:hover {
+    background-color: #4255ffaa;
+  }
+  
+  /* Create an active/current tablink class */
+  .raid-preset-tab button.active {
+    border-bottom: 2px solid #333;
+    /*font-size: 14px;
+    font-weight: bold;*/
+    color: black;
+  }
+  
+  /* ============================================================================= */
+  /* FILTER WHITELIST STYLES */
+  
+    .whitelist-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+  
+    .whitelist-left {
+      display:flex;
+      align-items: center;
+    }
+    .whitelist-right {
+      margin-left: auto;
+    }
+    
+    #entrySelect {
+      margin-right: 10px;
+    }
+  
+  
+    
+    .whitelist-display {
+      text-align: center;
+    }
+    
+    .whitelist-area {
+      min-height: 34px;
+      list-style: none;
+      padding-left: 2px;
+      padding-right: 2px;
+      padding-bottom: 4px;
+      padding-top: 4px;
+      display: flex;
+      flex-wrap: wrap;
+      background-color: white;
+      border: 1px solid lightgrey;
+    }
+    
+    .whitelist-area li {
+      background-color: rgb(235, 235, 235);
+      border: 1px solid lightgrey;
+      border-radius: 8px;
+      margin-right: 10px;
+      margin-bottom: 10px;
+      padding-top: 2px;
+      padding-bottom: 2px;
+      padding-left: 4px;
+      padding-right: 2px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .whitelist-area li button {
+      margin-left: 10px;
+      padding: 2px 8px;
+      background-color: #f12626c0;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 8pt;
+    }
+  
+    .whitelist-area li button:hover {
+      background-color: #581a1acb;
+    }
+  
+    .whitelist-area li button:active {
+      background-color: #581a1acb;
+      color: grey;
+    }
+  
+  
+    /* ============================================================================= */
+  /* POKEMON TYPE BACKGROUND COLOR */
+  
+  .normal-type {
+    color: white;
+    text-align: center;
+    background-color: #a8a878;
+  }
+  
+  .fighting-type {
+    color: white;
+    text-align: center;
+    background-color: #c03028;
+  }
+  
+  .flying-type {
+    color: white;
+    text-align: center;
+    background-color: #a890f0;
+  }
+  
+  .poison-type {
+    color: white;
+    text-align: center;
+    background-color: #a040a0;
+  }
+  
+  .ground-type {
+    color: white;
+    text-align: center;
+    background-color: #e0c068;
+  }
+  
+  .rock-type {
+    color: white;
+    text-align: center;
+    background-color: #b8a038;
+  }
+  
+  .bug-type {
+    color: white;
+    text-align: center;
+    background-color: #a8b820;
+  }
+  
+  .ghost-type {
+    color: white;
+    text-align: center;
+    background-color: #705898;
+  }
+  
+  .steel-type {
+    color: white;
+    text-align: center;
+    background-color: #b8b8d0;
+  }
+  
+  .fire-type {
+    color: white;
+    text-align: center;
+    background-color: #f08030;
+  }
+  
+  .water-type {
+    color: white;
+    text-align: center;
+    background-color: #6890f0;
+  }
+  
+  .grass-type {
+    color: white;
+    text-align: center;
+    background-color: #78c850;
+  }
+  
+  .electric-type {
+    color: white;
+    text-align: center;
+    background-color: #f8d030;
+  }
+  
+  .psychic-type {
+    color: white;
+    text-align: center;
+    background-color: #f85888;
+  }
+  
+  .ice-type {
+    color: white;
+    text-align: center;
+    background-color: #98d8d8;
+  }
+  
+  .dragon-type {
+    color: white;
+    text-align: center;
+    background-color: #7038f8;    
+  }
+  
+  .dark-type {
+    color: white;
+    text-align: center;
+    background-color: #705848;
+  }
+  
+  .fairy-type {
+    color: white;
+    text-align: center;
+    background-color: #ee99ac;
+    /*background: linear-gradient( transparent 0%, transparent 10%, #ee99ac 10%, #ee99ac 100%);*/
+  }
+  
+  .stellar-type {
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    background-image: conic-gradient( #fde247, #f8a51a, #f35f29, #e44c6f,
+      #c76bbc, #8341c9, #765dbd, #737da7, #879eab,
+      #5ebce2, #33beea, #287ada, #385ec3, #4da2ba,
+      #6bdf54, #d2e074, #e4e8c6, #e7cc9c );
+  }
+  
+  .alt-stellar-type {
+    text-align: center;
+    color: blue;
+    background-image: linear-gradient(red,blue);
+  }
+  
+  /* ============================================================================= */
+  /* BOSS SUMMARY TABLE */
+  
+    .result-effects-info {
+      text-align: center;
+      background-color: yellow;
+      font-weight: bold;
+    }
+  
+    .result-filters-info {
+      text-align: center;
+      background-color: rgb(0, 255, 0);
+      font-weight: bold;
+    }
+  
+    .boss-summary {
+      border: 1px solid black;
+      padding-bottom: 10px;
+    }
+  
+    .boss-summary-preset {
+      font-size: 20px;
+      font-weight: bold;
+    }
+  
+    .boss-summary-name {
+      font-size: 18px;
+      font-weight: bold;
+    }
+  
+    .boss-info-tera {
+      border-radius: 20px;
+      padding-right: 10px;
+      padding-left: 10px;
+      padding-top: 4px;
+      padding-bottom: 4px;
+      margin-top: -1px;
+      border: 1px solid black;
+    }
+  
+    .boss-summary-labelA {
+      font-weight: bold;
+    }
+  
+    .boss-summary-gridA {
+      background-color: white;
+      display: grid;
+      grid-template-columns: 52px 68px 50px 140px;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid black;
+      /*grid-template-rows: repeat(7,30px);*/
+    }
+    .boss-summary-gridB {
+      background-color: white;
+      display: grid;
+      grid-template-columns: repeat(6,50px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid black;
+    }
+    .boss-summary-labelB {
+      font-weight: bold;
+      text-align: center;
+    }
+  
+      /* BOSS INFO MOVESETS */
+    .boss-summary-gridC {
+      display: grid;
+      align-items: center;
+      grid-template-columns: repeat(1,130px);
+      line-height: 30px;
+      /*grid-template-rows: 40px;*/
+      margin-left: 10px;
+      margin-bottom: 10px;
+    }
+    .boss-summary-labelC {
+      font-weight: bold;
+      text-align: center;
+    }
+    .boss-summary-valueC {
+      border: 1px solid black;
+      border-radius: 20px;
+      text-align: center;
+    }
+  
+    .boss-summary-blockD {
+      /*width: 200px;*/
+      /*height: 120px;*/
+      /*border: 1px solid black;*/
+      display: flex;
+      flex-direction: column;
+      margin-left: 10px;
+    }
+  
+    .nature-raise {
+      color: rgb(156, 0, 0);
+    }
+    .nature-hinder {
+      color: rgb(0, 97, 189);
+    }
+    .boss-summary-valueB {
+      text-align: center;
+    }
+  
+  
+    .burned-status {
+      border-radius: 20px;
+      padding-left: 10px;
+      padding-right: 10px;
+      padding-bottom: 4px;
+      padding-top: 4px;
+      
+      border: 1px solid orange;
+      background-color: rgb(197, 35, 35);
+      color: white;
+    }
+  
+    .boss-stat-container {
+      display: flex;
+      flex-direction: row;
+    }
+  
+    /*.stat-grid {
+      display: grid;
+      grid-template-columns: 35px 46px 40px 46px 40px 40px;
+      grid-template-rows: repeat(7,30px);
+      gap: 2px;
+      align-items: center;
+    }*/
+  
+  /* ============================================================================= */
+  /* RESULTS VERSUS TEXT */
+  .versus {
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    /*border-top: 1px solid;*/
+    /*border-bottom: 1px solid;*/
+  }
+  
+  /* ============================================================================= */
+  /* RESULTS RAID BOSS INFO TABLE */
+  
+  .search-result-section {
+    display:flex;
+    flex-direction: column;
+    min-height: 100px;
+    min-width: fit-content;
+    max-width: 100vw;
+    background-color: var(--bg-panel-color);
+    border-top: 4px solid var(--top-fieldset-border-color);
+    border-bottom: 4px solid var(--top-fieldset-border-color);
+    margin-top: 20px;
+    /*max-height: 800px;*/
+    /*overflow-y: scroll;*/
+    /*padding-bottom: 10px;*/
+  }
+  
+  .div-raid-boss-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    width:40%;
+  }
+  
+  .raid-boss-info-table {
+    font-size: 16pt;
+    border: none;
+    border-collapse: collapse;
+  }
+  
+  .raid-boss-info-table td,
+  .raid-boss-info-table th {
+    border-left: 1px solid;
+    border-top: 1px solid;
+    padding: 8px;
+  }
+  
+  .raid-boss-info-table th {
+    background-color: #80808033;
+  }
+  
+  /*.raid-boss-info-table td {
+    background-color: red;
+  }*/
+  
+  .raid-boss-info-table tr:first-child th {
+    border-top: none;
+  }
+  
+  /*.raid-boss-info-table td:first-child,
+  .raid-boss-info-table th:first-child {
+    border-left: none;
+  }*/
+  
+  /* ============================================================================= */
+  /* SEARCH BUTTON & COOLDOWN EFFECT */
+  
+  .search-button {
+    font-size: 16px;
+    height: 30px;
+  
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .search-button {
+    border-radius: 10px;
+    box-shadow: 1px 1px 1px grey;
+    border: 1px solid #666666;
+    
+    font-size: 16px;
+    height: 40px;
+  }
+  
+  .search-button:hover:not(:disabled) {
+    background-color: lightgrey;
+  }
+  .search-button:active:not(:disabled) {
+    background-color: grey;
+  }
+  .search-button:disabled {
+    background-color: #bdc3c7;
+    color: #7f8c8d;
+    animation-iteration-count: 1;
+    /*cursor: not-allowed;*/
+  }
+  
+  #searchCooldownEffect {
+    position: absolute;
+    display: none;
+    top: 0;
+    left: 0;
+    width: 100%; /* Start with the same width as the parent button */
+    height: 100%;
+    transform-origin: left center; /* Adjust transform-origin for horizontal shrinking */
+    animation: searchCooldownAnimation 3s linear infinite;
+    /*background-color: rgba(120, 0, 0, 0.5);*/
+    background-color: rgba( 120, 120, 120, 0.5);
+  }
+  
+  @keyframes searchCooldownAnimation {
+    0% {
+      transform: scaleX(1); /* Initial width is 100% */
+      opacity: 0.5;
+    }
+    100% {
+      transform: scaleX(0); /* Shrink to 0 width */
+      opacity: 0.5;
+    }
+  }
+  
+  /* ============================================================================= */
+  /* RESULTS TABLE STYLING */
+  
+    .full-table-style {
+      background-color: var(--table-background-color);
+    }
+  
+    /*#resultTableContents {
+      scroll-padding-top: 40px;
+    }*/
+  
+    table.ResultTable {
+      width: 100%;
+      /*margin-left: 4px;
+      margin-right: 4px;
+      margin-bottom: 10px;*/
+      /*border-collapse: collapse;*/
+      border-collapse: separate;
+      border-spacing: 0 0;
+      border-top: 1px solid black;
+      border-bottom: 1px solid black;
+  
+      background-color: var(--table-row-default-color);
+    }
+  
+    /*table.ResultTable thead {
+      position: sticky;
+      top: 80;
+      z-index: 10;
+    }*/
+  
+    table.ResultTable th {
+      position: relative;
+      padding: 8px;
+      background-color: var(--table-header-default-color);
+    }
+  
+  
+    /*table.ResultTable th::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background-color: #aadd;
+    }*/
+  
+    table.ResultTable td {
+      position: relative;
+      /*box-shadow: red 0px 2px;*/
+      /*border: 1px solid #ccc;*/
+      /*border-bottom: 1px solid #ccc;*/
+      /*border-right: 1px solid #ccc;*/
+      padding-bottom: 8px;
+      padding-top: 14px;
+      padding-right: 8px;
+      padding-left: 8px;
+    }
+  
+    /* Vertical space between rows */
+    table.ResultTable td::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background-color: var(--table-background-color);
+    }
+  
+    table.ResultTable td.Centered {
+      text-align: center;
+    }
+    table.ResultTable td.Lefthand {
+      text-align: left;
+    }
+    table.ResultTable td.Righthand {
+      text-align: right;
+    }
+    table.ResultTable td.NoResults {
+      text-align: center;
+      font-weight: bold;
+    }
+  
+    /*table.ResultTable tr::before {
+      content: '';
+      display: block;
+      height: 8px;
+      background-color: transparent;
+      position: absolute;
+      top: -8px;
+      left: 0;
+      right: 0;
+    }*/
+  
+    table.ResultTable th.TopRow {
+      font-size: 20px;
+    }
+  
+    table.ResultTable tr {
+      border-bottom: 1px solid black;
+    }
+  
+    table.ResultTable th.Limiter,
+    table.ResultTable td.Limiter {
+      border-right: 1px solid black;
+    }
+  
+    table.ResultTable tr:last-child td {
+      border-bottom:none;
+    }
+    /*table.ResultTable tbody tr:last-child {
+      border-right:none;
+    }*/
+  
+    table.ResultTable tr:last-child th {
+      border-top: 1px solid black;
+      border-bottom: 2px solid black;
+      padding-bottom: 10px;
+    }
+  
+    #resultTableWatermark {
+      padding-top: 6px;
+      padding-bottom: 6px;
+      text-align: center;
+      font-weight: bold;
+      background-color: var(--bg-panel-color);
+    }
+  
+  
+  /* ============================================================================= */
+  /* DEFAULT ELEMENT STYLES */
+  
+    /* Style for labels */
+    label {
+      font-weight: bold;
+    }
+  
+    legend {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    
+    /* Style for select elements */
+    select {
+      margin: 5px 0; /* Add spacing between select elements */
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+  
+    input {
+      margin-left: 5px;
+      margin-right: 5px;
+    }
+  
+    h2 {
+      margin-left: 20px;
+    }
+  
+    h3 {
+      margin-left: 30px;
+    }
+    
+  
+  
+  
+  /* ============================================================================= */
+  /* RESULT DAMAGE BACKGROUND COLOR */
+  
+  .result-no-damage {
+    background: #00CCFF;
+  }
+  .result-very-low-damage {
+    background: lightgreen;
+  }
+  .result-low-damage {
+    background: greenyellow;
+  }
+  .result-ok-damage {
+    background: yellow;
+  }
+  .result-high-damage {
+    background: orange;
+  }
+  .result-very-high-damage {
+    background: red;
+  }
+  .result-extreme-damage {
+    background: darkred;
+  }
+  
+  .result-valid {
+    background: yellowgreen;
+    text-align: center;
+  }
+  .result-invalid {
+    background: #c03028;
+    text-align: center;
+  }
+  
+  
+  
+    .collapsed {
+      display: none;
+    }
