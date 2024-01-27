@@ -32,12 +32,12 @@ export enum SpeedNaturePreference {
 export class RankingParameters {
     public filters: FilteringParameters = new FilteringParameters();
     public results: ResultPrintParameters = new ResultPrintParameters();
-    public search: SearchParameters = new SearchParameters();
+    public mainparams: MainParameters = new MainParameters();
     public ability: AbilityParameters = new AbilityParameters();
     public items: ItemParameters = new ItemParameters();
-    public advanced: AdvancedParameters = new AdvancedParameters();
+    public misc: MiscParameters = new MiscParameters();
 
-    public hpMultiplier : number = 1;
+    public hpMultiplier: number = 1;
 }
 
 
@@ -57,7 +57,7 @@ export enum SearchRankingType {
     OutspeedIntoBDTIntoAttack = "OutspeedIntoBDTIntoAttack"
 }
 
-class SearchParameters {
+class MainParameters {
     public rankingType: SearchRankingType = SearchRankingType.MixedDefOptimal;
 
     public isRankByCritical: boolean = false;
@@ -65,7 +65,7 @@ class SearchParameters {
     public defNaturePreferenceNonPQ: DefensiveNaturePreference = DefensiveNaturePreference.HinderLowestOfAtkSpa;
     public defNaturePreferencePQ: DefensiveNaturePreference = DefensiveNaturePreference.HinderHighestStat;
 
-    public speedNaturePreference: SpeedNaturePreference = SpeedNaturePreference.HinderLowestOffensive;
+    public defenderTeraType: string = '';
 }
 
 class FilteringParameters {
@@ -198,13 +198,7 @@ class ItemParameters {
 
 }
 
-class FieldParameters {
-
-
-}
-
-class AdvancedParameters {
+class MiscParameters {
     public lockTerrain: boolean = false;
     public lockWeather: boolean = false;
-    public defenderTeraType: string = '';
 }

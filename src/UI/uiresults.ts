@@ -1,8 +1,11 @@
 import { RaidBossPreset } from "../presets/raidpreset";
+import { moveLearnsetDictionary } from "../ranking/movelearnset";
 import { PrintVisibleDamage } from "../ranking/searchparameters";
 import { EVSpread } from "../ranking/util";
+import { toID } from "../smogon-calc";
 import { Generation } from "../smogon-calc/data/interface";
 import { showExtraActions } from "./extractiontable";
+import { PostSearchFilter } from "./postsearchfilter";
 import { SearchResult } from "./searchresult";
 import UIElements from "./uielements";
 import { clearTypeBackground, colorBossInfoMove, createTableBodyCell, createTableHeadCell, getImagePath, setDamageBackgroundColor, setTypeBackgroundColor, setValidBackgroundColor, stringFromEVSpread } from "./util";
@@ -30,7 +33,7 @@ export function createResultTableHead( search: SearchResult ) {
     let movepool = (useExtraMoves ? search.rankingData.extraMoves : search.rankingData.mainMoves );
   
     let raidCounterColspan = 1;
-    if ( rankingParameters.advanced.defenderTeraType != '' ) {
+    if ( rankingParameters.mainparams.defenderTeraType != '' ) {
       raidCounterColspan = 3;
       createTableHeadCell(hrow1,'Raid Counter', 3).classList.add('Limiter', 'TopRow');
       createTableHeadCell(hrow2,'Tera Type').classList.add('Limiter');
@@ -132,7 +135,7 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
         const row = tbody.insertRow();
         const cellRank = row.insertCell(); // Ranking
         const cellSpecies = row.insertCell(); // Pokemon species
-        if ( rankingParameters.advanced.defenderTeraType == '' ) {
+        if ( rankingParameters.mainparams.defenderTeraType == '' ) {
           const cellType1 = row.insertCell(); // Type 1
           const cellType2 = row.insertCell(); // Type 2
           cellType1.textContent = result.type1;
@@ -144,8 +147,8 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
         else {
           const cellTeraType = row.insertCell(); // Type Tera
           cellTeraType.classList.add('Limiter');
-          cellTeraType.textContent = rankingParameters.advanced.defenderTeraType;
-          setTypeBackgroundColor( cellTeraType, rankingParameters.advanced.defenderTeraType );
+          cellTeraType.textContent = rankingParameters.mainparams.defenderTeraType;
+          setTypeBackgroundColor( cellTeraType, rankingParameters.mainparams.defenderTeraType );
         }
   
         if ( search.bestMoveSize > 0 ) {
@@ -386,7 +389,7 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
 
   export function updateEffectsInfo( search: SearchResult ) {
     let infoPanel = UIElements.Results.InfoEffectsAndSettings;
-    infoPanel.textContent = "EV Method: " + search.rankingData.originalParameters.search.rankingType.toString();
+    infoPanel.textContent = "EV Method: " + search.rankingData.originalParameters.mainparams.rankingType.toString();
     let bossSide : string[] = [];
     if ( search.rankingData.originalField.attackerSide.isFocusEnergy ) {
       bossSide.push("Focus Energy");
@@ -446,6 +449,27 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
   }
 
 
+  export function readPSFData() {
+    let newPSFProfile : PostSearchFilter = new PostSearchFilter();
+
+    // Read selected moves
+    if ( UIElements.Results.PSFFilterLearnMove.checked) {
+        // If whitelist is populated
+        if ( UIElements.Results.PSFLearnMoveList.childElementCount > 0 ) {
+            // Filter for each move selected
+            for ( let index = 0; index < UIElements.Results.PSFLearnMoveList.childElementCount; ++index ) {
+                // Get move name from chosen
+                let moveName = (UIElements.Results.PSFLearnMoveList.children[index] as HTMLElement).dataset.originalValue!;
+                newPSFProfile.learnMoveList.push( moveName );
+            }
+        }
+    }
+
+    // Read STAB check
+    newPSFProfile.checkStab = UIElements.Results.PSFBaseSTAB.checked;
+
+    return newPSFProfile;
+}
 
   export function hidePSFInfo() {
     UIElements.Results.InfoFilters.classList.add('collapsed');
@@ -453,3 +477,71 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
   export function showPSFInfo() {
     UIElements.Results.InfoFilters.classList.remove('collapsed');
   }
+
+  export function summarizePSF( psf: PostSearchFilter ) {
+    // If PSF contains default values, then there is no active filter
+    if ( psf.isDefault() ) {
+      hidePSFInfo();
+    }
+    else {
+      UIElements.Results.InfoFilters.textContent = "[Active Filter]";
+      if ( psf.learnMoveList.length > 0 ) {
+        UIElements.Results.InfoFilters.textContent += " <=> Can Learn: \"" + psf.learnMoveList.join("\", \"") + "\"";
+      }
+
+      if ( psf.checkStab ) {
+        UIElements.Results.InfoFilters.textContent += " <=> STAB Only"
+      }
+      showPSFInfo();
+    }
+  }
+  
+export function applyPostSearchFilters( gen: Generation, search : SearchResult ) {
+  let psf = readPSFData();
+
+  // Reset filtered data
+  search.filteredData = search.rankingData.originalData;
+
+  // Filter for each move selected
+  psf.learnMoveList.forEach(moveName => {
+    let moveLearnset = moveLearnsetDictionary.get(moveName);
+    
+    // If valid move learnset (should always be valid)
+    if ( moveLearnset ) {
+      // Filter out all entries which do not learn this move
+      search.filteredData = search.filteredData.filter( (val) => {
+        return moveLearnset!.includes( val.species );
+      });
+    }
+  });
+
+    // STAB filter
+    let teraType = search.rankingData.raidBoss.teraType!;
+    if ( UIElements.Results.PSFBaseSTAB.checked ) {
+      search.filteredData = search.filteredData.filter( (val) => {
+
+        let type1 = gen.types.get(toID(val.type1));
+        let type2 = gen.types.get(toID(val.type2));
+
+        let isStab1 = false;
+        let isStab2 = false;
+        if ( type1!.effectiveness[teraType!]! > 1 ) {
+            isStab1 = true;
+        }
+        if ( type2!.effectiveness[teraType!]! > 1 ) {
+            isStab2 = true;
+        }
+
+        // Check if immune via ability
+
+        return isStab1 || isStab2;
+      });
+    }
+
+    summarizePSF( psf );
+
+    // Update table starting from page 1
+    updatePaging( search );
+    createResultTableEntries( search, 1 );
+}
+

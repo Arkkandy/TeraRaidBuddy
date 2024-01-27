@@ -104,7 +104,7 @@ export default function getOptimalDefensiveSpread_PQ( gen: Generation, raidBoss:
 
     // Predict best defensive nature based on the hardest hitting move & preference
     if (!useGivenNature ) {
-        noAbilityDefender.nature = selectDefensiveNaturePreference( noAbilityDefender, isHighestHitPhysical, physMoves.length>0, specMoves.length>0, parameters.search.defNaturePreferencePQ ) as NatureName;
+        noAbilityDefender.nature = selectDefensiveNaturePreference( noAbilityDefender, isHighestHitPhysical, physMoves.length>0, specMoves.length>0, parameters.mainparams.defNaturePreferencePQ ) as NatureName;
     }
     // Update stats, ugly
     noAbilityDefender = noAbilityDefender.clone();

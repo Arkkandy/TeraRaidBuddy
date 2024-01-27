@@ -156,7 +156,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
     for ( let m = 0; m < mainMoves.length; ++m ) {
         let moveCopy = mainMoves[m].clone();
         // Set crit = true if we're ranking by critical damage
-        if ( parameters.search.isRankByCritical ) {
+        if ( parameters.mainparams.isRankByCritical ) {
             moveCopy.isCrit = true;
         }
         // Otherwise critical is its default value, which could be true for guaranteed critical moves (Flower Trick, etc)
@@ -166,7 +166,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
     for ( let m = 0; m < mainMoves.length; ++m ) {
         let moveCopy = mainMoves[m].clone();
         // If ranking is not done by critical damage, secondary damage is critical
-        if ( !parameters.search.isRankByCritical ) {
+        if ( !parameters.mainparams.isRankByCritical ) {
             moveCopy.isCrit = true;
         }
         // Otherwise critical is its default value, which could be true for guaranteed critical moves (Flower Trick, etc)
@@ -179,7 +179,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
     for ( let m = 0; m < extraMoves.length; ++m ) {
         let moveCopy = extraMoves[m].clone();
         // Set crit = true if we're ranking by critical damage
-        if ( parameters.search.isRankByCritical ) {
+        if ( parameters.mainparams.isRankByCritical ) {
             moveCopy.isCrit = true;
         }
         // Otherwise critical is its default value, which could be true for guaranteed critical moves (Flower Trick, etc)
@@ -190,7 +190,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
     for ( let m = 0; m < extraMoves.length; ++m ) {
         let moveCopy = extraMoves[m].clone();
         // If ranking is not done by critical damage, secondary damage is critical
-        if ( !parameters.search.isRankByCritical ) {
+        if ( !parameters.mainparams.isRankByCritical ) {
             moveCopy.isCrit = true;
         }
         // Otherwise critical is its default value, which could be true for guaranteed critical moves (Flower Trick, etc)
@@ -227,8 +227,8 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
 
     let useDefenderTeraType = false;
     let defenderTeraType: TypeName | undefined = undefined;
-    if ( parameters.advanced.defenderTeraType != '' ) {
-        defenderTeraType = parameters.advanced.defenderTeraType as TypeName;
+    if ( parameters.mainparams.defenderTeraType != '' ) {
+        defenderTeraType = parameters.mainparams.defenderTeraType as TypeName;
         useDefenderTeraType = true;
     }
 
@@ -270,24 +270,24 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
             }
 
             // Ogerpon terastal forms are only available with their respective mask types
-            if ( data.name == 'Ogerpon-Teal-Tera' && parameters.advanced.defenderTeraType != 'Grass' ) {
+            if ( data.name == 'Ogerpon-Teal-Tera' && parameters.mainparams.defenderTeraType != 'Grass' ) {
                 continue;
             }
             
-            if ( data.name == 'Ogerpon-Cornerstone-Tera' && parameters.advanced.defenderTeraType != 'Rock' ) {
+            if ( data.name == 'Ogerpon-Cornerstone-Tera' && parameters.mainparams.defenderTeraType != 'Rock' ) {
                 continue;
             }
             
-            if ( data.name == 'Ogerpon-Hearthflame-Tera' && parameters.advanced.defenderTeraType != 'Fire' ) {
+            if ( data.name == 'Ogerpon-Hearthflame-Tera' && parameters.mainparams.defenderTeraType != 'Fire' ) {
                 continue;
             }
             
-            if ( data.name == 'Ogerpon-Wellspring-Tera' && parameters.advanced.defenderTeraType != 'Water' ) {
+            if ( data.name == 'Ogerpon-Wellspring-Tera' && parameters.mainparams.defenderTeraType != 'Water' ) {
                 continue;
             }
         }
         // Terapagos-Stellar is only possible with Stellar terastalization
-        if ( speciesEntry.name == "Terapagos-Stellar" && !(useDefenderTeraType && parameters.advanced.defenderTeraType == 'Stellar')) {
+        if ( speciesEntry.name == "Terapagos-Stellar" && !(useDefenderTeraType && parameters.mainparams.defenderTeraType == 'Stellar')) {
             continue;
         }
 
@@ -381,15 +381,15 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
             // Wonder Guard?
             else
             // For any other ability, proceed
-            if ( parameters.search.rankingType == SearchRankingType.NoInvestment ) {
+            if ( parameters.mainparams.rankingType == SearchRankingType.NoInvestment ) {
                 evSpreadProspects.push( new EVSpread( 'Bashful', {hp:0, atk:0, def:0, spa:0, spd:0, spe:0} ));
             }
-            else if ( parameters.search.rankingType == SearchRankingType.FullDef ) {
+            else if ( parameters.mainparams.rankingType == SearchRankingType.FullDef ) {
                 let prefPhys = false;
-                if ( parameters.search.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderLowestOfAtkSpa) {
+                if ( parameters.mainparams.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderLowestOfAtkSpa) {
                     prefPhys = speciesEntry.baseStats.atk > speciesEntry.baseStats.spa
                 }
-                else if ( parameters.search.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderOnlySpa ) {
+                else if ( parameters.mainparams.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderOnlySpa ) {
                     prefPhys = true;
                 }
 
@@ -400,12 +400,12 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     evSpreadProspects.push( new EVSpread( 'Bold', {hp:252, atk:0, def:252, spa:0, spd:0, spe:0} ));
                 }               
             }
-            else if ( parameters.search.rankingType == SearchRankingType.FullSpD ) {
+            else if ( parameters.mainparams.rankingType == SearchRankingType.FullSpD ) {
                 let prefPhys = false;
-                if ( parameters.search.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderLowestOfAtkSpa) {
+                if ( parameters.mainparams.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderLowestOfAtkSpa) {
                     prefPhys = speciesEntry.baseStats.atk > speciesEntry.baseStats.spa
                 }
-                else if ( parameters.search.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderOnlySpa ) {
+                else if ( parameters.mainparams.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderOnlySpa ) {
                     prefPhys = true;
                 }
 
@@ -416,12 +416,12 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     evSpreadProspects.push( new EVSpread( 'Calm', {hp:252, atk:0, def:0, spa:0, spd:252, spe:0} ));
                 }
             }
-            else if ( parameters.search.rankingType == SearchRankingType.SimpleOffense ) {
+            else if ( parameters.mainparams.rankingType == SearchRankingType.SimpleOffense ) {
                 let prefPhys = false;
-                if ( parameters.search.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderLowestOfAtkSpa) {
+                if ( parameters.mainparams.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderLowestOfAtkSpa) {
                     prefPhys = speciesEntry.baseStats.atk > speciesEntry.baseStats.spa
                 }
-                else if ( parameters.search.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderOnlySpa ) {
+                else if ( parameters.mainparams.defNaturePreferenceNonPQ == DefensiveNaturePreference.HinderOnlySpa ) {
                     prefPhys = true;
                 }
                 
@@ -432,7 +432,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     evSpreadProspects.push( new EVSpread( 'Modest', {hp:252, atk:0, def:0, spa:252, spd:0, spe:0 }));
                 }
             }
-            else if ( parameters.search.rankingType == SearchRankingType.MixedDefSimple ) {
+            else if ( parameters.mainparams.rankingType == SearchRankingType.MixedDefSimple ) {
                 evSpreadProspects.push( new EVSpread( 'Bold', {hp:252, atk:0, def:252, spa:0, spd:4, spe:0} ));
                 evSpreadProspects.push( new EVSpread( 'Bold', {hp:252, atk:0, def:4, spa:0, spd:252, spe:0} ));
                 evSpreadProspects.push( new EVSpread( 'Bold', {hp:4, atk:0, def:252, spa:0, spd:252, spe:0} ));
@@ -440,7 +440,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                 evSpreadProspects.push( new EVSpread( 'Calm', {hp:252, atk:0, def:4, spa:0, spd:252, spe:0} ));
                 evSpreadProspects.push( new EVSpread( 'Calm', {hp:4, atk:0, def:252, spa:0, spd:252, spe:0} ));
             }
-            else if ( parameters.search.rankingType == SearchRankingType.MixedDefOptimal ) {
+            else if ( parameters.mainparams.rankingType == SearchRankingType.MixedDefOptimal ) {
                 //defenderEVs = {hp:0, atk:0, def:0, spa:0, spd:0, spe:0};
                 let dummyDefender = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
@@ -456,7 +456,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
 
                 evSpreadProspects.push( bestSpread );
             }
-            else if ( parameters.search.rankingType == SearchRankingType.AttackIntoOptimalDef ) {
+            else if ( parameters.mainparams.rankingType == SearchRankingType.AttackIntoOptimalDef ) {
                 let initialEVs = {hp:0, atk:0, def:0, spa:0, spd:0, spe:0};
                 let initialSpread = allocateOffensiveSpread( initialEVs, speciesEntry.baseStats.atk > speciesEntry.baseStats.spa, false );
 
@@ -476,7 +476,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
 
                 evSpreadProspects.push( bestSpread );
             }
-            else if ( parameters.search.rankingType == SearchRankingType.OutspeedIntoOptimalDef ) {
+            else if ( parameters.mainparams.rankingType == SearchRankingType.OutspeedIntoOptimalDef ) {
                 let neutralDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
                     nature: 'Hardy',
@@ -486,7 +486,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     abilityOn: true,
                     status: defaultStatus,
                 });
-                let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.search.defNaturePreferenceNonPQ );
+                let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.mainparams.defNaturePreferenceNonPQ );
                 let positiveDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
                     nature: prefNature,
@@ -519,7 +519,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     evSpreadProspects.push( bestSpread );
                 }
             }
-            else if ( parameters.search.rankingType == SearchRankingType.OutspeedIAttackIDefense ) {
+            else if ( parameters.mainparams.rankingType == SearchRankingType.OutspeedIAttackIDefense ) {
                 let neutralDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
                     nature: 'Hardy',
@@ -529,7 +529,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     abilityOn: true,
                     status: defaultStatus,
                 });
-                let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.search.defNaturePreferenceNonPQ );
+                let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.mainparams.defNaturePreferenceNonPQ );
                 let positiveDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
                     nature: prefNature,
@@ -565,7 +565,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     evSpreadProspects.push( bestSpread );
                 }
             }
-            else if ( parameters.search.rankingType == SearchRankingType.BestDefenseThreshold ) {
+            else if ( parameters.mainparams.rankingType == SearchRankingType.BestDefenseThreshold ) {
                 //defenderEVs = {hp:0, atk:0, def:0, spa:0, spd:0, spe:0};
                 let dummyDefender = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
@@ -581,7 +581,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
 
                 evSpreadProspects.push( bestSpread );
             }
-            else if ( parameters.search.rankingType == SearchRankingType.BestDefenseThresholdIntoAttack ) {
+            else if ( parameters.mainparams.rankingType == SearchRankingType.BestDefenseThresholdIntoAttack ) {
                 let buildPhysical = speciesEntry.baseStats.atk > speciesEntry.baseStats.spa;
 
                 //defenderEVs = {hp:0, atk:0, def:0, spa:0, spd:0, spe:0};
@@ -602,7 +602,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
 
                 evSpreadProspects.push( finalSpread );
             }
-            else if ( parameters.search.rankingType == SearchRankingType.OutspeedIntoBDT ) {
+            else if ( parameters.mainparams.rankingType == SearchRankingType.OutspeedIntoBDT ) {
                 let neutralDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
                     nature: 'Hardy',
@@ -612,7 +612,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     abilityOn: true,
                     status: defaultStatus,
                 });
-                let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.search.defNaturePreferenceNonPQ );
+                let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.mainparams.defNaturePreferenceNonPQ );
                 let positiveDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
                     nature: prefNature,
@@ -646,7 +646,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                 }
             }
 
-            else if ( parameters.search.rankingType == SearchRankingType.OutspeedIntoBDTIntoAttack ) {
+            else if ( parameters.mainparams.rankingType == SearchRankingType.OutspeedIntoBDTIntoAttack ) {
                 let neutralDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
                     nature: 'Hardy',
@@ -656,7 +656,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     abilityOn: true,
                     status: defaultStatus,
                 });
-                let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.search.defNaturePreferenceNonPQ );
+                let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.mainparams.defNaturePreferenceNonPQ );
                 let positiveDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
                     nature: prefNature,
@@ -1188,7 +1188,7 @@ function checkSpecialItem(species: string) {
 
 function setAbilityTerrain(ability: string, field: Smogon.Field, parameters: RankingParameters ) {
     // Enable terrain according to parameters
-    if ( !parameters.advanced.lockTerrain ) {
+    if ( !parameters.misc.lockTerrain ) {
         if ( parameters.ability.activateTerrainSettingAbilities && ( ability == 'Hadron Engine' || ability == 'Electric Surge') ) {
             field.terrain = 'Electric';
         }
@@ -1205,7 +1205,7 @@ function setAbilityTerrain(ability: string, field: Smogon.Field, parameters: Ran
 }
 function setAbilityWeather(ability: string, field: Smogon.Field, parameters: RankingParameters ) {
     // Enable weather according to parameters
-    if ( !parameters.advanced.lockWeather ) {
+    if ( !parameters.misc.lockWeather ) {
         if ( parameters.ability.activateWeatherSettingAbilities && ( ability == 'Orichalcum Pulse' || ability == 'Drought') ) {
             field.weather = 'Sun';
         }
@@ -1221,17 +1221,17 @@ function setAbilityWeather(ability: string, field: Smogon.Field, parameters: Ran
     }
 }
 function checkGrassPeltTrigger(ability: string, field: Smogon.Field, parameters: RankingParameters ) {
-    if ( ability == 'Grass Pelt' && parameters.ability.forceTriggerGrassPelt && !parameters.advanced.lockTerrain ) {
+    if ( ability == 'Grass Pelt' && parameters.ability.forceTriggerGrassPelt && !parameters.misc.lockTerrain ) {
         field.terrain = 'Grassy';
     }
 }
 function checkQuarkDriveTrigger(ability: string, field: Smogon.Field, parameters: RankingParameters ) {
-    if ( ability == 'Quark Drive' && parameters.ability.forceTriggerQuarkDrive && !parameters.advanced.lockTerrain ) {
+    if ( ability == 'Quark Drive' && parameters.ability.forceTriggerQuarkDrive && !parameters.misc.lockTerrain ) {
         field.terrain = 'Electric';
     }
 }
 function checkProtosynthesisTrigger(ability: string, field: Smogon.Field, parameters: RankingParameters ) {
-    if ( ability == 'Protosynthesis' && parameters.ability.forceTriggerProtosynthesis && !parameters.advanced.lockWeather ) {
+    if ( ability == 'Protosynthesis' && parameters.ability.forceTriggerProtosynthesis && !parameters.misc.lockWeather ) {
         field.weather = 'Sun';
     }
 }

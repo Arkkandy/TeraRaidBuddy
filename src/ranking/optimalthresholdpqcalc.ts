@@ -101,7 +101,7 @@ export default function getOptimalDefensiveThreshold_PQ( gen: Generation, raidBo
     // Predict best defensive nature based on the hardest hitting move
     // #TODO: Apply PQ nature preference
     if (!useGivenNature ) {
-        noAbilityDefender.nature = selectDefensiveNaturePreference( noAbilityDefender, isHighestHitPhysical, physMoves.length>0, specMoves.length>0, parameters.search.defNaturePreferencePQ ) as NatureName;
+        noAbilityDefender.nature = selectDefensiveNaturePreference( noAbilityDefender, isHighestHitPhysical, physMoves.length>0, specMoves.length>0, parameters.mainparams.defNaturePreferencePQ ) as NatureName;
         /*if ( isHighestHitPhysical ) {
             // Suggest defensive nature
             noAbilityDefender.nature = "Bold";

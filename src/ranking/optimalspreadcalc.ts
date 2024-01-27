@@ -75,7 +75,7 @@ export default function getOptimalDefensiveSpread( gen: Generation, raidBoss: Po
 
     // Predict best defensive nature based on the hardest hitting move
     if ( !useGivenNature ) {
-        raidDefender.nature = selectDefensiveNaturePreference( raidDefender, isHighestHitPhysical, physMoves.length>0, specMoves.length>0, parameters.search.defNaturePreferenceNonPQ ) as NatureName;
+        raidDefender.nature = selectDefensiveNaturePreference( raidDefender, isHighestHitPhysical, physMoves.length>0, specMoves.length>0, parameters.mainparams.defNaturePreferenceNonPQ ) as NatureName;
     }
 
     // Discard low hitting physical moves

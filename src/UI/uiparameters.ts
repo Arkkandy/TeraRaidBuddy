@@ -15,13 +15,14 @@ export function readSearchParameters() {
     parameters.hpMultiplier = Number.parseInt(UIElements.RaidBoss.BossHPMultiplier.value);
   
     // Read all inputs from the front end
-    parameters.search.rankingType =
+    parameters.mainparams.rankingType =
       SearchRankingType[ UIElements.MainParams.parameterSearchType.value as keyof typeof SearchRankingType ];
-    parameters.search.isRankByCritical = UIElements.MainParams.parameterSearchDamageRank.value == 'C';
-    parameters.search.defNaturePreferenceNonPQ =
+    parameters.mainparams.isRankByCritical = UIElements.MainParams.parameterSearchDamageRank.value == 'C';
+    parameters.mainparams.defNaturePreferenceNonPQ =
       DefensiveNaturePreference[ UIElements.MainParams.parameterSearchDefNaturePref.value as keyof typeof DefensiveNaturePreference ];
-    parameters.search.defNaturePreferencePQ =
+    parameters.mainparams.defNaturePreferencePQ =
       DefensiveNaturePreference[ UIElements.MainParams.parameterSearchDefNaturePrefPQ.value as keyof typeof DefensiveNaturePreference ];
+    parameters.mainparams.defenderTeraType = UIElements.MainParams.parameterDefenderTeraType.value;
   
     // Read filter parameters
     let evoFilter = UIElements.SearchParams.FilterNFE.value;
@@ -110,10 +111,9 @@ export function readSearchParameters() {
     parameters.items.defaultAttackerItem = UIElements.SearchParams.ItemDefaultSelect.value;
     parameters.items.giveBoosterEnergytoPQ = UIElements.SearchParams.ItemBoosterEnergyToPQ.checked;
   
-    // Advanced Parameters
-    parameters.advanced.defenderTeraType = UIElements.MainParams.parameterDefenderTeraType.value;
-    parameters.advanced.lockWeather = UIElements.SearchParams.FieldLockWeather.checked;
-    parameters.advanced.lockTerrain = UIElements.SearchParams.FieldLockTerrain.checked;
+    // Misc Parameters    
+    parameters.misc.lockWeather = UIElements.SearchParams.FieldLockWeather.checked;
+    parameters.misc.lockTerrain = UIElements.SearchParams.FieldLockTerrain.checked;
   
     // Result Parameters
     let moveDamParam = Number.parseInt( UIElements.MainParams.parameterResultMoveDamage.value );
