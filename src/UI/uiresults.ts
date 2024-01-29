@@ -478,20 +478,31 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
     UIElements.Results.InfoFilters.classList.remove('collapsed');
   }
 
-  export function summarizePSF( psf: PostSearchFilter ) {
+  export function summarizePSF( gen: Generation, psf: PostSearchFilter ) {
     // If PSF contains default values, then there is no active filter
     if ( psf.isDefault() ) {
       hidePSFInfo();
     }
     else {
-      UIElements.Results.InfoFilters.textContent = "[Active Filter]";
+      UIElements.Results.InfoFilters.innerHTML = "";
+
+      let contents = "[Active Filter]";
       if ( psf.learnMoveList.length > 0 ) {
-        UIElements.Results.InfoFilters.textContent += " <=> Can Learn: \"" + psf.learnMoveList.join("\", \"") + "\"";
+        contents += " ⬤ Can Learn:";
+        for ( let m = 0; m < psf.learnMoveList.length; ++m ) {
+          let moveData = gen.moves.get(toID(psf.learnMoveList[m]));
+          if ( moveData ) {
+            contents += ` <span class=\"${moveData.type.toLowerCase()}-type\">${psf.learnMoveList[m]}</span>`;
+          }
+        }
+        //contents += " <=> Can Learn: \"<span class=\"stellar-type\">" + psf.learnMoveList.join("\", \"") + "\"</span>";
       }
 
       if ( psf.checkStab ) {
-        UIElements.Results.InfoFilters.textContent += " <=> STAB Only"
+        contents += " ⬤ STAB Only"
       }
+
+      UIElements.Results.InfoFilters.innerHTML = contents;
       showPSFInfo();
     }
   }
@@ -538,7 +549,7 @@ export function applyPostSearchFilters( gen: Generation, search : SearchResult )
       });
     }
 
-    summarizePSF( psf );
+    summarizePSF( gen, psf );
 
     // Update table starting from page 1
     updatePaging( search );

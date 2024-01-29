@@ -1,7 +1,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Tera Raid Buddy</title>
 
 
@@ -19,36 +19,7 @@
             document.body.classList.toggle('dark-mode');
           }
         </script-->
-        <header class="header-container">
-            <div class="header-title-container">
-                <img src="../assets/apple-touch-icon.png" alt="Website Icon" width="48" height="48">
-                <h1>Tera Raid Buddy</h1>
-                <p>v1.0b</p>
-            </div>
 
-            <div>
-                <button id="calculateButton" class="search-button">Calculate
-                    <div id="searchCooldownEffect"></div>
-                </button>
-            </div>
-
-            <div>
-                <!--button class="header-toggle-button" onclick="toggleDarkMode()">Toggle Dark Mode</button-->
-                <button id="focusTableButton">Focus Table</button>
-                <button id="advancedToggleButton">Advanced Mode</button>
-                <button id="ssTest">Screenshot Test</button>
-                <button disabled>Toggle Dark Mode</button>
-                <button disabled>Toggle Tooltips</button>
-            </div>
-                <!--h2>Search the best raid counters fast</h2-->
-                <!--div class="custom-tooltip">
-                    Hover me!
-                    <div class="tooltip-text">
-                        Sun from Drought
-                    </div>
-                </div>
-                <button title="I'm a tooltip">Random button</button-->
-        </header>
 
         <div id="loadingOverlay">
             <div id="loadingSymbol">
@@ -59,16 +30,47 @@
 
 
         <div class="page-wrapper">
+            <header class="header-container">
+                <div class="header-title-container">
+                    <img src="../assets/apple-touch-icon.png" alt="Website Icon" width="48" height="48">
+                    <h1>Tera Raid Buddy</h1>
+                    <p>v1.0b</p>
+                </div>
+    
+                <div>
+                    <button id="calculateButton" class="search-button">Calculate
+                        <div id="searchCooldownEffect"></div>
+                    </button>
+                </div>
+    
+                <div>
+                    <!--button class="header-toggle-button" onclick="toggleDarkMode()">Toggle Dark Mode</button-->
+                    <button id="focusTableButton">Focus Table</button>
+                    <button id="advancedToggleButton">Advanced Mode</button>
+                    <button id="ssTest">Screenshot Test</button>
+                    <button disabled>Toggle Dark Mode</button>
+                    <button disabled>Toggle Tooltips</button>
+                </div>
+                    <!--h2>Search the best raid counters fast</h2-->
+                    <!--div class="custom-tooltip">
+                        Hover me!
+                        <div class="tooltip-text">
+                            Sun from Drought
+                        </div>
+                    </div>
+                    <button title="I'm a tooltip">Random button</button-->
+            </header>
+
             <div class="content-wrapper">
                 <!-- TOP ROW OF PARAMETERS -->
                 <div>
 
                     <!-- START OF RAID BOSS PARAMETERS SECTION -->
                     <!--div class="test-container"-->
-                    <fieldset class="top-level-fieldset parameter-centered">
+                    <fieldset class="boss-parameter-collection top-level-fieldset parameter-centered">
                         <legend class="fieldset-top-legend">Raid Boss</legend>
                         <!--h2>Raid Parameters</h2-->
-                        <div class="boss-parameter-collection">
+                        
                             <fieldset class="inner-fieldset">
                                 <!--legend class="fieldset-legend">Boss Stats</legend-->
                                 <div class="parameter-sequence-row">
@@ -193,125 +195,117 @@
                                         <input class="stat-field-input" id="parameterBossSpeStage" type="number" min="-6" max="6" value="0">
                                         <div class="stat-field" id="parameterBossSpeCalc"></div>
                                     </div>
-                                        <div class="boss-property-grid">
-                                            <label>Level</label>
-                                            <input id="pokemonBossLevel"type="number" min="1" max="100" value="100">
-                                                <label>HP x</label>
-                                                <select id="pokemonBossHpMultiplier">
-                                                    <option>1</option>
-                                                    <option>5</option>
-                                                    <option>8</option>
-                                                    <option>12</option>
-                                                    <option>20</option>
-                                                    <option>25</option>
-                                                    <option>30</option>
-                                                    <option>35</option>
-                                                    <option>40</option>
-                                                    <option>50</option>
-                                                </select>
+                                    <div class="boss-property-grid">
+                                        <label>Level</label>
+                                        <input id="pokemonBossLevel"type="number" min="1" max="100" value="100">
 
-                                            <div class="empty">&nbsp;</div>
-                                            <div class="empty">&nbsp;</div>
-                                                
-                                            <label>Nature</label>
-                                            <select id="pokemonBossNature">
-                                                <option value="Adamant">Adamant</option>
-                                                <option value="Bashful" selected>Bashful</option>
-                                                <option value="Bold">Bold</option>
-                                                <option value="Brave">Brave</option>
-                                                <option value="Calm">Calm</option>
-                                                <option value="Careful">Careful</option>
-                                                <option value="Docile">Docile</option>
-                                                <option value="Gentle">Gentle</option>
-                                                <option value="Hardy">Hardy</option>
-                                                <option value="Hasty">Hasty</option>
-                                                <option value="Impish">Impish</option>
-                                                <option value="Jolly">Jolly</option>
-                                                <option value="Lax">Lax</option>
-                                                <option value="Lonely">Lonely</option>
-                                                <option value="Mild">Mild</option>
-                                                <option value="Modest">Modest</option>
-                                                <option value="Naive">Naive</option>
-                                                <option value="Naughty">Naughty</option>
-                                                <option value="Quiet">Quiet</option>
-                                                <option value="Quirky">Quirky</option>
-                                                <option value="Rash">Rash</option>
-                                                <option value="Relaxed">Relaxed</option>
-                                                <option value="Sassy">Sassy</option>
-                                                <option value="Serious">Serious</option>
-                                                <option value="Timid">Timid</option>
-                                            </select>                                                
-                                            
-                                            <label>Item</label>
-                                            <select id="pokemonBossHeldItem">
-                                                <option value="" selected>(None)</option>
-                                            </select>
-                                            
-                                            
-                                            <label id="pokemonBossAbilityLabel">Ability*</label>
-                                            <select id="pokemonBossNaturalAbilities">
-                                            </select>
-                                            <select id="pokemonBossAllAbilities" class="collapsed">
-                                            </select>
+                                        <label>HP x</label>
+                                        <select id="pokemonBossHpMultiplier">
+                                            <option>1</option>
+                                            <option>5</option>
+                                            <option>8</option>
+                                            <option>12</option>
+                                            <option>20</option>
+                                            <option>25</option>
+                                            <option>30</option>
+                                            <option>35</option>
+                                            <option>40</option>
+                                            <option>50</option>
+                                        </select>
 
+                                        <div class="empty">&nbsp;</div>
+                                        <div class="empty">&nbsp;</div>
                                             
-                                            <label>Status</label>
-                                            <select id="pokemonBossStatus">
-                                                <option value="">None</option>
-                                                <option value="burn">Burned</option>
-                                            </select>
-                                        </div>
+                                        <label>Nature</label>
+                                        <select id="pokemonBossNature">
+                                            <option value="Adamant">Adamant</option>
+                                            <option value="Bashful" selected>Bashful</option>
+                                            <option value="Bold">Bold</option>
+                                            <option value="Brave">Brave</option>
+                                            <option value="Calm">Calm</option>
+                                            <option value="Careful">Careful</option>
+                                            <option value="Docile">Docile</option>
+                                            <option value="Gentle">Gentle</option>
+                                            <option value="Hardy">Hardy</option>
+                                            <option value="Hasty">Hasty</option>
+                                            <option value="Impish">Impish</option>
+                                            <option value="Jolly">Jolly</option>
+                                            <option value="Lax">Lax</option>
+                                            <option value="Lonely">Lonely</option>
+                                            <option value="Mild">Mild</option>
+                                            <option value="Modest">Modest</option>
+                                            <option value="Naive">Naive</option>
+                                            <option value="Naughty">Naughty</option>
+                                            <option value="Quiet">Quiet</option>
+                                            <option value="Quirky">Quirky</option>
+                                            <option value="Rash">Rash</option>
+                                            <option value="Relaxed">Relaxed</option>
+                                            <option value="Sassy">Sassy</option>
+                                            <option value="Serious">Serious</option>
+                                            <option value="Timid">Timid</option>
+                                        </select>                                                
+                                        
+                                        <label>Item</label>
+                                        <select id="pokemonBossHeldItem">
+                                            <option value="" selected>(None)</option>
+                                        </select>
+                                        
+                                        
+                                        <label id="pokemonBossAbilityLabel">Ability*</label>
+                                        <select id="pokemonBossNaturalAbilities">
+                                        </select>
+                                        <select id="pokemonBossAllAbilities" class="collapsed">
+                                        </select>
+
+                                        
+                                        <label>Status</label>
+                                        <select id="pokemonBossStatus">
+                                            <option value="">None</option>
+                                            <option value="burn">Burned</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </fieldset>
 
                             <!--div class="boss-parameter-collection"-->
-                            <div class="moveset-container">
-                                <fieldset class="inner-fieldset-low-spacing">
-                                    <legend class="fieldset-custom-legend">Main Moveset</legend>
-                                    <div class="parameter-sequence-row">
-                                        <div class="moveset-container">
-                                            <select id ="pokemonBossMove1" class="moveset-selector">
-                                            </select>
-                                            <select id ="pokemonBossMove2" class="moveset-selector">
-                                            </select>
-                                            <select id ="pokemonBossMove3" class="moveset-selector">
-                                            </select>
-                                            <select id ="pokemonBossMove4" class="moveset-selector">
-                                            </select>
-                                            
-                                        </div>
-                                        <div class="moveset-container">
-                                            <button id="pokemonBossMainMoveDefault">Defaults</button>
-                                            <button id="pokemonBossMainMoveClear">Clear</button>
-                                        </div>
-                                    </div>
-                                </fieldset>
+                            <fieldset class="inner-fieldset">
+                                <legend class="fieldset-custom-legend">Main Moveset</legend>
+                                    <div class="moveset-container">
+                                        <select id ="pokemonBossMove1" class="moveset-selector">
+                                        </select>
+                                        <select id ="pokemonBossMove2" class="moveset-selector">
+                                        </select>
+                                        <select id ="pokemonBossMove3" class="moveset-selector">
+                                        </select>
+                                        <select id ="pokemonBossMove4" class="moveset-selector">
+                                        </select>
+                                        
 
-                                <fieldset class="inner-fieldset">
-                                    <legend class="fieldset-custom-legend">Extra Moves</legend>
-                                    <div class="parameter-sequence-row">
-                                        <div class="moveset-container">
-                                            <select id ="pokemonBossAddMove1" class="moveset-selector">
-                                            </select>
-                                            <select id ="pokemonBossAddMove2" class="moveset-selector">
-                                            </select>
-                                            <select id ="pokemonBossAddMove3" class="moveset-selector">
-                                            </select>
-                                            <select id ="pokemonBossAddMove4" class="moveset-selector">
-                                            </select>
-                                            
-                                        </div>
-                                        <div class="moveset-container">
-                                            <button id="pokemonBossAddMoveDefault">Defaults</button>
-                                            <button id="pokemonBossAddMoveClear">Clear</button>
-                                        </div>
+                                        <button id="pokemonBossMainMoveDefault">Defaults</button>
+                                        <button id="pokemonBossMainMoveClear">Clear</button>
                                     </div>
-                                </fieldset>
-                            </div>
+                            </fieldset>
+
+                            <fieldset class="inner-fieldset">
+                                <legend class="fieldset-custom-legend">Extra Moves</legend>
+                                    <div class="moveset-container">
+                                        <select id ="pokemonBossAddMove1" class="moveset-selector">
+                                        </select>
+                                        <select id ="pokemonBossAddMove2" class="moveset-selector">
+                                        </select>
+                                        <select id ="pokemonBossAddMove3" class="moveset-selector">
+                                        </select>
+                                        <select id ="pokemonBossAddMove4" class="moveset-selector">
+                                        </select>
+                                        
+                                        <button id="pokemonBossAddMoveDefault">Defaults</button>
+                                        <button id="pokemonBossAddMoveClear">Clear</button>
+                                    </div>
+                            </fieldset>
                             
                             <fieldset id="pokemonBossExtraActionSection" class="inner-fieldset">
                                 <legend class="fieldset-custom-legend">Extra Actions</legend>
-                                <div>
+
                                     <table id="pokemonBossActionTable" class="action-table">
                                         <thead>
                                             <tr>
@@ -323,10 +317,8 @@
                                         <tbody>
                                         </tbody>
                                     </table>
-                                </div>
                             </fieldset>
                             <!--/div-->
-                        </div>
                     </fieldset>
                     <!-- END OF RAID BOSS PARAMETERS SECTION -->
 
@@ -440,22 +432,22 @@
                                     <option value="6">Best Main & Extra Moves</option>
                                 </select>
                             </div>
-                            <div>
+                            <div class="parameter-spacing">
                                 <label>Move Damage</label>
                                 <select id="parameterResultMoveDamage">
                                     <option value="1" selected>Show only selected damage rank</option>
                                     <option value="0">Show normal and critical damage</option>
                                 </select>
                             </div>
-                            <div>
+                            <div class="parameter-spacing">
                                 <label>Show sprites</label>
                                 <input id="parameterResultShowSprites" type="checkbox">
                             </div>
-                            <div>
+                            <div class="parameter-spacing">
                                 <label>Show if outspeed?</label>
                                 <input id="parameterResultShowOutspeed" type="checkbox" checked>
                             </div>
-                            <div>
+                            <div class="parameter-spacing">
                                 <label>Show leftover EVs</label>
                                 <input id="parameterResultShowLeftoverEV" type="checkbox">
                             </div>
@@ -490,7 +482,7 @@
                                     <input type="checkbox" id="filterSTAB">
                                 </div>
                             </div>
-                            <div class="top-line-border">
+                            <div class="parameter-row top-line-border">
                                 <div class="parameter-section-title">Raid Counter Whitelist</div>
                             </div>
                             <div>
@@ -506,12 +498,10 @@
                                         <button id="filterWhitelistClearButton">Clear</button>
                                     </div>
                                 </div>
-                                <div>
-                                    <div class="whitelist-display">Whitelisted Entries</div>
-                                    <ul id="filterWhitelist" class="whitelist-area">
-                                        <!-- Whitelisted entries will be dynamically added here -->
-                                    </ul>
-                                </div>
+                                <div class="whitelist-display">Whitelisted Entries</div>
+                                <ul id="filterWhitelist" class="whitelist-area">
+                                    <!-- Whitelisted entries will be dynamically added here -->
+                                </ul>
                             </div>
                             <div class="parameter-sequence-row-even top-line-border">
                                 <div class="parameter-section-title">Pokedex Filter</div>
@@ -1141,7 +1131,7 @@
                                     <div class="parameter-sequence-row">
                                         <div class="parameter-sequence-row custom-tooltip">
                                             <label for="">Learnable Move</label>
-                                            <input type="checkbox" id="psfFilterLearnMove">
+                                            <input type="checkbox" id="psfFilterLearnMove" checked>
                                             <select id="psfLearnMoveSelect">
                                             </select>
                                             <div class="tooltip-text">
@@ -1292,7 +1282,7 @@
                                 <option value="20" selected>20</option>
                                 <option value="30">30</option>
                                 <option value="50">50</option>
-                                <option value="50">100</option>
+                                <option value="100">100</option>
                                 <option value="999">All</option>
                             </select>
                         </div>
@@ -1326,7 +1316,7 @@
                                 </tbody>
                             </table>
                             <div id="resultTableWatermark">
-                                Generated with Tera Raid Buddy (by Arkandy)
+                                Generated with Tera Raid Buddy <a href="https://arkkandy.github.io/TeraRaidBuddy">arkkandy.github.io/TeraRaidBuddy</a>
                             </div>
                         </div>
                     </div>

@@ -562,7 +562,7 @@ if (defender.hasAbility('Tera Shell') &&
   //  if a physical move hit (not Psyshock, Psystrike, Secret Sword
   //  OR
   //  when a special move hits after competitive was triggered
-  if ( noteIntimidate && ( hitsPhysical && move.category == 'Physical' ) || ( move.category == 'Special' && attacker.hasAbility('Competitive' )) ) {
+  if ( noteIntimidate && ( ( hitsPhysical && move.category == 'Physical' ) || ( move.category == 'Special' && attacker.hasAbility('Competitive' ))) ) {
     desc.defenderAbility = 'Intimidate';
   }
   // Dauntless only contributes to final damage if the incoming move goes through defense

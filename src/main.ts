@@ -549,6 +549,10 @@ UIElements.RaidBoss.BossAddMoveDefaultButton.addEventListener('click', () => {
   }
 });
 
+/*UIElements.RaidBoss.BossTeraType.addEventListener( 'change', () => {
+  UIElements.RaidBoss.BossTeraType.className = UIElements.RaidBoss.BossTeraType.selectedOptions[0].className;
+} );*/
+
 
 UIElements.RaidBoss.BossHPBase.addEventListener( 'change', () => { UIRaidBoss.updateHPStat(gen); } );
 UIElements.RaidBoss.BossHPIV.addEventListener( 'change', () => { UIRaidBoss.updateHPStat(gen); } );
@@ -603,22 +607,31 @@ UIElements.RaidBoss.BossNature.addEventListener( 'change', () => {
   document.body.classList.toggle('dark-mode');
 }*/
 
+function isMobileDevice() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
 UIElements.Header.ssTestButton.addEventListener('click', function() {
   let canMakeScreenshot = false;
   let errorMessage = "";
 
   // Only make a screenshot if
   if ( currentSearchResult != undefined ) {
-    if ( UIElements.Results.ResultsTable.tBodies[0].rows.length > 0 ) {
-      if ( UIElements.Results.ResultsTable.tBodies[0].rows.length <= 20 ) {
-        canMakeScreenshot = true;
-      }
+    if (!isMobileDevice()) {
+      if ( UIElements.Results.ResultsTable.tBodies[0].rows.length > 0 ) {
+        if ( UIElements.Results.ResultsTable.tBodies[0].rows.length <= 20 ) {
+          canMakeScreenshot = true;
+        }
+        else {
+          errorMessage = "Table must show at most 20 rows to be captured into a screenshot!";
+        }
+      } 
       else {
-        errorMessage = "Table must show at most 20 rows to be captured into a screenshot!";
+        errorMessage = "The table must have at least 1 valid row result, and at most 20!";
       }
-    } 
+    }
     else {
-      errorMessage = "The table must have at least 1 valid row result, and at most 20!";
+      errorMessage = "This feature is currently disabled on mobile devices. Fix coming soon!"
     }
   }
   else {
