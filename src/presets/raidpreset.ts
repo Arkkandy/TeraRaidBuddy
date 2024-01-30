@@ -40,6 +40,7 @@ export class RaidBossPreset {
 
 
 export let tier7EventRaidBossPresets: RaidBossPreset[] = [
+    { speciesName: "Empoleon", level: 100, ability: "Competitive", mainMoves: ["Blizzard", "Hydro Pump", "Steel Beam", "Grass Knot"], addMoves: ["Snowscape", "Blizzard", "Icy Wind", "Surf" ], teraType: "Ice", nature: "Modest", extraActions: [ {description: "Boss Prediction"}, {description: "Event Start"}, {description: "Feb 2nd 0:00 UTC"}, {description: "Event End"}, {description: "Feb 4th 23:59 UTC"} ] },
     { speciesName: "Blaziken", level: 100, ability: "Speed Boost", mainMoves: ["Brave Bird", "Blaze Kick", "Low Kick", "Earthquake"], addMoves: ["Bulk Up", "Swords Dance", "Overheat", "Rock Slide" ], teraType: "Flying", nature: "Adamant", extraActions: [ {description: "Move: Swords Dance", time:90}, {description: "Player Stat Reset", hp: 90 },  { description:"Tera Shield", hp: 80, time: 80 }, {description:"Move: Overheat", hp: 79 }, { description: "Boss Stat Reset", hp: 70 }, { description: "Move: Bulk Up", time:65} ] },
     { speciesName: "Iron Bundle", level: 100, ability: "Quark Drive", mainMoves: ["Freeze-Dry", "Hydro Pump", "Blizzard", "Chilling Water"], addMoves: ["Snowscape", "Aurora Veil", "Electric Terrain"], teraType: "Ice", nature: "Modest"}, // HP x30
     { speciesName: "Samurott-Hisui", level: 100, ability: "Sharpness", mainMoves: ["Razor Shell", "Ceaseless Edge", "X-Scissor", "Sacred Sword"], addMoves: ["Focus Energy", "Swords Dance", "Bulldoze"], teraType: "Water", nature: "Adamant" },

@@ -169,7 +169,7 @@ export function reselectPresetDefaults( gen: Generation, currentPresetMode: Raid
     showExtraActions( gen, preset.extraActions, UIElements.RaidBoss.BossActionTable );
 }
 
-function retrievePokemonSpecies( presetMode : RaidPresetMode ) : string {
+export function retrieveSelectedBossSpecies( presetMode : RaidPresetMode ) : string {
     switch( presetMode ) {
       case RaidPresetMode.Custom: return UIElements.RaidBoss.CustomSelect.value;
       case RaidPresetMode.FiveStar: return UIElements.RaidBoss.R5Select.value;
@@ -537,7 +537,7 @@ export function readBossMainMoveset(gen: Generation, parameters: RankingParamete
 
 
 
-  function readBossSelectedAbility( selectionMode : AbilitySelectionMode ) : string {
+  export function readBossSelectedAbility( selectionMode : AbilitySelectionMode ) : string {
     return ( selectionMode == AbilitySelectionMode.NaturalAbilities ? UIElements.RaidBoss.BossNaturalAbilitySelect.value : UIElements.RaidBoss.BossAllAbilitiesSelect.value );
   }
 
@@ -569,7 +569,7 @@ export function readRaidBossParameters( gen: Generation, presetMode : RaidPreset
   
     let status : undefined | 'brn' = ( UIElements.RaidBoss.BossStatus.value == "" ? undefined : 'brn' );
   
-    return new Pokemon( gen, retrievePokemonSpecies(presetMode), {
+    return new Pokemon( gen, retrieveSelectedBossSpecies(presetMode), {
       level: UIElements.RaidBoss.BossLevel.valueAsNumber,
       nature: UIElements.RaidBoss.BossNature.value,
       ivs: ivs,

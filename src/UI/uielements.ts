@@ -67,6 +67,13 @@ const UIElements = {
     // RAID BOSS SECTION
     RaidBoss: {
 
+        ExportPopupButton: getUIElement<HTMLButtonElement>('pokemonRaidExportButton'),
+
+        ExportDataPrompt: getUIElement<HTMLElement>('bossExportPrompt'),
+        ExportImportButton: getUIElement<HTMLButtonElement>('exportImportButton'),
+        ExportReturnButton: getUIElement<HTMLButtonElement>('exportReturnButton'),
+        ExportTextContent: getUIElement<HTMLTextAreaElement>('exportTextArea'),
+
         // Raid preset tab buttons
         CustomPresetButton: getUIElement<HTMLButtonElement>('pokemonRaidPresetCustomButton'),
         R5PresetButton: getUIElement<HTMLButtonElement>('pokemonRaidPresetRaid5Button'),

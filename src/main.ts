@@ -27,6 +27,7 @@ import * as UIParameters from './UI/uiparameters';
 import * as UIResults from './UI/uiresults';
 import { showExtraActions } from './UI/extractiontable';
 import * as UIRaidBoss from './UI/uiraidboss';
+import * as PokeImport from './UI/pokeimport';
 
 
 // ========================================================================
@@ -223,6 +224,50 @@ function updateBossSelection( presetMode: RaidPresetMode ) {
   UIRaidBoss.overwriteStats( gen, presetMode );
 }
 
+function createScreenshotOverlay() {
+  let overlay = document.createElement('div');
+  overlay.classList.add('backgroundOverlay');
+
+  overlay.innerHTML = `<div id="loadingSymbol">... Please wait while your screenshot is generated ...<div id="loadingAnimation"></div></div>`;
+
+  document.body.appendChild( overlay );
+
+  return overlay;
+ /* <div id="loadingOverlay">
+            <div id="loadingSymbol">
+                ... Please wait while your screenshot is generated ...
+                <div id="loadingAnimation"></div>
+            </div>
+        </div>*/
+}
+
+function changeAbilityMode( mode : AbilitySelectionMode ) {
+  if ( mode == AbilitySelectionMode.AnyAbilities ) {
+    abilityMode = AbilitySelectionMode.AnyAbilities;
+
+    UIElements.RaidBoss.BossAbilityLabel.textContent = "Ability";
+
+    UIElements.RaidBoss.BossNaturalAbilitySelect.classList.add("collapsed");
+    UIElements.RaidBoss.BossAllAbilitiesSelect.classList.remove("collapsed");
+  }
+  else {
+    abilityMode = AbilitySelectionMode.NaturalAbilities;
+
+    UIElements.RaidBoss.BossAbilityLabel.textContent = "Ability*";
+
+    UIElements.RaidBoss.BossAllAbilitiesSelect.classList.add("collapsed");
+    UIElements.RaidBoss.BossNaturalAbilitySelect.classList.remove("collapsed");
+  }
+}
+
+function updateAllStats() {
+  UIRaidBoss.updateHPStat(gen);
+  UIRaidBoss.updateAtkStat(gen);
+  UIRaidBoss.updateDefStat(gen);
+  UIRaidBoss.updateSpaStat(gen);
+  UIRaidBoss.updateSpdStat(gen);
+  UIRaidBoss.updateSpeStat(gen);
+}
 
 // ========================================================================
 // ========================================================================
@@ -427,20 +472,10 @@ setTimeout(() => {
 
 UIElements.RaidBoss.BossAbilityLabel.addEventListener('click', () => {
   if ( abilityMode == AbilitySelectionMode.NaturalAbilities ) {
-    abilityMode = AbilitySelectionMode.AnyAbilities;
-
-    UIElements.RaidBoss.BossAbilityLabel.textContent = "Ability";
-
-    UIElements.RaidBoss.BossNaturalAbilitySelect.classList.add("collapsed");
-    UIElements.RaidBoss.BossAllAbilitiesSelect.classList.remove("collapsed");
+    changeAbilityMode( AbilitySelectionMode.AnyAbilities);
   }
   else {
-    abilityMode = AbilitySelectionMode.NaturalAbilities;
-
-    UIElements.RaidBoss.BossAbilityLabel.textContent = "Ability*";
-
-    UIElements.RaidBoss.BossAllAbilitiesSelect.classList.add("collapsed");
-    UIElements.RaidBoss.BossNaturalAbilitySelect.classList.remove("collapsed");
+    changeAbilityMode( AbilitySelectionMode.NaturalAbilities);
   }
 });
 
@@ -587,20 +622,11 @@ UIElements.RaidBoss.BossSpeEV.addEventListener( 'change', () => { UIRaidBoss.upd
 UIElements.RaidBoss.BossSpeStage.addEventListener( 'change', () => { UIRaidBoss.updateSpeStat(gen); } );
 
 UIElements.RaidBoss.BossLevel.addEventListener( 'change', () => {
-  UIRaidBoss.updateHPStat(gen);
-  UIRaidBoss.updateAtkStat(gen);
-  UIRaidBoss.updateDefStat(gen);
-  UIRaidBoss.updateSpaStat(gen);
-  UIRaidBoss.updateSpdStat(gen);
-  UIRaidBoss.updateSpeStat(gen);
+  updateAllStats();
 } );
 
 UIElements.RaidBoss.BossNature.addEventListener( 'change', () => {
-  UIRaidBoss.updateAtkStat(gen);
-  UIRaidBoss.updateDefStat(gen);
-  UIRaidBoss.updateSpaStat(gen);
-  UIRaidBoss.updateSpdStat(gen);
-  UIRaidBoss.updateSpeStat(gen);
+  updateAllStats();
 } );
 
 /*function toggleDarkMode() {
@@ -616,8 +642,8 @@ UIElements.Header.ssTestButton.addEventListener('click', function() {
   let errorMessage = "";
 
   // Only make a screenshot if
-  if ( currentSearchResult != undefined ) {
-    if (!isMobileDevice()) {
+  if ( true) {//if (!isMobileDevice()) {
+    if ( currentSearchResult != undefined ) {
       if ( UIElements.Results.ResultsTable.tBodies[0].rows.length > 0 ) {
         if ( UIElements.Results.ResultsTable.tBodies[0].rows.length <= 20 ) {
           canMakeScreenshot = true;
@@ -631,22 +657,26 @@ UIElements.Header.ssTestButton.addEventListener('click', function() {
       }
     }
     else {
-      errorMessage = "This feature is currently disabled on mobile devices. Fix coming soon!"
+      errorMessage = "No search has been performed yet!";
+      
     }
   }
   else {
-    errorMessage = "No search has been performed yet!";
+    errorMessage = "This feature is currently disabled on mobile devices. Fix coming soon!"
   }
 
   // If the search result is elligible for a screenshot
   if ( canMakeScreenshot ) {
     // Show overlay element
-    let overlay = document.getElementById('loadingOverlay') as HTMLDivElement;
-    overlay.style.display = 'flex';
+    let temporaryOverlay = createScreenshotOverlay();
 
     // Temporarily hide pagination
     let pagination = document.getElementById('resultTablePagination') as HTMLDivElement;
     pagination.hidden = true;
+
+    // Temporarily unsticky thead
+    let thead = UIElements.Results.ResultsTable.tHead;
+    thead?.classList.remove('Sticky');
 
     let timestamp = new Date().toISOString().replace(/[-:.]/g, ''); // Format: YYYYMMDDTHHMMSS
     let filename =  'TRB_vs_' + currentSearchResult?.rankingData.raidBoss.name + timestamp + '.png';
@@ -666,8 +696,12 @@ UIElements.Header.ssTestButton.addEventListener('click', function() {
         // Download screenshot
         link.click();
 
-        // Hide overlay
-        overlay.style.display = 'none';
+        // Remove overlay from the interface
+        temporaryOverlay.remove();
+  
+        // Re-sticky thead
+        thead?.classList.add('Sticky');
+
         // Show pagination again
         pagination.hidden = false;
       });
@@ -786,6 +820,41 @@ UIElements.Results.PSFClearButton.addEventListener( 'click', () => {
   clearPostSearchFilters();
 });
 
+
+UIElements.RaidBoss.ExportPopupButton.addEventListener( 'click', () => {
+
+  PokeImport.ExportBossData( currentPresetMode, abilityMode );
+
+  UIElements.RaidBoss.ExportDataPrompt.classList.remove('collapsed');
+});
+
+UIElements.RaidBoss.ExportReturnButton.addEventListener( 'click', () => {
+  UIElements.RaidBoss.ExportDataPrompt.classList.add('collapsed');
+});
+
+UIElements.RaidBoss.ExportImportButton.addEventListener( 'click', () => {
+
+  if ( UIElements.RaidBoss.ExportTextContent.value ) {
+    let data = PokeImport.ReadBossData( UIElements.RaidBoss.ExportTextContent.value );
+
+    if ( !PokeImport.VerifyBossData( gen, data ) ) {
+      alert("Failure.");
+      return;
+    }
+
+    // Set defaults
+    UIElements.RaidBoss.CustomSelect.value = data.bossName!;
+    onPresetChange(RaidPresetMode.Custom);
+
+    changeAbilityMode(AbilitySelectionMode.AnyAbilities);
+
+    // Read data proper
+    PokeImport.ImportBossData(gen, data );
+    
+    updateAllStats();
+  }
+})
+
 // ========================================================================
 // ========================================================================
 // ========================================================================
@@ -794,8 +863,8 @@ UIElements.Results.PSFClearButton.addEventListener( 'click', () => {
 // ========================================================================
 // Set UI initial state (see index.html also)
 
-UIElements.RaidBoss.R5ESelect.value = "Flutter Mane";
-onPresetChange( RaidPresetMode.FiveStarEvent );
+UIElements.RaidBoss.R7ESelect.value = "Empoleon";
+onPresetChange( RaidPresetMode.SevenStarEvent );
 
 
 // REFORMAT POKEMON NAMES IN TEXT

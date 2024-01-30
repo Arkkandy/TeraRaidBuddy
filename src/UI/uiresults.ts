@@ -23,7 +23,7 @@ export function createResultTableHead( search: SearchResult ) {
     const hrow2 = thead.insertRow();
   
     // Create 'Raid Counter' group
-    createTableHeadCell(hrow2,'Ranking');
+    createTableHeadCell(hrow2,'Rank');
     createTableHeadCell(hrow2,'Pokemon');
   
     // Shortcut variables to the original data
@@ -390,6 +390,43 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
   export function updateEffectsInfo( search: SearchResult ) {
     let infoPanel = UIElements.Results.InfoEffectsAndSettings;
     infoPanel.textContent = "EV Method: " + search.rankingData.originalParameters.mainparams.rankingType.toString();
+    
+    let allField: string[] = [];
+    if ( search.rankingData.originalField.terrain ) {
+      let terrainString = "";
+      if ( search.rankingData.originalParameters.misc.lockTerrain ) {
+         terrainString = "🔒";
+      }
+      terrainString += search.rankingData.originalField.terrain.toString();
+      allField.push(terrainString);
+    }
+    if ( search.rankingData.originalField.weather ) {
+      let weatherString = "";
+      if ( search.rankingData.originalParameters.misc.lockWeather ) {
+         weatherString = "🔒";
+      }
+      weatherString += search.rankingData.originalField.weather.toString();
+      allField.push(weatherString);
+    }
+    if ( search.rankingData.originalField.isVesselOfRuin ) {
+      allField.push('Vessel of Ruin');
+    }
+    if ( search.rankingData.originalField.isTabletsOfRuin ) {
+      allField.push('Tablets of Ruin');
+    }
+    if ( search.rankingData.originalField.isSwordOfRuin ) {
+      allField.push('Sword of Ruin');
+    }
+    if ( search.rankingData.originalField.isBeadsOfRuin ) {
+      allField.push('Beads of Ruin');
+    }
+    if ( search.rankingData.originalField.isGravity ) {
+      allField.push('Gravity');
+    }
+    if ( search.rankingData.originalField.isWonderRoom ) {
+      allField.push('Wonder Room');
+    }
+
     let bossSide : string[] = [];
     if ( search.rankingData.originalField.attackerSide.isFocusEnergy ) {
       bossSide.push("Focus Energy");
@@ -397,6 +434,7 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
     if ( search.rankingData.originalField.attackerSide.isTailwind ) {
       bossSide.push('Tailwind');
     }
+
     let defenderSide : string[] = [];
     if ( search.rankingData.originalField.defenderSide.isDefenseCheer ) {
       defenderSide.push("Defense Cheer");
@@ -412,8 +450,12 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
         defenderSide.push('Light Screen');
       }
     }
+
     if ( search.rankingData.originalField.defenderSide.isTailwind ) {
       defenderSide.push('Tailwind');
+    }
+    if ( allField.length > 0 ) {
+      infoPanel.textContent += " | Field: " + allField.join(", ");
     }
     if ( bossSide.length > 0 ) {
       infoPanel.textContent += " | Boss: " + bossSide.join(", ");
