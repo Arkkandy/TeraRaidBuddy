@@ -1,6 +1,6 @@
 import { RaidBossPreset } from "../presets/raidpreset";
 import { moveLearnsetDictionary } from "../ranking/movelearnset";
-import { PrintVisibleDamage } from "../ranking/searchparameters";
+import { PrintVisibleDamage, getReadableRankingString } from "../ranking/searchparameters";
 import { EVSpread } from "../ranking/util";
 import { toID } from "../smogon-calc";
 import { Generation } from "../smogon-calc/data/interface";
@@ -389,7 +389,7 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
 
   export function updateEffectsInfo( search: SearchResult ) {
     let infoPanel = UIElements.Results.InfoEffectsAndSettings;
-    infoPanel.textContent = "EV Method: " + search.rankingData.originalParameters.mainparams.rankingType.toString();
+    infoPanel.textContent = "EV Method: " + getReadableRankingString(search.rankingData.originalParameters.mainparams.rankingType);
     
     let allField: string[] = [];
     if ( search.rankingData.originalField.terrain ) {

@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 module.exports = {
   mode: 'development', // Set to 'production' for release
@@ -22,6 +23,11 @@ module.exports = {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
+    ],
+  },
+  optimization: {
+    minimizer: [
+      new TerserPlugin()
     ],
   },
   plugins: [

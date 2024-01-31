@@ -4,7 +4,7 @@
   "description": "The quickest, easiest and most complete Tera Raid calculator!",
   "main": "main.js",
   "scripts": {
-    "build": "webpack",
+    "build": "webpack --mode production",
     "start": "webpack serve --open --port 3000",
     "test": "jest",
     "test:watch": "jest --watch"

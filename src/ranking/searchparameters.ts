@@ -56,6 +56,24 @@ export enum SearchRankingType {
     OutspeedIntoBDT = "OutspeedIntoBDT",
     OutspeedIntoBDTIntoAttack = "OutspeedIntoBDTIntoAttack"
 }
+export function getReadableRankingString( srt:SearchRankingType ) {
+    switch ( srt ) {
+        case SearchRankingType.NoInvestment: return "No Investment";
+        case SearchRankingType.FullDef: return "Full Defense";
+        case SearchRankingType.FullSpD: return "Full Sp.Defense"
+        case SearchRankingType.SimpleOffense: return "252 HP / 252 Atk or SpA";
+        case SearchRankingType.MixedDefSimple: return "Simple Mixed Defense"
+        case SearchRankingType.MixedDefOptimal: return "Balanced Defenses";
+        case SearchRankingType.OutspeedIntoOptimalDef: return "Speed & Balanced";
+        case SearchRankingType.AttackIntoOptimalDef: return "Max Atk & Balanced";
+        case SearchRankingType.OutspeedIAttackIDefense: return "Speed & Max Atk & Balanced";
+        case SearchRankingType.BestDefenseThreshold: return "Best Defense Threshold";
+        case SearchRankingType.BestDefenseThresholdIntoAttack: return "BDT > Attack";
+        case SearchRankingType.OutspeedIntoBDT: return "Speed > BDT";
+        case SearchRankingType.OutspeedIntoBDTIntoAttack: return "Speed > BDT > Attack";
+    }
+    return "Unknown";
+}
 
 class MainParameters {
     public rankingType: SearchRankingType = SearchRankingType.MixedDefOptimal;
