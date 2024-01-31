@@ -14,11 +14,6 @@
         <link rel="stylesheet" type="text/css" href="styles/main.css">
     <script defer src="bundle.js"></script></head>
     <body>
-        <!--script>
-            function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-          }
-        </script-->
 
         <div class="page-wrapper">
             <header class="header-container">
@@ -38,31 +33,17 @@
                     <button id="focusTableButton">Focus Table</button>
                     <button id="advancedToggleButton">Advanced Mode</button>
                     <button id="ssTest">Screenshot Test</button>
-                    <button disabled>Toggle Dark Mode</button>
-                    <button disabled>Toggle Tooltips</button>
                 </div>
-                    <!--h2>Search the best raid counters fast</h2-->
-                    <!--div class="custom-tooltip">
-                        Hover me!
-                        <div class="tooltip-text">
-                            Sun from Drought
-                        </div>
-                    </div>
-                    <button title="I'm a tooltip">Random button</button-->
+
             </header>
 
             <div class="content-wrapper">
-                <!-- TOP ROW OF PARAMETERS -->
                 <div>
 
-                    <!-- START OF RAID BOSS PARAMETERS SECTION -->
-                    <!--div class="test-container"-->
                     <fieldset class="boss-parameter-collection top-level-fieldset parameter-centered">
                         <legend class="fieldset-top-legend">Raid Boss</legend>
-                        <!--h2>Raid Parameters</h2-->
 
                             <fieldset class="inner-fieldset">
-                                <!--legend class="fieldset-legend">Boss Stats</legend-->
                                 
                                     <div class="parameter-sequence-row">
                                         <div class="raid-preset-tab">
@@ -104,10 +85,6 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <!--label>6* Boss</label>
-                                            <select>
-                                                <option>Annihilape</option>
-                                            </select-->
                                             <div>
                                                 <img id="pokemonBossSprite" src="../assets/sprites/_unknown.png" class="sprite-raid-boss" width="128" height="128"> <!---->
                                             </div>
@@ -256,7 +233,6 @@
                                     </div>
                             </fieldset>
 
-                            <!--div class="boss-parameter-collection"-->
                             <fieldset class="inner-fieldset">
                                 <legend class="fieldset-inner-legend">Main Moveset</legend>
                                     <div class="moveset-container">
@@ -311,7 +287,6 @@
 
 
 
-
                     <!-- START OF MAIN PARAMETER ROW SECTION -->
                     <fieldset id="mainParams" class="top-level-fieldset parameter-centered">
                         <legend class="fieldset-top-legend">Main Parameters</legend>
@@ -345,13 +320,7 @@
                                 </select>
                                 <div class="tooltip-text">Calculate damage using normal damage or critical hits.</div>
                             </div>
-                            <!--div>
-                                <label>Ranking</label>
-                                <select>
-                                    <option value="1">Damage: Low to High</option>
-                                    <option value="2">National Dex #</option>
-                                </select>
-                            </div-->
+
                         </div>
                         <div class="parameter-sequence-row top-line-border">
                             <div class="parameter-section-title">Defender Parameters</div>
@@ -450,11 +419,8 @@
                         <legend class="fieldset-top-legend">Search Parameters</legend>
 
                         <!-- START OF SEARCH FILTERS SECTION -->
-                            <!--button type="button" id="filtersToggle">Expand</button-->
-                        <!-- TODO: change attribute to when the application is finished class="group collapsed" -->
                         <fieldset class="search-parameter-inner-fieldset inner-fieldset">
                             <legend class="fieldset-inner-legend">Search Filters</legend>
-                            <!--div id="filterParams" class="group fieldset-highlight"-->
                             <div class="parameter-sequence-row-even">
                                 <div>
                                     <label for="filterNFE">Evolution filter</label>
@@ -477,7 +443,6 @@
                                     <div class="whitelist-left">
                                         <label for="filterWhitelistSelect">Pokemon select:</label>
                                         <select id="filterWhitelistSelect">
-                                            <!-- Options will be dynamically added here -->
                                         </select>
                                         <button id="filterWhitelistAddButton">Add</button>
                                     </div>
@@ -487,7 +452,6 @@
                                 </div>
                                 <div class="whitelist-display">Whitelisted Entries</div>
                                 <ul id="filterWhitelist" class="whitelist-area">
-                                    <!-- Whitelisted entries will be dynamically added here -->
                                 </ul>
                             </div>
                             <div class="parameter-sequence-row-even top-line-border">
@@ -701,18 +665,6 @@
                                 <div class="parameter-section-title">Activate Abilities</div>
                             </div>
                             <div class="search-parameter-grid">
-                                <!--div class="search-parameter-item">
-                                    <label for="abilityEnableWeatherSetters">Enable Weather Setters</label>
-                                    <input type="checkbox" id="abilityEnableWeatherSetters">
-                                </div>
-                                <div class="search-parameter-item">
-                                    <label for="abilityEnableTerrainSetters">Enable Terrain Setters</label>
-                                    <input type="checkbox" id="abilityEnableTerrainSetters">
-                                </div>
-                                <div class="search-parameter-item">
-                                    <label for="abilityMeetDefensiveAbilities">Force Ability Conditions</label>
-                                    <input type="checkbox" id="abilityMeetDefensiveAbilities">
-                                </div-->
                                 <div class="search-parameter-item">
                                     <label for="abilityActivateTerrain">Terrain Setters</label>
                                     <input type="checkbox" id="abilityActivateTerrain" checked>
@@ -859,35 +811,11 @@
                                     <label for="abiltyEnableAirLock">Air Lock+</label>
                                     <input type="checkbox" id="abilityEnableAirLock" checked>
                                 </div>
-                                <!--div class="container">
-                                    <label for="">Proto/Quark</label>
-                                    <input type="checkbox" id="">
-                                </div>
-                                <--div class="container">
-                                    <label for="">Dauntless Shield</label>
-                                    <input type="checkbox" id="">
-                                </div>
-                                <div class="container">
-                                    <label for="">Imposter</label>
-                                    <input type="checkbox" id="">
-                                </div-->
                             </div>
                             <div class="parameter-sequence-row top-line-border">
                                 <div class="parameter-section-title">Force Triggers</div>
                             </div>
                             <div class="search-parameter-grid">
-                                <!--div class="search-parameter-item">
-                                    <label for="abilityEnableWeatherSetters">Enable Weather Setters</label>
-                                    <input type="checkbox" id="abilityEnableWeatherSetters">
-                                </div>
-                                <div class="search-parameter-item">
-                                    <label for="abilityEnableTerrainSetters">Enable Terrain Setters</label>
-                                    <input type="checkbox" id="abilityEnableTerrainSetters">
-                                </div>
-                                <div class="search-parameter-item">
-                                    <label for="abilityMeetDefensiveAbilities">Force Ability Conditions</label>
-                                    <input type="checkbox" id="abilityMeetDefensiveAbilities">
-                                </div-->
                                 <div class="search-parameter-item">
                                     <label for="abilityForceGrassPelt">Grass Pelt</label>
                                     <input type="checkbox" id="abilityForceGrassPelt" checked>
@@ -946,51 +874,18 @@
                                 <div class="parameter-section-title">Enable Items</div>
                             </div>
                             <div class="search-parameter-grid">
-                                <!--div class="search-parameter-item">
-                                    <label for="abilityEnableWeatherSetters">Enable Weather Setters</label>
-                                    <input type="checkbox" id="abilityEnableWeatherSetters">
-                                </div>
-                                <div class="search-parameter-item">
-                                    <label for="abilityEnableTerrainSetters">Enable Terrain Setters</label>
-                                    <input type="checkbox" id="abilityEnableTerrainSetters">
-                                </div>
-                                <div class="search-parameter-item">
-                                    <label for="abilityMeetDefensiveAbilities">Force Ability Conditions</label>
-                                    <input type="checkbox" id="abilityMeetDefensiveAbilities">
-                                </div-->
+
                                 <div class="search-parameter-item">
                                     <label for="">Mirror Herb</label>
                                     <input type="checkbox" id="" disabled>
                                 </div>
-                                <!--div class="container">
-                                    <label for="">Proto/Quark</label>
-                                    <input type="checkbox" id="">
-                                </div>
-                                <--div class="container">
-                                    <label for="">Dauntless Shield</label>
-                                    <input type="checkbox" id="">
-                                </div>
-                                <div class="container">
-                                    <label for="">Imposter</label>
-                                    <input type="checkbox" id="">
-                                </div-->
+
                             </div>
                             <div class="parameter-sequence-row top-line-border">
                                 <div class="parameter-section-title">Give Held Items</div>
                             </div>
                             <div class="search-parameter-grid">
-                                <!--div class="search-parameter-item">
-                                    <label for="abilityEnableWeatherSetters">Enable Weather Setters</label>
-                                    <input type="checkbox" id="abilityEnableWeatherSetters">
-                                </div>
-                                <div class="search-parameter-item">
-                                    <label for="abilityEnableTerrainSetters">Enable Terrain Setters</label>
-                                    <input type="checkbox" id="abilityEnableTerrainSetters">
-                                </div>
-                                <div class="search-parameter-item">
-                                    <label for="abilityMeetDefensiveAbilities">Force Ability Conditions</label>
-                                    <input type="checkbox" id="abilityMeetDefensiveAbilities">
-                                </div-->
+
                                 <div class="search-parameter-item">
                                         <label for="">Eviolite to NFE</label>
                                         <input type="checkbox" id="parameterItemEvioliteToNFE" checked>
@@ -1007,18 +902,6 @@
                                     <label for="">Light Ball to Pikachu</label>
                                     <input type="checkbox" id="" disabled>
                                 </div>
-                                <!--div class="container">
-                                    <label for="">Proto/Quark</label>
-                                    <input type="checkbox" id="">
-                                </div>
-                                <--div class="container">
-                                    <label for="">Dauntless Shield</label>
-                                    <input type="checkbox" id="">
-                                </div>
-                                <div class="container">
-                                    <label for="">Imposter</label>
-                                    <input type="checkbox" id="">
-                                </div-->
                             </div>
                         </fieldset>
                         <!-- END OF ITEM PARAMETERS SECTION -->
@@ -1027,30 +910,6 @@
                         <!-- START OF MOVE PARAMETERS SECTION -->
                         <fieldset class="search-parameter-inner-fieldset inner-fieldset">
                             <legend class="fieldset-inner-legend">Move Parameters</legend>
-                            <!--div class="boss-parameter-collection">
-                                <div class="group">
-                                    <div>
-                                        <label for="parameterMoveDummy1">Dummy</label>
-                                        <input type="checkbox" id="parameterMoveDummy1" disabled>
-                                    </div>
-                                    <select id="parameterMoveDummy2" disabled>
-                                        <option value="" selected>None</option>
-                                    </select>
-                                </div>
-                                <div class="group">
-                                    <div>
-                                        <label for="parameterFieldLockWeather">Lock Weather</label>
-                                        <input type="checkbox" id="parameterFieldLockWeather">
-                                    </div>
-                                    <select id="parameterFieldWeatherSelect">
-                                        <option value="" selected>No weather</option>
-                                        <option value="Sun">Sun</option>
-                                        <option value="Rain">Rain</option>
-                                        <option value="Sand">Sand</option>
-                                        <option value="Snow">Snow</option>
-                                    </select>
-                                </div>
-                            </div-->
                             <div class="parameter-sequence-row">
                                 <div class="parameter-section-title">Multi-Strike Moves</div>
                             </div>
@@ -1293,7 +1152,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <!-- Results will be added here dynamically -->
                                 </tbody>
                             </table>
                             <div id="resultTableWatermark">
