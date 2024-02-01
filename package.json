@@ -4,8 +4,10 @@
   "description": "The quickest, easiest and most complete Tera Raid calculator!",
   "main": "main.js",
   "scripts": {
-    "build": "webpack --mode production",
-    "start": "webpack serve --open --port 3000",
+    "start": "webpack serve --config webpack.dev.js --open --port 3000",
+    "build": "webpack --config webpack.config.js",
+    "build:dev": "webpack --config webpack.dev.js",
+    "build:prod": "webpack --config webpack.prod.js",
     "test": "jest",
     "test:watch": "jest --watch"
   },
