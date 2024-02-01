@@ -45,9 +45,9 @@ function assertInitializationSuccess() {
 
 const UIElements = {
 
-    // Debug message (this is pointless, use console)
-    debug: {
-        errorHeader: getUIElement<HTMLHeadingElement>("errorheader", true ) as HTMLHeadingElement,
+    HelpSection: {
+        UserGuidePopup: getUIElement<HTMLElement>('userGuide'),
+        UserGuideToggle: getUIElement<HTMLButtonElement>('userGuideButton'),
     },
 
     // ========================================================================
@@ -73,6 +73,7 @@ const UIElements = {
         ExportImportButton: getUIElement<HTMLButtonElement>('exportImportButton'),
         ExportReturnButton: getUIElement<HTMLButtonElement>('exportReturnButton'),
         ExportTextContent: getUIElement<HTMLTextAreaElement>('exportTextArea'),
+        ExportErrorMessage: getUIElement<HTMLElement>('exportErrorMessage'),
 
         // Raid preset tab buttons
         CustomPresetButton: getUIElement<HTMLButtonElement>('pokemonRaidPresetCustomButton'),

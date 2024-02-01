@@ -268,7 +268,7 @@ export function readBossMainMoveset(gen: Generation, parameters: RankingParamete
       UIElements.RaidBoss.BossHPCalc.textContent = hpStat.toString();
     }
     catch(e) {
-      UIElements.debug.errorHeader.textContent = "Error";
+      
     }
   }
 
@@ -287,7 +287,7 @@ export function readBossMainMoveset(gen: Generation, parameters: RankingParamete
       UIElements.RaidBoss.BossAtkCalc.textContent = finalStat.toString();
     }
     catch(e) {
-      UIElements.debug.errorHeader.textContent = "Error";
+      
     }
   }
 
@@ -306,7 +306,7 @@ export function readBossMainMoveset(gen: Generation, parameters: RankingParamete
       UIElements.RaidBoss.BossDefCalc.textContent = finalStat.toString();
     }
     catch(e) {
-      UIElements.debug.errorHeader.textContent = "Error";
+      
     }
   }
 
@@ -325,7 +325,7 @@ export function readBossMainMoveset(gen: Generation, parameters: RankingParamete
       UIElements.RaidBoss.BossSpaCalc.textContent = finalStat.toString();
     }
     catch(e) {
-      UIElements.debug.errorHeader.textContent = "Error";
+      
     }
   }
 
@@ -344,7 +344,7 @@ export function readBossMainMoveset(gen: Generation, parameters: RankingParamete
       UIElements.RaidBoss.BossSpdCalc.textContent = finalStat.toString();
     }
     catch(e) {
-      UIElements.debug.errorHeader.textContent = "Error";
+      
     }
   }
 
@@ -364,7 +364,7 @@ export function readBossMainMoveset(gen: Generation, parameters: RankingParamete
       UIElements.RaidBoss.BossSpeCalc.textContent = finalStat.toString();
     }
     catch(e) {
-      UIElements.debug.errorHeader.textContent = "Error";
+      
     }
   }
 

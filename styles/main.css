@@ -101,8 +101,29 @@ body.dark-mode {
     transform: rotate(360deg);
   }
 }
-  
-    
+
+
+/* ============================================================================= */
+/* USER GUIDE SECTION */
+
+.user-guide-ask {
+  font-weight: bold;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+.user-guide-answer {
+  margin-left: 40px;
+  margin-right: 40px;
+}
+
+.user-guide-verticalspace-small {
+  margin-top: 10px;
+}
+.user-guide-verticalspace-large {
+  margin-top: 40px;
+}
+
 /* ============================================================================= */
 /* PAGE HEADER STYLES */
 
@@ -605,127 +626,7 @@ body.dark-mode {
 }
   
   
-/* ============================================================================= */
-/* POKEMON TYPE BACKGROUND COLOR */
-  
-.normal-type {
-  color: white;
-  text-align: center;
-  background-color: #a8a878;
-}
 
-.fighting-type {
-  color: white;
-  text-align: center;
-  background-color: #c03028;
-}
-
-.flying-type {
-  color: white;
-  text-align: center;
-  background-color: #a890f0;
-}
-
-.poison-type {
-  color: white;
-  text-align: center;
-  background-color: #a040a0;
-}
-
-.ground-type {
-  color: white;
-  text-align: center;
-  background-color: #e0c068;
-}
-
-.rock-type {
-  color: white;
-  text-align: center;
-  background-color: #b8a038;
-}
-
-.bug-type {
-  color: white;
-  text-align: center;
-  background-color: #a8b820;
-}
-
-.ghost-type {
-  color: white;
-  text-align: center;
-  background-color: #705898;
-}
-
-.steel-type {
-  color: white;
-  text-align: center;
-  background-color: #b8b8d0;
-}
-
-.fire-type {
-  color: white;
-  text-align: center;
-  background-color: #f08030;
-}
-
-.water-type {
-  color: white;
-  text-align: center;
-  background-color: #6890f0;
-}
-
-.grass-type {
-  color: white;
-  text-align: center;
-  background-color: #78c850;
-}
-
-.electric-type {
-  color: white;
-  text-align: center;
-  background-color: #f8d030;
-}
-
-.psychic-type {
-  color: white;
-  text-align: center;
-  background-color: #f85888;
-}
-
-.ice-type {
-  color: white;
-  text-align: center;
-  background-color: #98d8d8;
-}
-
-.dragon-type {
-  color: white;
-  text-align: center;
-  background-color: #7038f8;    
-}
-
-.dark-type {
-  color: white;
-  text-align: center;
-  background-color: #705848;
-}
-
-.fairy-type {
-  color: white;
-  text-align: center;
-  background-color: #ee99ac;
-  /*background: linear-gradient( transparent 0%, transparent 10%, #ee99ac 10%, #ee99ac 100%);*/
-}
-
-.stellar-type {
-  color: white;
-  text-align: center;
-  font-weight: bold;
-  background-image: conic-gradient( #fde247, #f8a51a, #f35f29, #e44c6f,
-    #c76bbc, #8341c9, #765dbd, #737da7, #879eab,
-    #5ebce2, #33beea, #287ada, #385ec3, #4da2ba,
-    #6bdf54, #d2e074, #e4e8c6, #e7cc9c );
-}
 
 /* ============================================================================= */
 /* ============================================================================= */
@@ -750,9 +651,11 @@ body.dark-mode {
 
 .boss-summary {
   /*border: 1px solid black;*/
+
   padding-bottom: 10px;
-  margin-left: 48px;
-  margin-right: 48px;
+  padding-left: 48px;
+  padding-right: 48px;
+  padding-top: 10px;
 }
 
 .boss-summary-preset {
@@ -1108,7 +1011,210 @@ h2 {
 h3 {
   margin-left: 30px;
 }
-    
+
+
+/* ============================================================================= */
+/* POKEMON TYPE BACKGROUND COLOR */
+  
+.normal-type {
+  color: white;
+  text-align: center;
+  background-color: #a8a878;
+}
+
+.fighting-type {
+  color: white;
+  text-align: center;
+  background-color: #c03028;
+}
+
+.flying-type {
+  color: white;
+  text-align: center;
+  background-color: #a890f0;
+}
+
+.poison-type {
+  color: white;
+  text-align: center;
+  background-color: #a040a0;
+}
+
+.ground-type {
+  color: white;
+  text-align: center;
+  background-color: #e0c068;
+}
+
+.rock-type {
+  color: white;
+  text-align: center;
+  background-color: #b8a038;
+}
+
+.bug-type {
+  color: white;
+  text-align: center;
+  background-color: #a8b820;
+}
+
+.ghost-type {
+  color: white;
+  text-align: center;
+  background-color: #705898;
+}
+
+.steel-type {
+  color: white;
+  text-align: center;
+  background-color: #b8b8d0;
+}
+
+.fire-type {
+  color: white;
+  text-align: center;
+  background-color: #f08030;
+}
+
+.water-type {
+  color: white;
+  text-align: center;
+  background-color: #6890f0;
+}
+
+.grass-type {
+  color: white;
+  text-align: center;
+  background-color: #78c850;
+}
+
+.electric-type {
+  color: white;
+  text-align: center;
+  background-color: #f8d030;
+}
+
+.psychic-type {
+  color: white;
+  text-align: center;
+  background-color: #f85888;
+}
+
+.ice-type {
+  color: white;
+  text-align: center;
+  background-color: #98d8d8;
+}
+
+.dragon-type {
+  color: white;
+  text-align: center;
+  background-color: #7038f8;    
+}
+
+.dark-type {
+  color: white;
+  text-align: center;
+  background-color: #705848;
+}
+
+.fairy-type {
+  color: white;
+  text-align: center;
+  background-color: #ee99ac;
+  /*background: linear-gradient( transparent 0%, transparent 10%, #ee99ac 10%, #ee99ac 100%);*/
+}
+
+.stellar-type {
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  background-image: conic-gradient( #fde247, #f8a51a, #f35f29, #e44c6f,
+    #c76bbc, #8341c9, #765dbd, #737da7, #879eab,
+    #5ebce2, #33beea, #287ada, #385ec3, #4da2ba,
+    #6bdf54, #d2e074, #e4e8c6, #e7cc9c );
+}
+
+
+.normal-bgbanner {
+  background: linear-gradient( to top right, #a8a878, white  );
+}
+
+.fighting-bgbanner {
+  background: linear-gradient( to top right, #c03028, white  );
+}
+
+.flying-bgbanner {
+  background: linear-gradient( to top right, #a890f0, white  );
+}
+
+.poison-bgbanner {
+  background: linear-gradient( to top right, #a040a0, white  );
+}
+
+.ground-bgbanner {
+  background: linear-gradient( to top right, #e0c068, white  );
+}
+
+.rock-bgbanner {
+  background: linear-gradient( to top right, #b8a038, white  );
+}
+
+.bug-bgbanner {
+  background: linear-gradient( to top right, #a8b820, white  );
+}
+
+.ghost-bgbanner {
+  background: linear-gradient( to top right, #705898, white  );
+}
+
+.steel-bgbanner {
+  background: linear-gradient( to top right, #b8b8d0, white  );
+}
+
+.fire-bgbanner {
+  background: linear-gradient( to top right, #f08030, white  );
+}
+
+.water-bgbanner {
+  background: linear-gradient( to top right, #6890f0, white  );
+}
+
+.grass-bgbanner {
+  background: linear-gradient( to top right, #78c850, white  );
+}
+
+.electric-bgbanner {
+  background: linear-gradient( to top right, #f8d030, white  );
+}
+
+.psychic-bgbanner {
+  background: linear-gradient( to top right, #f85888, white  );
+}
+
+.ice-bgbanner {
+  background: linear-gradient( to top right, #98d8d8, white  );
+}
+
+.dragon-bgbanner {
+  background: linear-gradient( to top right, #7038f8, white  );
+}
+
+.dark-bgbanner {
+  background: linear-gradient( to top right, #705848, white  );
+}
+
+.fairy-bgbanner {
+  background: linear-gradient( to top right, #ee99ac, white  );
+}
+
+.stellar-bgbanner {
+  background-image: conic-gradient( #fde247, #f8a51a, #f35f29, #e44c6f,
+    #c76bbc, #8341c9, #765dbd, #737da7, #879eab,
+    #5ebce2, #33beea, #287ada, #385ec3, #4da2ba,
+    #6bdf54, #d2e074, #e4e8c6, #e7cc9c );
+}
+
   
 /* ============================================================================= */
 /* RESULT DAMAGE BACKGROUND COLOR */

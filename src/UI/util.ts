@@ -13,7 +13,7 @@ export function populateDropdown( select: HTMLSelectElement, options: string[] )
     });
 }
 
-export function setTypeBackgroundColor(cell: HTMLElement, type: string ) : void {
+export function setTypeColor(cell: HTMLElement, type: string ) : void {
     if ( type == 'Normal') {
         cell.classList.add('normal-type');
     }
@@ -72,13 +72,82 @@ export function setTypeBackgroundColor(cell: HTMLElement, type: string ) : void 
         cell.classList.add('stellar-type');
     }
 }
-export function clearTypeBackground( element: HTMLElement ) {
+export function setTypeBackgroundColor(cell: HTMLElement, type: string ) : void {
+    if ( type == 'Normal') {
+        cell.classList.add('normal-bgbanner');
+    }
+    else if ( type == 'Fighting') {
+        cell.classList.add('fighting-bgbanner');
+    }
+    else if ( type == 'Flying') {
+        cell.classList.add('flying-bgbanner');
+    }
+    else if ( type == 'Poison') {
+        cell.classList.add('poison-bgbanner');
+    }
+    else if ( type == 'Ground') {
+        cell.classList.add('ground-bgbanner');
+    }
+    else if ( type == 'Rock') {
+        cell.classList.add('rock-bgbanner');
+    }
+    else if ( type == 'Bug') {
+        cell.classList.add('bug-bgbanner');
+    }
+    else if ( type == 'Ghost') {
+        cell.classList.add('ghost-bgbanner');
+    }
+    else if ( type == 'Steel') {
+        cell.classList.add('steel-bgbanner');
+    }
+    else if ( type == 'Fire') {
+        cell.classList.add('fire-bgbanner');
+    }
+    else if ( type == 'Water') {
+        cell.classList.add('water-bgbanner');
+    }
+    else if ( type == 'Grass') {
+        cell.classList.add('grass-bgbanner');
+    }
+    else if ( type == 'Electric') {
+        cell.classList.add('electric-bgbanner');
+    }
+    else if ( type == 'Psychic') {
+        cell.classList.add('psychic-bgbanner');
+    }
+    else if ( type == 'Ice') {
+        cell.classList.add('ice-bgbanner');
+    }
+    else if ( type == 'Dragon') {
+        cell.classList.add('dragon-bgbanner');
+    }
+    else if ( type == 'Dark') {
+        cell.classList.add('dark-bgbanner');
+    }
+    else if ( type == 'Fairy') {
+        cell.classList.add('fairy-bgbanner');
+    }
+    else if ( type == 'Stellar') {
+        cell.classList.add('stellar-bgbanner');
+    }
+}
+export function clearTypeColoring( element: HTMLElement ) {
     element.classList.forEach( className => {
       if ( className.includes('-type')) {
         element.classList.remove(className);
       }
     });
-  }
+}
+
+export function clearTypeBackground( element: HTMLElement ) {
+    element.classList.forEach( className => {
+      if ( className.includes('-bgbanner')) {
+        element.classList.remove(className);
+      }
+    });
+}
+
+
 
 export function stringFromEVSpread(nature: string, evspread: StatsTable<number> ) {
     let spread: string = nature;
@@ -140,7 +209,7 @@ export function setValidBackgroundColor(cell: HTMLTableCellElement, state: boole
 
 
 export function getImagePath(pokeName: string) {
-    let path = "../assets/sprites/";
+    let path = "assets/sprites/";
     let extension = ".png";
     return path + pokeName.toLowerCase() + extension;
 }
@@ -184,9 +253,9 @@ export function createTableBodyCell( bodyRow: HTMLTableRowElement, content: stri
 export function colorBossInfoMove( moveElement: HTMLElement, move: Move, boss: Pokemon ) {
 // Set background color matching the type
 if ( move.name == "Tera Blast") {
-    setTypeBackgroundColor( moveElement, boss.teraType! );
+    setTypeColor( moveElement, boss.teraType! );
 }
 else {
-    setTypeBackgroundColor( moveElement, move.type );
+    setTypeColor( moveElement, move.type );
 }
 }

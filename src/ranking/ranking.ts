@@ -196,21 +196,12 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
         // Otherwise critical is its default value, which could be true for guaranteed critical moves (Flower Trick, etc)
         eMovesSecondaryDamage.push( moveCopy );
     }
-
     let isCalculateSecondaryDamage =
         parameters.results.moveDamageVisibility == PrintVisibleDamage.BestMoveBoth || PrintVisibleDamage.BothMoveBoth || PrintVisibleDamage.MainMoveBoth || PrintVisibleDamage.BestMainExtraPoolBoth;
 
-    
-    
-    //let rankingResults: RankingResultEntry[] = [];
-    
-    // Get all species data for quick lookups ??
-    //const speciesData = [...gen.species];
-
     if ( parameters.ability.disableAttackerAbility ) {
-        raidBoss.ability = 'Honey Gather' as AbilityName;
+        raidBoss.ability = undefined;
     }
-
     if ( parameters.items.disableBossItem ) {
         raidBoss.item = undefined;
     }
@@ -220,7 +211,6 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
 
     // Determine STAB types against boss while accounting for ability immunities
     let raidBossTypeData = gen.types.get(Smogon.toID(raidBoss.teraType));
-    //let STABvsRaidBoss = 
 
     let entriesAnalyzed = 0;
     let filtered = 0;
@@ -239,12 +229,9 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
         localFilteringData = localFilteringData.filter( (item) => parameters.filters.whiteListIDs.includes( item.name ) );
     }
 
-    // #TODO: Extra Moves
     let finalResult: RankingResult = new RankingResult( parameters, moves, eMoves, raidBoss, field );
 
     // Perform damage checks against all filterable species
-    /*let subFilteringData: FilterDataEntry[] = [ filteringData.find( item => item.name == 'Scream Tail' || item.name == 'Flutter Mane') as FilterDataEntry];
-    for ( const data of subFilteringData ) {*/
     for ( const data of localFilteringData ) {
 
         let speciesEntry = gen.species.get(Smogon.toID(data.name))!;
@@ -297,8 +284,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
         // Check against all abilities
         let abilities: string[] = [];
         if ( parameters.ability.disableDefenderAbility ) {
-            // #TODO: Better solution? This ability doesn't do anything so effectively nullifies the ability slot
-            abilities.push("Honey Gather");
+            abilities.push("");
         }
         else {
             // Slot 1 always exists
@@ -1025,7 +1011,7 @@ function filterAbilities( abilities: string[], side: BattlefieldSide, parameters
 
     // Add "no ability" if everything was filtered
     if ( reviewedAbilities.length == 0 ) {
-        reviewedAbilities.push("Honey Gather");
+        reviewedAbilities.push("");
     }
 
     return reviewedAbilities;

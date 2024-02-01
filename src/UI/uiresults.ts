@@ -8,7 +8,7 @@ import { showExtraActions } from "./extractiontable";
 import { PostSearchFilter } from "./postsearchfilter";
 import { SearchResult } from "./searchresult";
 import UIElements from "./uielements";
-import { clearTypeBackground, colorBossInfoMove, createTableBodyCell, createTableHeadCell, getImagePath, setDamageBackgroundColor, setTypeBackgroundColor, setValidBackgroundColor, stringFromEVSpread } from "./util";
+import { clearTypeBackground, clearTypeColoring, colorBossInfoMove, createTableBodyCell, createTableHeadCell, getImagePath, setDamageBackgroundColor, setTypeBackgroundColor, setTypeColor, setValidBackgroundColor, stringFromEVSpread } from "./util";
 
 
 
@@ -141,14 +141,14 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
           cellType1.textContent = result.type1;
           cellType2.textContent = result.type2;
           cellType2.classList.add('Limiter');
-          setTypeBackgroundColor( cellType1, result.type1 );
-          setTypeBackgroundColor( cellType2, result.type2 );
+          setTypeColor( cellType1, result.type1 );
+          setTypeColor( cellType2, result.type2 );
         }
         else {
           const cellTeraType = row.insertCell(); // Type Tera
           cellTeraType.classList.add('Limiter');
           cellTeraType.textContent = rankingParameters.mainparams.defenderTeraType;
-          setTypeBackgroundColor( cellTeraType, rankingParameters.mainparams.defenderTeraType );
+          setTypeColor( cellTeraType, rankingParameters.mainparams.defenderTeraType );
         }
   
         if ( search.bestMoveSize > 0 ) {
@@ -283,13 +283,11 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
     UIElements.Results.BossInfoSprite.src = getImagePath( search.rankingData.raidBoss.name );
   
     // Remove any previous type coloring
-    UIElements.Results.BossInfoTeraType.classList.forEach( className => {
-      if ( className.includes('-type')) {
-        UIElements.Results.BossInfoTeraType.classList.remove(className);
-      }
-    });
+    clearTypeBackground( UIElements.Results.BossInfoContainer );
+    clearTypeColoring( UIElements.Results.BossInfoTeraType );
     UIElements.Results.BossInfoTeraType.textContent = "Tera " + search.rankingData.raidBoss.teraType!;
-    setTypeBackgroundColor( UIElements.Results.BossInfoTeraType, search.rankingData.raidBoss.teraType!)
+    setTypeColor( UIElements.Results.BossInfoTeraType, search.rankingData.raidBoss.teraType!);
+    setTypeBackgroundColor( UIElements.Results.BossInfoContainer, search.rankingData.raidBoss.teraType!);
   
     UIElements.Results.BossInfoLevel.textContent = search.rankingData.raidBoss.level.toString();
     UIElements.Results.BossInfoItem.textContent = ( search.rankingData.raidBoss.item ? search.rankingData.raidBoss.item : "-None-" );
@@ -304,10 +302,10 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
     UIElements.Results.BossInfoSpeValue.textContent = search.rankingData.raidBoss.stats.spe.toString();
   
     /* MAIN MOVESET */
-    clearTypeBackground(UIElements.Results.BossInfoMain1);
-    clearTypeBackground(UIElements.Results.BossInfoMain2);
-    clearTypeBackground(UIElements.Results.BossInfoMain3);
-    clearTypeBackground(UIElements.Results.BossInfoMain4);
+    clearTypeColoring(UIElements.Results.BossInfoMain1);
+    clearTypeColoring(UIElements.Results.BossInfoMain2);
+    clearTypeColoring(UIElements.Results.BossInfoMain3);
+    clearTypeColoring(UIElements.Results.BossInfoMain4);
   
     UIElements.Results.BossInfoMain1.textContent = search.rankingData.mainMoves[0].name;
     colorBossInfoMove(UIElements.Results.BossInfoMain1, search.rankingData.mainMoves[0], search.rankingData.raidBoss );
@@ -334,10 +332,10 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
     }
   
     /* EXTRA MOVES */
-    clearTypeBackground(UIElements.Results.BossInfoExtra1);
-    clearTypeBackground(UIElements.Results.BossInfoExtra2);
-    clearTypeBackground(UIElements.Results.BossInfoExtra3);
-    clearTypeBackground(UIElements.Results.BossInfoExtra4);
+    clearTypeColoring(UIElements.Results.BossInfoExtra1);
+    clearTypeColoring(UIElements.Results.BossInfoExtra2);
+    clearTypeColoring(UIElements.Results.BossInfoExtra3);
+    clearTypeColoring(UIElements.Results.BossInfoExtra4);
   
     if ( search.rankingData.extraMoves.length >= 1 ) {
       UIElements.Results.BossInfoExtra1.textContent = search.rankingData.extraMoves[0].name;
@@ -378,7 +376,7 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
   
     /* Show action table */
     if ( bossPreset ) {
-      showExtraActions( gen, bossPreset.extraActions , UIElements.Results.BossInfoExtraTable );
+      showExtraActions( gen, bossPreset.extraActions, UIElements.Results.BossInfoExtraTable, search.rankingData.raidBoss );
       UIElements.Results.BossInfoExtraSection.classList.remove('collapsed');
     }
     else {

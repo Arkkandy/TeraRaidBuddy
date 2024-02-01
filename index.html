@@ -31,10 +31,68 @@
     
                 <div>
                     <button id="focusTableButton">Focus Table</button>
-                    <button id="advancedToggleButton">Advanced Mode</button>
                     <button id="ssTest">Screenshot Test</button>
+                    <button id="advancedToggleButton">Advanced Mode</button>
+                    <button id="userGuideButton">User Guide</button>
                 </div>
             </header>
+
+            <div id="userGuide" class="search-result-section collapsed">
+                <h2 class="parameter-centered">User Guide</h2>
+
+                <fieldset class="inner-fieldset">
+                    <div class="user-guide-ask">How do I get started?</div>
+                    <div class="user-guide-answer">Select the boss preset you're about to face, press Calculate at the top of the page, let the browser scroll down to the results and now pick one of the best counters! The lowest damage is not necessarily the best answer always as there are many factors to consider, but it will help you stay alive longer in raids which leads to more victories!</div>
+                </fieldset>
+
+                <fieldset class="inner-fieldset">
+                    <div class="user-guide-ask">What counter should I pick?</div>
+
+                    <div class="user-guide-answer">Tera Raid Buddy shows you how the best stats match up to any raid boss - whether you take an offensive or supportive build is entirely up to you.</div>
+                    <div class="user-guide-answer">Aside from lowest damage, you should consider the secondary effects of the bosses' main moves and abilities and how to effectively counter them. And prepare for the extra actions!</div>
+                </fieldset>
+                
+                <fieldset class="inner-fieldset">
+                    <div class="user-guide-ask">What are the EV training methods?</div>
+                    <div class="user-guide-answer">The final stats of the raid counters are determined by the EV Training Method which you can freely choose. Damage is always compared against the maximum possible damage out of the calculated damage range. The first four methods are self-explanatory but the others will do the following:</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Mixed Defense Simple</span> - Tests 6 possible spreads including the maximum investment combinations between HP, Def and SpD as well as a +Def or a +SpD nature.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Optimal Defensive Balance</span> - Finds the lowest investment EV spread for the best possible balance between physical and special damage taken.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > Defenses</span> - First invest to outspeed the raid boss, if possible, and then invest the remaining EVs in Optimal Defensive Balance.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Attack > Defenses</span> - Fully invest in Attack/Sp.Attack and then invest the remaining 256 EVs in Optimal Defensive Balance.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > Attack > Defenses</span> - First, invest to outspeed. Second, full investment in Attack/Sp.Attack. Third, with the ramining EVs if any invest in Optimal Defensive Balance.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Best Defense Threshold</span> - Use the EV spread with the minimum investment to reach the best possible defensive threshold with the unallocated EVs.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">BDT > Attack</span> - Train for the Best Defensive Threshold and use any remaining EVs offensively.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > BDT</span> - First invest to outspeed and then train for the Best Defense Threshold. </div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > BDT > Attack</span> - First invest to outspeed, then train for the Best Defense Threshold, finally invest the rest of EVs in Attack/Sp.Attack.</div>
+                </fieldset>
+
+                <fieldset class="inner-fieldset">
+                    <div class="user-guide-ask">So.. what exactly is the Best Defense Threshold?</div>
+                    <div class="user-guide-answer">In the context of my ranking algorithm, the threshold is the number of turns a Pokémon will survive. Taking 100% or more damage is a 1 shot. Taking less than 100% damage requires at least 2 turns to KO. Less than 50% damage at least 3 turns. And so on.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small">As an example, one particular Pokemon could have a minimum survival threshold of 2 turns with zero EV investment. And with full investment perhaps it could reach a threshold of 4 turns by taking less than 33% damage.</div>
+                    <div class="user-guide-answer">What the Best Defense Threshold algorithm does is it calculates the EV spread that lies on the border of the highest threshold achievable - the minium investment to ensure this Pokémon survives 4 turns.</div>
+                    <div class="user-guide-answer">This is why the results you see in the table will be percentage values just below 50% or 33% or 25%, etc.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small">Some Pokémon will have exactly those values probably because it was not possible to invest any higher.</div>
+                </fieldset>
+
+                <fieldset class="inner-fieldset">
+                    <div class="user-guide-ask">What does the nature preference do?</div>
+                    <div class="user-guide-answer">Depending on the EV Training Method, the ranking algorithm will select a certain nature for your raid counters. The raised stat will be either a defensive stat, offensive stat or speed stat, as determined by the specific training method you selected.</div>
+                    <div class="user-guide-answer">The hindered stat will be determined by your preference.</div>
+                    <div class="user-guide-answer">For the default setting "Hinder Lowest Of Atk Spa" Pokemon with higher base attack will have physical oriented natures (eg. Adamant, Jolly, Careful, Impish), and higher special attack will have special oriented natures (eg. Modest, Timid, Bold, Calm).</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small">Nature preference for paradox Pokemon is more complex. If you select "Hinder Highest Stat" the algorithm will not hinder Defense or Sp.Defense if they matter against the specific boss.</div>
+                </fieldset>
+
+                <fieldset class="inner-fieldset">
+                    <div class="user-guide-ask" style="font-weight:bold">Why is it that some of the raid counters have less than 252 Def or SpD?</div>
+                    <div class="user-guide-answer">When using the Optimal Defensive Balance method, or similar methods, the ranking algorithm will find the best spread with least investment. So, having 240 Def or 252 Def, or whatever the specific numbers were, would not change the maximum damage taken.</div>
+                </fieldset>
+
+                <fieldset class="inner-fieldset">
+                    <div class="user-guide-ask" style="font-weight:bold">I think I found a bug. Now what?</div>
+                    <div class="user-guide-answer">Please let me know. Either through issues on github, or dm me on reddit. I will work on bug fixes when I have the time to.</div>
+                </fieldset>
+            </div>
 
             <div class="content-wrapper">
                 <!-- TOP ROW OF PARAMETERS -->
@@ -317,7 +375,7 @@
                                     <option value="N">Rank by Normal Damage</option>
                                     <option value="C">Rank by Critical Damage</option>
                                 </select>
-                                <div class="tooltip-text">Calculate damage using normal damage or critical hits.</div>
+                                <div class="tooltip-text">Rank and stats are based on normal damage or critical hits.</div>
                             </div>
                         </div>
                         <div class="parameter-sequence-row top-line-border">
@@ -332,7 +390,7 @@
                                     <option value="HinderOnlySpa">Hinder Only Spa</option>
                                 </select>
                             </div>
-                            <div class="parameter-spacing">
+                            <div class="parameter-spacing custom-tooltip">
                                 <label for="parameterSearchDefNaturePQ">Nature Preference PQ</label>
                                 <select id="parameterSearchDefNaturePQ">
                                     <option value="HinderHighestStat" selected>Hinder Highest Stat</option>
@@ -346,6 +404,9 @@
                                     <option value="HinderOnlySpd">Hinder Only Spd</option>
                                     <option value="HinderOnlySpe">Hinder Only Spe</option>
                                 </select>
+                                <div class="tooltip-text">
+                                    Nature preference when Protosynthesis or Quark Drive are activated.
+                                </div>
                             </div>
                             <div class="parameter-spacing">
                                 <label for="parameterDefenderTeraType">Defender Tera Type</label>
@@ -644,19 +705,6 @@
                                     <input type="checkbox" id="abilityDisableDefender">
                                 </div>
                             </div>
-                            <div class="parameter-sequence-row-even">
-                                <div class="parameter-centered">
-                                    <label for="abilityOverridePQStat">Override Proto/Quark stat</label>
-                                    <select id="abilityOverridePQStat" title="Not implemented" disabled>
-                                        <option value="" selected>Auto</option>
-                                        <option value="">Attack</option>
-                                        <option value="">Defense</option>
-                                        <option value="">SpAttack</option>
-                                        <option value="">SpDefense</option>
-                                        <option value="">Speed</option>
-                                    </select>
-                                </div>
-                            </div>
                             <div class="parameter-sequence-row top-line-border">
                                 <div class="parameter-section-title">Activate Abilities</div>
                             </div>
@@ -812,11 +860,14 @@
                                 <div class="parameter-section-title">Force Triggers</div>
                             </div>
                             <div class="search-parameter-grid">
-                                <div class="search-parameter-item">
+                                <div class="search-parameter-item custom-tooltip">
                                     <label for="abilityForceGrassPelt">Grass Pelt</label>
                                     <input type="checkbox" id="abilityForceGrassPelt" checked>
+                                    <div class="tooltip-text">
+                                        Activate Grass Pelt by setting Grassy Terrain.
+                                    </div>
                                 </div>
-                                <div class="search-parameter-item">
+                                <div class="search-parameter-item custom-tooltip">
                                     <label for="abilityForceMarvelScale">Marvel Scale</label>
                                     <select id="abilityForceMarvelScale">
                                         <option value="">None</option>
@@ -827,14 +878,23 @@
                                         <option value="slp">Asleep</option>
                                         <option value="frz">Frozen</option>
                                     </select>
+                                    <div class="tooltip-text">
+                                        Activate Marvel Scale by setting a status effect.
+                                    </div>
                                 </div>
-                                <div class="search-parameter-item">
+                                <div class="search-parameter-item custom-tooltip">
                                     <label for="abilityForceQuarkDrive">Quark Drive</label>
                                     <input type="checkbox" id="abilityForceQuarkDrive">
+                                    <div class="tooltip-text">
+                                        Activate Quark Drive by setting Electric Terrain.
+                                    </div>
                                 </div>
-                                <div class="search-parameter-item">
+                                <div class="search-parameter-item custom-tooltip">
                                     <label for="abilityForceProtosynthesis">Protosynthesis</label>
                                     <input type="checkbox" id="abilityForceProtosynthesis">
+                                    <div class="tooltip-text">
+                                        Activate Protosynthesis by setting Sunny Weather.
+                                    </div>
                                 </div>
                             </div>
                         </fieldset>
@@ -863,7 +923,7 @@
                                 </div>
                             </div>
                             <div class="parameter-sequence-row top-line-border">
-                                <div class="parameter-section-title">Enable Items</div>
+                                <div class="parameter-section-title">Mirror Herb Stats Boosts</div>
                             </div>
                             <div class="search-parameter-grid">
                                 <div class="search-parameter-item">
@@ -1075,9 +1135,9 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div>
-                            <div class="versus">VS</div>
+                            <div>
+                                <div class="versus">VS</div>
+                            </div>
                         </div>
                         <div id="resultsEffectsAndFilters" class="result-effects-info collapsed">
                             -
@@ -1154,9 +1214,11 @@
         <div id="bossExportPrompt" class="backgroundOverlay collapsed">
             <div class="boss-export-import">
                 <div>
-                    <span style="font-weight:bold;font-size:18px;">Boss data </span>
+                    <span style="font-weight:bold;font-size:18px;">Import Boss data </span>
                     <span>(Imports can only be made into custom mode)</span>
                     
+                </div>
+                <div id="exportErrorMessage">
                 </div>
                 <div class="parameter-sequence-row vertical-spacing">
                     <button id="exportImportButton">Import</button>

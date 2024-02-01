@@ -1,10 +1,10 @@
 import { ExtraAction } from "../presets/raidpreset";
-import { toID } from "../smogon-calc";
+import { Pokemon, toID } from "../smogon-calc";
 import { Generation } from "../smogon-calc/data/interface";
-import { createTableBodyCell, setTypeBackgroundColor } from "./util";
+import { colorBossInfoMove, createTableBodyCell, setTypeColor } from "./util";
 
 
-export function showExtraActions( gen: Generation, actions: ExtraAction[] | undefined, table: HTMLTableElement ) {
+export function showExtraActions( gen: Generation, actions: ExtraAction[] | undefined, table: HTMLTableElement, moveUser?: Pokemon ) {
     // Clear previous contents
     let actiontbody = table.tBodies[0];
     actiontbody.innerHTML = "";
@@ -16,7 +16,15 @@ export function showExtraActions( gen: Generation, actions: ExtraAction[] | unde
         if ( action.description.startsWith("Move:")) {
           let move = gen.moves.get( toID(action.description.slice(6)));
           if ( move ) {
-            setTypeBackgroundColor( actionDesc, move.type );
+            if ( move.name == 'Tera Blast' && moveUser != undefined ) {
+              if ( moveUser.teraType ) {
+                setTypeColor( actionDesc, moveUser.teraType );
+              }
+              else {
+                setTypeColor( actionDesc, move.type );
+              }
+            }
+            setTypeColor( actionDesc, move.type );
             actionDesc.textContent = move.name;
           }
           else {

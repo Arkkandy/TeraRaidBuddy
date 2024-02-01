@@ -6,7 +6,7 @@ import html2canvas from 'html2canvas';
 
 import { SearchResult } from './UI/searchresult';
 import {RaidPresetMode, AbilitySelectionMode, getPresetModeString} from './UI/uilogic'
-import { setDamageBackgroundColor, setTypeBackgroundColor, setValidBackgroundColor, stringFromEVSpread, populateDropdown, clearTypeBackground, getImagePath } from './UI/util';
+import { setDamageBackgroundColor, setTypeColor, setValidBackgroundColor, stringFromEVSpread, populateDropdown, clearTypeColoring, getImagePath } from './UI/util';
 
 import {calculate,Generations,Pokemon,Move, toID, Field, Stats, Side} from './smogon-calc'
 import { StatsTable } from './smogon-calc';
@@ -825,6 +825,7 @@ UIElements.RaidBoss.ExportPopupButton.addEventListener( 'click', () => {
 
   PokeImport.ExportBossData( currentPresetMode, abilityMode );
 
+  UIElements.RaidBoss.ExportErrorMessage.textContent = "";
   UIElements.RaidBoss.ExportDataPrompt.classList.remove('collapsed');
 });
 
@@ -837,8 +838,20 @@ UIElements.RaidBoss.ExportImportButton.addEventListener( 'click', () => {
   if ( UIElements.RaidBoss.ExportTextContent.value ) {
     let data = PokeImport.ReadBossData( UIElements.RaidBoss.ExportTextContent.value );
 
-    if ( !PokeImport.VerifyBossData( gen, data ) ) {
-      alert("Failure.");
+    try {
+      PokeImport.VerifyBossData( gen, data );
+    }
+    catch ( error: any ) {
+      if ( error instanceof Error ) {
+        console.log(error.message);
+      }
+      else if (typeof error === 'string' ) {
+        UIElements.RaidBoss.ExportErrorMessage.style.color = 'red';
+        UIElements.RaidBoss.ExportErrorMessage.textContent = error;
+      }
+      else {
+        console.log('Unexpected error');
+      }
       return;
     }
 
@@ -852,8 +865,18 @@ UIElements.RaidBoss.ExportImportButton.addEventListener( 'click', () => {
     PokeImport.ImportBossData(gen, data );
     
     updateAllStats();
+
+    UIElements.RaidBoss.ExportErrorMessage.style.color = 'green';
+    UIElements.RaidBoss.ExportErrorMessage.textContent = "Successfully imported!";
+
+    // Close window
+    //UIElements.RaidBoss.ExportDataPrompt.classList.add('collapsed');
   }
-})
+});
+
+UIElements.HelpSection.UserGuideToggle.addEventListener('click', () => {
+  UIElements.HelpSection.UserGuidePopup.classList.toggle('collapsed');
+});
 
 // ========================================================================
 // ========================================================================

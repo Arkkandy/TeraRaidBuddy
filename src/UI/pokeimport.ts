@@ -154,14 +154,10 @@ export function ReadBossData( bossData : string ) : SimplifiedBossData {
 
         if ( line1.length == 1 ) {
             data.bossName = line1[0];
-            console.log(line1[0]);
         }
         else if ( line1.length == 2 ) {
             data.bossName = line1[0];
             data.item = line1[1];
-
-            console.log(line1[0]);
-            console.log(line1[1]);
         }
 
         for ( let i = 1; i < lines.length; ++i ) {
@@ -171,32 +167,27 @@ export function ReadBossData( bossData : string ) : SimplifiedBossData {
                 let elements = line.split(": ");
                 if ( elements.length == 2 ) {
                     data.level = elements[1];
-                    console.log("Level: " + data.level);
                 }
             }
             else if ( line.endsWith("Nature")) {
                 let elements = line.split(" ");
                 if ( elements.length == 2 ) {
                     data.nature = elements[0];
-                    console.log("Nature: " + data.nature);
                 }
             }
             else if ( line.startsWith("Tera Type: ")) {
                 let elements = line.split(": ");
                 if ( elements.length == 2 ) {
                     data.teraType = elements[1];
-                    console.log("Tera Type: " + data.teraType);
                 }
             }
             else if ( line.startsWith("Ability: ")) {
                 let elements = line.split(": ");
                 if ( elements.length == 2 ) {
                     data.ability = elements[1];
-                    console.log("Ability: " + data.ability);
                 }
             }
             else if ( line.startsWith("EVs: ")) {
-                console.log("Reading EVs");
                 let evcontent = line.substring(5).split(" / ");
                 evcontent.forEach( (s) => {
                     let statSplit = s.split(" ");
@@ -208,13 +199,11 @@ export function ReadBossData( bossData : string ) : SimplifiedBossData {
                             data.evs = [];
                         }
 
-                        console.log( value + " | " + stat );
                         data.evs.push( {stat:stat, val:value} );
                     }
                 });
             }
             else if ( line.startsWith("IVs: ")) {
-                console.log("Reading IVs");
                 let ivcontent = line.substring(5).split(" / ");
                 ivcontent.forEach( (s) => {
                     let statSplit = s.split(" ");
@@ -226,25 +215,21 @@ export function ReadBossData( bossData : string ) : SimplifiedBossData {
                             data.ivs = [];
                         }
 
-                        console.log( value + "|" + stat );
                         data.ivs.push( {stat:stat, val:value} );
                     }
                 });
             }
             else if ( line.startsWith("Extra")) {
                 readMainMoves = false;
-                console.log("Now reading extra moves");
             }
             else if ( line.startsWith("- ")) {
                 if ( readMainMoves ) {
                     if ( data.mainMoves == undefined ) { data.mainMoves = []; }
                     data.mainMoves.push( line.substring(2));
-                    console.log("Main Move: " + line.substring(2));
                 }
                 else {
                     if ( data.extraMoves == undefined ) { data.extraMoves = []; }
                     data.extraMoves.push( line.substring(2));
-                    console.log("Extra Move: " + line.substring(2));
                 }
             }
         }
@@ -259,104 +244,86 @@ export function VerifyBossData( gen: Generation, bossData : SimplifiedBossData )
    
     // Read boss name
     if ( bossData.bossName != undefined ) {
-        console.log( "Boss name length: " + bossData.bossName.length.toString());
         dataEntry = filteringData.find( (entry) => {
             return entry.name == bossData.bossName;
         });
     }
     if ( dataEntry == undefined ) {
-        console.log("Wrong boss name or missing");
-        return false;
+        throw "Wrong boss name or missing.";
     }
 
     // Item [Optional]
     if ( bossData.item != undefined ) {
         if ( gen.items.get( toID( bossData.item )) == undefined ) {
-            console.log("Wrong item name");
-            return false;
+            throw "Wrong item name.";
         }
     }
 
     // Level
     if ( bossData.level != undefined ) {
-        try {
-            let level = parseInt( bossData.level );
-            if ( level < 1 || level > 100 ) {
-                console.log("Level out of bounds");
-                return false;
-            }
+        if (bossData.level.match(/[^$,.\d]/)) {
+            throw 'Malformed level value.';
         }
-        catch {
-            console.log("Malformed level string");
-            return false;
+        let level = parseInt( bossData.level );
+        if ( Number.isNaN( level ) ) {
+            throw "Malformed level value.";
+        }
+        if ( level < 1 || level > 100 ) {
+            throw "Level out of bounds.";
         }
     }
     else {
-        console.log("Level required");
-        return false;
+        throw "Level required -> Level: #";
     }
 
     // Nature
     if ( bossData.nature != undefined ) {
         if ( gen.natures.get( toID( bossData.nature )) == undefined ) {
-            console.log("Wrong nature");
-            return false;
+            throw "Wrong nature";
         }
     }
     else {
-        console.log("Missing nature");
-        return false;
+        throw "Missing nature";
     }
 
     // Tera Type
     if ( bossData.teraType != undefined ) {
         if ( bossData.teraType == "Stellar") {
-            console.log("Raid boss can't be Stellar Tera Type");
-            return false;
+            throw "Raid boss can't be Stellar Tera Type";
         }
-        if ( gen.types.get( toID( bossData.teraType )) == undefined ) {
-            console.log("Wrong Tera Type");
-            return false;
+        if ( ( bossData.teraType == '???' )|| gen.types.get( toID( bossData.teraType )) == undefined ) {
+            throw "Wrong Tera Type";
         }
     }
     else {
-        console.log("Missing Tera Type");
-        return false;
+        throw "Tera Type required -> Tera Type: [Type]";
     }
 
     // Ability [Optional]
     if ( bossData.ability != undefined ) {
         if ( gen.abilities.get( toID( bossData.ability )) == undefined ) {
-            console.log("Wrong ability");
-            return false;
+            throw "Wrong ability";
         }
     }
 
     // EVs [Optional]
     if ( bossData.evs != undefined ) {
-        let evsValid = true;
         bossData.evs.forEach( (s) => {
             let statName = s.stat.toLowerCase();
             if ( statName != "hp" && statName != "atk" && statName != "def" && statName != "spa" && statName != "spd" && statName != "spe") {
-                console.log("Wrong EV stat name");
-                evsValid = false;
+                throw "Wrong EV stat name -> hp | atk | def | spa | spd | spe";
             }
-            try {
-                let evValue = parseInt( s.val );
-                if ( evValue < 0 || evValue > 252 ) {
-                    console.log("EV value out of bounds");
-                    evsValid = false;
-                }
+            if (s.val.match(/[^$,.\d]/)) {
+                throw 'Malformed EV value.';
             }
-            catch {
-                console.log("Malformed EV string");
-                evsValid = false;
+            let evValue = parseInt( s.val );
+            if ( Number.isNaN( evValue ) ) {
+                throw "Malformed EV value.";
+            }
+            if ( evValue < 0 || evValue > 252 ) {
+                throw "EV value out of bounds -> [0-252] ";
             }
         });
-
-        if ( !evsValid ) {
-            return false;
-        }
     }
 
     // IVs [Optional]
@@ -365,33 +332,26 @@ export function VerifyBossData( gen: Generation, bossData : SimplifiedBossData )
         bossData.ivs.forEach( (s) => {
             let statName = s.stat.toLowerCase();
             if ( statName != "hp" && statName != "atk" && statName != "def" && statName != "spa" && statName != "spd" && statName != "spe") {
-                console.log("Wrong IV stat name");
-                ivsValid = false;
+                throw "Wrong IV stat name -> hp | atk | def | spa | spd | spe";
             }
-            try {
-                let ivValue = parseInt( s.val );
-                if ( ivValue < 0 || ivValue > 31 ) {
-                    console.log("IV value out of bounds");
-                    ivsValid = false;
-                }
+            if (s.val.match(/[^$,.\d]/)) {
+                throw 'Malformed IV value.';
             }
-            catch {
-                console.log("Malformed IV string");
-                ivsValid = false;
+            let ivValue = parseInt( s.val );
+            if ( Number.isNaN( ivValue ) ) {
+                throw "Malformed IV value.";
+            }
+            if ( ivValue < 0 || ivValue > 31 ) {
+                throw "IV value out of bounds -> [0-31] ";
             }
         });
-
-        if ( !ivsValid ) {
-            return false;
-        }
     }
 
     // Moves [Optional]
     if ( bossData.mainMoves != undefined ) {
         for ( let m = 0; m < bossData.mainMoves.length; ++m ) {
             if ( gen.moves.get( toID( bossData.mainMoves[m]) ) == undefined) {
-                console.log("Wrong main move");
-                return false;
+                throw `Wrong main move -> ${bossData.mainMoves[m]}`;
             }
         }
     }
@@ -400,8 +360,7 @@ export function VerifyBossData( gen: Generation, bossData : SimplifiedBossData )
     if ( bossData.extraMoves != undefined ) {
         for ( let m = 0; m < bossData.extraMoves.length; ++m ) {
             if ( gen.moves.get( toID( bossData.extraMoves[m]) ) == undefined) {
-                console.log("Wrong extra move");
-                return false;
+                throw `Wrong extra move -> ${bossData.extraMoves[m]}`;
             }
         }
     }
