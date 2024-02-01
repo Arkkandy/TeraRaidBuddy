@@ -3,3 +3,4 @@ dist
 .env
 src/test
 notes.txt
+assets/sprites
