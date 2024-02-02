@@ -91,9 +91,12 @@ export class Side implements State.Side {
   isAuroraVeil: boolean;
   isBattery: boolean;
   isPowerSpot: boolean;
-  isFocusEnergy: boolean; // Added for #TeraRaidBuddy
-  isDefenseCheer: boolean;
   isSwitching?: 'out' | 'in';
+
+  // Added for #TeraRaidBuddy
+  isFocusEnergy: boolean;
+  isDefenseCheer: boolean; 
+  numFriendGuard: number;
 
   constructor(side: State.Side = {}) {
     this.spikes = side.spikes || 0;
@@ -117,6 +120,7 @@ export class Side implements State.Side {
     this.isPowerSpot = !!side.isPowerSpot;
     this.isFocusEnergy = !!side.isFocusEnergy;
     this.isDefenseCheer = !!side.isDefenseCheer;
+    this.numFriendGuard = side.numFriendGuard || 0;
     this.isSwitching = side.isSwitching;
   }
 

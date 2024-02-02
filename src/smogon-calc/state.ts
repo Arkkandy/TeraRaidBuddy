@@ -77,6 +77,7 @@ export namespace State {
     isPowerSpot?: boolean;
     isFocusEnergy?: boolean;
     isDefenseCheer?: boolean;
+    numFriendGuard?: number;
     isSwitching?: 'out' | 'in';
   }
 }

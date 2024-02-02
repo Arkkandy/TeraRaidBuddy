@@ -1,5 +1,5 @@
-import { Field, NATURES, Pokemon, Side, Stats } from "../smogon-calc";
-import { Generation, StatID, StatsTable } from "../smogon-calc/data/interface";
+import { Field, NATURES, Pokemon, Side, Stats, toID } from "../smogon-calc";
+import { Generation, StatID, StatsTable, TypeName } from "../smogon-calc/data/interface";
 import { getFinalSpeed, getModifiedStat } from "../smogon-calc/mechanics/util";
 import { DefensiveNaturePreference } from "./searchparameters";
 
@@ -93,6 +93,122 @@ export interface BestStat {
     stat: string;
     val: number;
 }
+
+
+type EffectivenessArray = {
+    [type in TypeName]: number;
+}
+export class TypeMatchup {
+    multipliers: EffectivenessArray = {
+        Normal: 1,
+        Grass: 1,
+        Fire: 1,
+        Water: 1,
+        Electric: 1,
+        Ice: 1,
+        Flying: 1,
+        Bug: 1,
+        Poison: 1,
+        Ground: 1,
+        Rock: 1,
+        Fighting: 1,
+        Psychic: 1,
+        Ghost: 1,
+        Dragon: 1,
+        Steel: 1,
+        Dark: 1,
+        Fairy: 1,
+        '???': 1,
+        Stellar: 1
+    };
+
+    constructor( gen: Generation, defType1: TypeName, defType2?: TypeName, defTeraType?: TypeName ) {
+        if ( defTeraType && defTeraType != 'Stellar' && defTeraType != '???' ) {
+            this.multipliers.Normal = this.getMatchupMultiplier(gen, 'Normal', defTeraType );
+            this.multipliers.Grass = this.getMatchupMultiplier(gen, 'Grass', defTeraType );
+            this.multipliers.Fire = this.getMatchupMultiplier(gen, 'Fire', defTeraType );
+            this.multipliers.Water= this.getMatchupMultiplier(gen, 'Water', defTeraType );
+            this.multipliers.Electric = this.getMatchupMultiplier(gen, 'Electric', defTeraType );
+            this.multipliers.Ice = this.getMatchupMultiplier(gen, 'Ice', defTeraType );
+            this.multipliers.Flying = this.getMatchupMultiplier(gen, 'Flying', defTeraType );
+            this.multipliers.Bug = this.getMatchupMultiplier(gen, 'Bug', defTeraType );
+            this.multipliers.Poison = this.getMatchupMultiplier(gen, 'Poison', defTeraType );
+            this.multipliers.Ground = this.getMatchupMultiplier(gen, 'Ground', defTeraType );
+            this.multipliers.Rock = this.getMatchupMultiplier(gen, 'Rock', defTeraType );
+            this.multipliers.Fighting = this.getMatchupMultiplier(gen, 'Fighting', defTeraType );
+            this.multipliers.Psychic = this.getMatchupMultiplier(gen, 'Psychic', defTeraType );
+            this.multipliers.Ghost = this.getMatchupMultiplier(gen, 'Ghost', defTeraType );
+            this.multipliers.Dragon = this.getMatchupMultiplier(gen, 'Dragon', defTeraType );
+            this.multipliers.Steel = this.getMatchupMultiplier(gen, 'Steel', defTeraType );
+            this.multipliers.Dark = this.getMatchupMultiplier(gen, 'Dark', defTeraType );
+            this.multipliers.Fairy = this.getMatchupMultiplier(gen, 'Fairy', defTeraType );
+        }
+        else {
+            this.multipliers.Normal = this.getMatchupMultiplier(gen, 'Normal', defType1 );
+            this.multipliers.Grass = this.getMatchupMultiplier(gen, 'Grass', defType1 );
+            this.multipliers.Fire = this.getMatchupMultiplier(gen, 'Fire', defType1 );
+            this.multipliers.Water= this.getMatchupMultiplier(gen, 'Water', defType1 );
+            this.multipliers.Electric = this.getMatchupMultiplier(gen, 'Electric', defType1 );
+            this.multipliers.Ice = this.getMatchupMultiplier(gen, 'Ice', defType1 );
+            this.multipliers.Flying = this.getMatchupMultiplier(gen, 'Flying', defType1 );
+            this.multipliers.Bug = this.getMatchupMultiplier(gen, 'Bug', defType1 );
+            this.multipliers.Poison = this.getMatchupMultiplier(gen, 'Poison', defType1 );
+            this.multipliers.Ground = this.getMatchupMultiplier(gen, 'Ground', defType1 );
+            this.multipliers.Rock = this.getMatchupMultiplier(gen, 'Rock', defType1 );
+            this.multipliers.Fighting = this.getMatchupMultiplier(gen, 'Fighting', defType1 );
+            this.multipliers.Psychic = this.getMatchupMultiplier(gen, 'Psychic', defType1 );
+            this.multipliers.Ghost = this.getMatchupMultiplier(gen, 'Ghost', defType1 );
+            this.multipliers.Dragon = this.getMatchupMultiplier(gen, 'Dragon', defType1 );
+            this.multipliers.Steel = this.getMatchupMultiplier(gen, 'Steel', defType1 );
+            this.multipliers.Dark = this.getMatchupMultiplier(gen, 'Dark', defType1 );
+            this.multipliers.Fairy = this.getMatchupMultiplier(gen, 'Fairy', defType1 );
+
+            if ( defType2 ) {
+                this.multipliers.Normal *= this.getMatchupMultiplier(gen, 'Normal', defType2 );
+                this.multipliers.Grass *= this.getMatchupMultiplier(gen, 'Grass', defType2 );
+                this.multipliers.Fire *= this.getMatchupMultiplier(gen, 'Fire', defType2 );
+                this.multipliers.Water *= this.getMatchupMultiplier(gen, 'Water', defType2 );
+                this.multipliers.Electric *= this.getMatchupMultiplier(gen, 'Electric', defType2 );
+                this.multipliers.Ice *= this.getMatchupMultiplier(gen, 'Ice', defType2 );
+                this.multipliers.Flying *= this.getMatchupMultiplier(gen, 'Flying', defType2 );
+                this.multipliers.Bug *= this.getMatchupMultiplier(gen, 'Bug', defType2 );
+                this.multipliers.Poison *= this.getMatchupMultiplier(gen, 'Poison', defType2 );
+                this.multipliers.Ground *= this.getMatchupMultiplier(gen, 'Ground', defType2 );
+                this.multipliers.Rock *= this.getMatchupMultiplier(gen, 'Rock', defType2 );
+                this.multipliers.Fighting *= this.getMatchupMultiplier(gen, 'Fighting', defType2 );
+                this.multipliers.Psychic *= this.getMatchupMultiplier(gen, 'Psychic', defType2 );
+                this.multipliers.Ghost *= this.getMatchupMultiplier(gen, 'Ghost', defType2 );
+                this.multipliers.Dragon *= this.getMatchupMultiplier(gen, 'Dragon', defType2 );
+                this.multipliers.Steel *= this.getMatchupMultiplier(gen, 'Steel', defType2 );
+                this.multipliers.Dark *= this.getMatchupMultiplier(gen, 'Dark', defType2 );
+                this.multipliers.Fairy *= this.getMatchupMultiplier(gen, 'Fairy', defType2 );
+            }
+        }
+    }
+
+    /* Smogon stores offensive multipliers in the Type Charts */
+    /* This class stores defensive multipliers */
+    getMatchupMultiplier( gen: Generation, attackType: TypeName, defendType: TypeName ) {
+        let multiplier = gen.types.get(toID(attackType))?.effectiveness[defendType];
+        return ( multiplier ? multiplier : 1 );
+    }
+
+
+
+    getTypeOffensiveMultiplier(type1 : TypeName ) : number {
+        return this.multipliers[type1];
+    }
+
+    checkAtLeastOneSTAB(type1 : TypeName, type2 : TypeName | undefined ) {
+        let isStab1 = this.getTypeOffensiveMultiplier(type1) > 1;
+        let isStab2 = ( type2 ? this.getTypeOffensiveMultiplier(type2) > 1 : false );
+
+        return isStab1 || isStab2;
+    }
+}
+
+
+
 
 /**
     1 - Find first HP value that's above the threshold

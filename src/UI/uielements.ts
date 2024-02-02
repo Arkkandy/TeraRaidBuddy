@@ -18,6 +18,8 @@ function assertInitializationSuccess() {
 // ========================================================================
 /* HTML DECLARATION INDEX
 
+    HELP SECTION
+
     HEADER ELEMENTS
 
     RAID BOSS SECTION
@@ -226,6 +228,8 @@ const UIElements = {
         MoveMultiStrike2to5: getUIElement<HTMLSelectElement>('parameterMoveMultiStrike2to5'),
         MoveMultiStrikePopulationBomb: getUIElement<HTMLSelectElement>('parameterMoveMultiStrikePopBomb'),
 
+        MoveBoostAvalanche: getUIElement<HTMLInputElement>('parameterMoveBoostAvalanche'),
+
         // Ability Parameters Section
         AbilityDisableBoss: getUIElement<HTMLInputElement>('abilityDisableBoss'),
         AbilityDisableDefender: getUIElement<HTMLInputElement>('abilityDisableDefender'),
@@ -291,18 +295,18 @@ const UIElements = {
         FieldTerrainSelect: getUIElement<HTMLSelectElement>('parameterFieldTerrainSelect'),
 
         FieldGravity: getUIElement<HTMLInputElement>('parameterFieldGravity'),
-        FieldWonderRoom: getUIElement<HTMLInputElement>('parameterFieldWonderRoom'),
+        //FieldWonderRoom: getUIElement<HTMLInputElement>('parameterFieldWonderRoom'),
         FieldMagicRoom: getUIElement<HTMLInputElement>('parameterFieldMagicRoom'),
-        FieldTrickRoom: getUIElement<HTMLInputElement>('parameterFieldTrickRoom'),
+        //FieldTrickRoom: getUIElement<HTMLInputElement>('parameterFieldTrickRoom'),
 
         FieldTabletsOfRuin: getUIElement<HTMLInputElement>('parameterFieldTabletsOfRuin'),
         FieldVesselOfRuin: getUIElement<HTMLInputElement>('parameterFieldVesselOfRuin'),
         FieldSwordOfRuin: getUIElement<HTMLInputElement>('parameterFieldSwordOfRuin'),
         FieldBeadsOfRuin: getUIElement<HTMLInputElement>('parameterFieldBeadsOfRuin'),
 
-        FieldBossReflect: getUIElement<HTMLInputElement>('parameterFieldBossReflect'),
+        /*FieldBossReflect: getUIElement<HTMLInputElement>('parameterFieldBossReflect'),
         FieldBossLightScreen: getUIElement<HTMLInputElement>('parameterFieldBossLightScreen'),
-        FieldBossAuroraVeil: getUIElement<HTMLInputElement>('parameterFieldBossAuroraVeil'),
+        FieldBossAuroraVeil: getUIElement<HTMLInputElement>('parameterFieldBossAuroraVeil'),*/
         FieldBossTailwind: getUIElement<HTMLInputElement>('parameterFieldBossTailwind'),
         FieldBossFocusEnergy: getUIElement<HTMLInputElement>('parameterFieldBossFocusEnergy'),
 
@@ -311,6 +315,7 @@ const UIElements = {
         FieldDefenderLightScreen: getUIElement<HTMLInputElement>('parameterFieldDefenderLightScreen'),
         FieldDefenderAuroraVeil: getUIElement<HTMLInputElement>('parameterFieldDefenderAuroraVeil'),
         FieldDefenderTailwind: getUIElement<HTMLInputElement>('parameterFieldDefenderTailwind'),
+        FieldDefenderFriendGuard: getUIElement<HTMLSelectElement>('parameterFieldFriendGuard'),
     },
 
 
@@ -342,7 +347,9 @@ const UIElements = {
         BossInfoPreset: getUIElement('bossSummaryPreset'),
         BossInfoSpecies: getUIElement('bossSummaryName'),
         BossInfoSprite: getUIElement<HTMLImageElement>('bossSummarySprite'),
+        bossInfoTeraSprite: getUIElement<HTMLImageElement>('bossInfoTeraSprite'),
         BossInfoTeraType: getUIElement('bossSummaryTera'),
+        BossInfoBaseTypes: getUIElement('bossSummaryBaseTypes'),
         BossInfoLevel: getUIElement('bossSummaryLevel'),
         BossInfoItem: getUIElement('bossSummaryItem'),
         BossInfoNature: getUIElement('bossSummaryNature'),

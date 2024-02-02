@@ -25,7 +25,7 @@ import getOptimalDefensiveThreshold_PQ from './optimalthresholdpqcalc';
 import {DefensiveNaturePreference, PrintVisibleDamage, RankingParameters, SearchRankingType } from './searchparameters';
 import { DefenseStatOptimizer } from './statoptimization';
 import { DefenseStatOptimizerPQ } from './statoptimizationpq';
-import { BattlefieldSide, EVSpread, calcModifiedDefenseStat, calcModifiedSpDefenseStat, evsToStringShowAll, findDefEvPQThreshold, findSpdEvPQThreshold, getHighestStat_PQ, getMinimumOutspeedEV, getNatureFromStats, getTotalEVInvestment, selectDefensiveNaturePreference, selectSpeedNaturePreference, statToNatureIndex } from './util';
+import { BattlefieldSide, EVSpread, TypeMatchup, calcModifiedDefenseStat, calcModifiedSpDefenseStat, evsToStringShowAll, findDefEvPQThreshold, findSpdEvPQThreshold, getHighestStat_PQ, getMinimumOutspeedEV, getNatureFromStats, getTotalEVInvestment, selectDefensiveNaturePreference, selectSpeedNaturePreference, statToNatureIndex } from './util';
 //import { recalculatableDamage } from './fastdamage.js';
 
 
@@ -46,24 +46,26 @@ export class RankingResult {
     public mainMoves: Smogon.Move[];
     public extraMoves: Smogon.Move[];
     public raidBoss: Smogon.Pokemon;
+    public bossMatchup: TypeMatchup;
 
     // May delete these
     public entriesAnalyzed: number = 0;
     public entriesSkipped: number = 0;
 
-    constructor( parameters: RankingParameters, mainMoves: Smogon.Move[], extraMoves: Smogon.Move[], raidBoss: Smogon.Pokemon, originalField: Smogon.Field ) {
+    constructor( parameters: RankingParameters, mainMoves: Smogon.Move[], extraMoves: Smogon.Move[], raidBoss: Smogon.Pokemon, bossMatchup: TypeMatchup, originalField: Smogon.Field ) {
         this.originalParameters = parameters;
         this.mainMoves = mainMoves;
         this.extraMoves = extraMoves;
         this.raidBoss = raidBoss;
+        this.bossMatchup = bossMatchup;
         this.originalField = originalField;
     }
 }
 
 export class RankingResultEntry {
     public species: string;
-    public type1: string;
-    public type2: string;
+    public type1: TypeName;
+    public type2: TypeName | undefined;
     public teraType?: string;
     
     public damage: DamagePair[] = [];
@@ -84,7 +86,7 @@ export class RankingResultEntry {
     public originalDefender?: Smogon.Pokemon;
     public originalField?: Smogon.Field;
 
-    constructor( species: NamedCurve, type1: string, type2: string, evSpread: Smogon.StatsTable<number>, outspeed: boolean ) {
+    constructor( species: NamedCurve, type1: TypeName, type2: TypeName | undefined, evSpread: Smogon.StatsTable<number>, outspeed: boolean ) {
         this.species = species;
         this.type1 = type1;
         this.type2= type2;
@@ -209,8 +211,8 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
     setAbilityTerrain( raidBoss.ability as string, field, parameters );
     setAbilityWeather( raidBoss.ability as string, field, parameters );
 
-    // Determine STAB types against boss while accounting for ability immunities
-    let raidBossTypeData = gen.types.get(Smogon.toID(raidBoss.teraType));
+    // Determine boss defensive matchups in advance
+    let raidBossTypeMatchup = new TypeMatchup( gen, raidBoss.types[0], raidBoss.types[1], raidBoss.teraType);
 
     let entriesAnalyzed = 0;
     let filtered = 0;
@@ -229,7 +231,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
         localFilteringData = localFilteringData.filter( (item) => parameters.filters.whiteListIDs.includes( item.name ) );
     }
 
-    let finalResult: RankingResult = new RankingResult( parameters, moves, eMoves, raidBoss, field );
+    let finalResult: RankingResult = new RankingResult( parameters, moves, eMoves, raidBoss, raidBossTypeMatchup, field );
 
     // Perform damage checks against all filterable species
     for ( const data of localFilteringData ) {
@@ -238,7 +240,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
         //console.log('........................'); console.log('Analyzing: %s', data.name);
 
         // Apply damage calc filters
-        if ( applySearchFilters( gen, raidBoss, speciesEntry, data, parameters ) ) {
+        if ( applySearchFilters( gen, raidBoss, raidBossTypeMatchup, speciesEntry, data, parameters ) ) {
             filtered++;
             continue;
         }
@@ -699,7 +701,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     boostedStat: 'auto'
                 });
 
-                let rankingResult = new RankingResultEntry( raidDefender.name, raidDefender.types[0], raidDefender.types[1] ? raidDefender.types[1] : "", raidDefender.evs, false );
+                let rankingResult = new RankingResultEntry( raidDefender.name, raidDefender.types[0], raidDefender.types[1], raidDefender.evs, false );
 
                 // Take note of EV spread used in the calcs
                 rankingResult.nature = prospectSpread.nature;
@@ -1017,10 +1019,10 @@ function filterAbilities( abilities: string[], side: BattlefieldSide, parameters
     return reviewedAbilities;
 }
 
-function applySearchFilters( gen: Generation, raidBoss: Smogon.Pokemon, speciesEntry: Specie, data: FilterDataEntry, parameters: RankingParameters ) {
+function applySearchFilters( gen: Generation, raidBoss: Smogon.Pokemon, bossMatchup: TypeMatchup, speciesEntry: Specie, data: FilterDataEntry, parameters: RankingParameters ) {
     let skip = false;
 
-    if ( parameters.filters.applyDexFilter ) {
+    if ( !skip && parameters.filters.applyDexFilter ) {
         let dexSkip = true;
         if ( parameters.filters.showPaldeaPokemon && ( data.dex.paldea != undefined ) ) {
             dexSkip = false;
@@ -1038,7 +1040,7 @@ function applySearchFilters( gen: Generation, raidBoss: Smogon.Pokemon, speciesE
         skip = skip || dexSkip;
     }
 
-    if ( parameters.filters.applyRarityFilter ) {
+    if ( !skip && parameters.filters.applyRarityFilter ) {
         let raritySkip = true;
         if ( parameters.filters.showRegularPokemon && ( data.rarity == RarityFlag.Regular ) ) {
             raritySkip = false;
@@ -1055,28 +1057,17 @@ function applySearchFilters( gen: Generation, raidBoss: Smogon.Pokemon, speciesE
         skip = skip || raritySkip;
     }
 
-    if ( parameters.filters.skipNonFinalEvolutions && speciesEntry.nfe ) {
+    if ( !skip && parameters.filters.skipNonFinalEvolutions && speciesEntry.nfe ) {
         skip = true;
     }
-    if ( parameters.filters.skipFinalEvolutions && (speciesEntry.nfe == undefined) ) {
+    if ( !skip && parameters.filters.skipFinalEvolutions && (speciesEntry.nfe == undefined) ) {
         skip = true;
     }
     
 
     // Check if at least one base type is super effective versus the raid boss tera type
-    if ( parameters.filters.checkOnlySTABDefenders ) {
-        let type1 = gen.types.get(Smogon.toID(speciesEntry.types[0]));
-        let type2 = gen.types.get(Smogon.toID(speciesEntry.types[1]));
-
-        let isStab1 = false;
-        let isStab2 = false;
-        if ( type1?.effectiveness[raidBoss.teraType!]! > 1 ) {
-            isStab1 = true;
-        }
-        if ( type2?.effectiveness[raidBoss.teraType!]! > 1 ) {
-            isStab2 = true;
-        }
-        if ( !(isStab1 || isStab2) ) {
+    if ( !skip && parameters.filters.checkOnlySTABDefenders ) {
+        if ( !bossMatchup.checkAtLeastOneSTAB( speciesEntry.types[0], speciesEntry.types[1] ) ) {
             skip = true;
         }
     }

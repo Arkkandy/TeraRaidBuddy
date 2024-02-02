@@ -37,18 +37,18 @@ export function showExtraActions( gen: Generation, actions: ExtraAction[] | unde
         }
   
         // HP
-        let hpCell = createTableBodyCell( actionRow, action.hp ? action.hp.toString() : "-", 1 );
+        let hpCell = createTableBodyCell( actionRow, action.hp ? action.hp.toString() : '\u00A0', 1 );
         hpCell.style.textAlign = 'center';
         hpCell.style.backgroundColor = "white";
   
         // TIME
-        let timeCell = createTableBodyCell( actionRow, action.time ? action.time.toString() : "-", 1 );
+        let timeCell = createTableBodyCell( actionRow, action.time ? action.time.toString() : '\u00A0', 1 );
         timeCell.style.textAlign = 'center';
         timeCell.style.backgroundColor = "white";
       });
     }
     else {
       let defaultRow = actiontbody.insertRow();
-      createTableBodyCell( defaultRow, "No extra actions", 3 ).style.textAlign = 'center';
+      createTableBodyCell( defaultRow, "Data not available", 3 ).style.textAlign = 'center';
     }
   }

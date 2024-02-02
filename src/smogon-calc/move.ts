@@ -44,6 +44,7 @@ export class Move implements State.Move {
   isMax: boolean;
 
   /* Modified for Tera Raid Buddy*/
+  doubleAvalanche?: boolean;
   forceDamageSpread: boolean;
   highBaseCrit?: boolean;
   guaranteedCrit?: boolean;
@@ -198,6 +199,7 @@ export class Move implements State.Move {
       
     });
     // Retain custom data for Tera Raid Buddy
+    newMove.doubleAvalanche = this.doubleAvalanche;
     newMove.forceDamageSpread = this.forceDamageSpread;
     return newMove;
   }

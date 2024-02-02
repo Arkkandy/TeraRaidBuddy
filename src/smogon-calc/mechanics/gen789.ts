@@ -403,8 +403,12 @@ export function calculateSMSSSV(
     desc.weather = field.weather;
   }
 
-    // Tera Shell works only at full HP, but for all hits of multi-hit moves
-if (defender.hasAbility('Tera Shell') &&
+  if (move.type === 'Stellar') {
+    typeEffectiveness = !defender.teraType ? 1 : 2;
+  }
+
+  // Tera Shell works only at full HP, but for all hits of multi-hit moves
+  if (defender.hasAbility('Tera Shell') &&
     defender.curHP() === defender.maxHP() &&
     (!field.defenderSide.isSR && (!field.defenderSide.spikes || defender.hasType('Flying')) ||
     defender.hasItem('Heavy-Duty Boots'))
@@ -604,13 +608,23 @@ if (defender.hasAbility('Tera Shell') &&
     desc.attackerAbility = attacker.ability;
   }
   const teraType = attacker.teraType;
-  if (teraType === move.type) {
+  if (teraType === move.type && teraType !== 'Stellar') {
     stabMod += 2048;
     desc.attackerTera = teraType;
   }
   if (attacker.hasAbility('Adaptability') && attacker.hasType(move.type)) {
     stabMod += teraType && attacker.hasOriginalType(teraType) ? 1024 : 2048;
     desc.attackerAbility = attacker.ability;
+  }
+  const isStellarBoosted =
+    attacker.teraType === 'Stellar' &&
+    (move.isStellarFirstUse || attacker.named('Terapagos-Stellar'));
+  if (isStellarBoosted) {
+    if (attacker.hasOriginalType(move.type)) {
+      stabMod += 2048;
+    } else {
+      stabMod = 4915;
+    }
   }
   desc.stabMod = stabMod;
 
@@ -787,9 +801,9 @@ export function calculateBasePowerSMSSSV(
   let basePower: number;
 
   switch (move.name) {
-  /*case 'Avalanche' :
-    basePower = move.bp * 2;
-    break;*/
+  case 'Avalanche' :
+    basePower = move.bp * ( move.doubleAvalanche ? 2 : 1 );
+    break;
   case 'Payback':
     basePower = move.bp * (turnOrder === 'last' ? 2 : 1);
     desc.moveBP = basePower;
@@ -959,6 +973,10 @@ export function calculateBasePowerSMSSSV(
   case 'Hard Press':
     basePower = 100 * Math.floor((defender.curHP() * 4096) / defender.maxHP());
     basePower = Math.floor(Math.floor((120 * basePower + 2048 - 1) / 4096) / 100) || 1;
+    desc.moveBP = basePower;
+    break;
+  case 'Tera Blast':
+    basePower = attacker.teraType === 'Stellar' ? 100 : 80;
     desc.moveBP = basePower;
     break;
   default:
@@ -1756,7 +1774,9 @@ export function calculateFinalModsSMSSSV(
   }
 
   if (field.defenderSide.isFriendGuard) {
-    finalMods.push(3072);
+    for ( let i = 0; i < field.defenderSide.numFriendGuard; ++i ) {
+      finalMods.push(3072);
+    }
     desc.isFriendGuard = true;
   }
 

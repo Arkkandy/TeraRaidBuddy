@@ -139,10 +139,12 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
           const cellType1 = row.insertCell(); // Type 1
           const cellType2 = row.insertCell(); // Type 2
           cellType1.textContent = result.type1;
-          cellType2.textContent = result.type2;
-          cellType2.classList.add('Limiter');
           setTypeColor( cellType1, result.type1 );
-          setTypeColor( cellType2, result.type2 );
+          if ( result.type2 ) {
+            cellType2.textContent = result.type2;
+            setTypeColor( cellType2, result.type2 );
+          }
+          cellType2.classList.add('Limiter');
         }
         else {
           const cellTeraType = row.insertCell(); // Type Tera
@@ -285,14 +287,47 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
     // Remove any previous type coloring
     clearTypeBackground( UIElements.Results.BossInfoContainer );
     clearTypeColoring( UIElements.Results.BossInfoTeraType );
-    UIElements.Results.BossInfoTeraType.textContent = "Tera " + search.rankingData.raidBoss.teraType!;
-    setTypeColor( UIElements.Results.BossInfoTeraType, search.rankingData.raidBoss.teraType!);
-    setTypeBackgroundColor( UIElements.Results.BossInfoContainer, search.rankingData.raidBoss.teraType!);
+    if ( search.rankingData.raidBoss.teraType ) {
+      UIElements.Results.BossInfoBaseTypes.classList.add('collapsed');
+      UIElements.Results.BossInfoTeraType.classList.remove('collapsed');
+      UIElements.Results.bossInfoTeraSprite.classList.remove('collapsed');
+
+      UIElements.Results.BossInfoTeraType.textContent = "Tera " + search.rankingData.raidBoss.teraType;
+      setTypeColor( UIElements.Results.BossInfoTeraType, search.rankingData.raidBoss.teraType);
+      setTypeBackgroundColor( UIElements.Results.BossInfoContainer, search.rankingData.raidBoss.teraType);
+
+      UIElements.Results.bossInfoTeraSprite.src = "assets/tera/" + search.rankingData.raidBoss.teraType.toLowerCase() + ".png";
+    }
+    else {
+      UIElements.Results.BossInfoTeraType.classList.add('collapsed');
+      UIElements.Results.bossInfoTeraSprite.classList.add('collapsed');
+      UIElements.Results.BossInfoBaseTypes.classList.remove('collapsed');
+
+      // Delete any previous types
+      UIElements.Results.BossInfoBaseTypes.innerHTML = "";
+
+      // Type 1
+      let elementType1 = document.createElement('div');
+      elementType1.classList.add('boss-info-basetype');
+      elementType1.textContent = search.rankingData.raidBoss.types[0];
+      setTypeColor(elementType1, search.rankingData.raidBoss.types[0]);
+      UIElements.Results.BossInfoBaseTypes.appendChild(elementType1);
+
+      // Type 2 if it exists
+      if ( search.rankingData.raidBoss.types[1] ) {
+        let elementType2 = document.createElement('div');
+        elementType2.classList.add('boss-info-basetype');
+        elementType2.textContent = search.rankingData.raidBoss.types[1];
+        setTypeColor(elementType2, search.rankingData.raidBoss.types[1]);
+        UIElements.Results.BossInfoBaseTypes.appendChild(elementType2);
+      }
+
+    }
   
     UIElements.Results.BossInfoLevel.textContent = search.rankingData.raidBoss.level.toString();
-    UIElements.Results.BossInfoItem.textContent = ( search.rankingData.raidBoss.item ? search.rankingData.raidBoss.item : "-None-" );
+    UIElements.Results.BossInfoItem.textContent = ( search.rankingData.raidBoss.item ? search.rankingData.raidBoss.item : "-None" );
     UIElements.Results.BossInfoNature.textContent = search.rankingData.raidBoss.nature;
-    UIElements.Results.BossInfoAbility.textContent = ( search.rankingData.raidBoss.ability ? search.rankingData.raidBoss.ability : "-None-" );
+    UIElements.Results.BossInfoAbility.textContent = ( search.rankingData.raidBoss.ability ? search.rankingData.raidBoss.ability : "-None" );
     
     UIElements.Results.BossInfoHPValue.textContent = ( search.rankingData.raidBoss.stats.hp * search.rankingData.originalParameters.hpMultiplier ).toString();
     UIElements.Results.BossInfoAtkValue.textContent = search.rankingData.raidBoss.stats.atk.toString();
@@ -314,21 +349,21 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
       colorBossInfoMove(UIElements.Results.BossInfoMain2, search.rankingData.mainMoves[1], search.rankingData.raidBoss );
     }
     else {
-      UIElements.Results.BossInfoMain2.textContent = "-";
+      UIElements.Results.BossInfoMain2.textContent = '\u00A0';
     }
     if ( search.rankingData.mainMoves.length >= 3 ) {
       UIElements.Results.BossInfoMain3.textContent = search.rankingData.mainMoves[2].name;
       colorBossInfoMove(UIElements.Results.BossInfoMain3, search.rankingData.mainMoves[2], search.rankingData.raidBoss );
     }
     else {
-      UIElements.Results.BossInfoMain3.textContent = "-";
+      UIElements.Results.BossInfoMain3.textContent = '\u00A0';
     }
     if ( search.rankingData.mainMoves.length >= 4 ) {
       UIElements.Results.BossInfoMain4.textContent = search.rankingData.mainMoves[3].name;
       colorBossInfoMove(UIElements.Results.BossInfoMain4, search.rankingData.mainMoves[3], search.rankingData.raidBoss );
     }
     else {
-      UIElements.Results.BossInfoMain4.textContent = "-";
+      UIElements.Results.BossInfoMain4.textContent = '\u00A0';
     }
   
     /* EXTRA MOVES */
@@ -342,28 +377,28 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
       colorBossInfoMove(UIElements.Results.BossInfoExtra1, search.rankingData.extraMoves[0], search.rankingData.raidBoss );
     }
     else {
-      UIElements.Results.BossInfoExtra1.textContent = "-";
+      UIElements.Results.BossInfoExtra1.textContent = '\u00A0';
     }
     if ( search.rankingData.extraMoves.length >= 2 ) {
       UIElements.Results.BossInfoExtra2.textContent = search.rankingData.extraMoves[1].name;
       colorBossInfoMove(UIElements.Results.BossInfoExtra2, search.rankingData.extraMoves[1], search.rankingData.raidBoss );
     }
     else {
-      UIElements.Results.BossInfoExtra2.textContent = "-";
+      UIElements.Results.BossInfoExtra2.textContent = '\u00A0';
     }
     if ( search.rankingData.extraMoves.length >= 3 ) {
       UIElements.Results.BossInfoExtra3.textContent = search.rankingData.extraMoves[2].name;
       colorBossInfoMove(UIElements.Results.BossInfoExtra3, search.rankingData.extraMoves[2], search.rankingData.raidBoss );
     }
     else {
-      UIElements.Results.BossInfoExtra3.textContent = "-";
+      UIElements.Results.BossInfoExtra3.textContent = '\u00A0';
     }
     if ( search.rankingData.extraMoves.length >= 4 ) {
       UIElements.Results.BossInfoExtra4.textContent = search.rankingData.extraMoves[3].name;
       colorBossInfoMove(UIElements.Results.BossInfoExtra4, search.rankingData.extraMoves[3], search.rankingData.raidBoss );
     }
     else {
-      UIElements.Results.BossInfoExtra4.textContent = "-";
+      UIElements.Results.BossInfoExtra4.textContent = '\u00A0';
     }
   
     /* Show if boss is burned */
@@ -570,22 +605,7 @@ export function applyPostSearchFilters( gen: Generation, search : SearchResult )
     let teraType = search.rankingData.raidBoss.teraType!;
     if ( UIElements.Results.PSFBaseSTAB.checked ) {
       search.filteredData = search.filteredData.filter( (val) => {
-
-        let type1 = gen.types.get(toID(val.type1));
-        let type2 = gen.types.get(toID(val.type2));
-
-        let isStab1 = false;
-        let isStab2 = false;
-        if ( type1!.effectiveness[teraType!]! > 1 ) {
-            isStab1 = true;
-        }
-        if ( type2!.effectiveness[teraType!]! > 1 ) {
-            isStab2 = true;
-        }
-
-        // Check if immune via ability
-
-        return isStab1 || isStab2;
+        return search.rankingData.bossMatchup.checkAtLeastOneSTAB( val.type1, val.type2); 
       });
     }
 

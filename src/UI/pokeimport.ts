@@ -111,7 +111,9 @@ export function ExportBossData( currentPresetMode : RaidPresetMode, abilityMode 
 
     bossData += nature + " Nature\n";
 
-    bossData += "Tera Type: " + teraType + "\n";
+    if ( teraType != "" ) {
+        bossData += "Tera Type: " + teraType + "\n";
+    }
 
     bossData += "Ability: " + ability + "\n";
 
@@ -286,17 +288,11 @@ export function VerifyBossData( gen: Generation, bossData : SimplifiedBossData )
         throw "Missing nature";
     }
 
-    // Tera Type
+    // Tera Type [Optional]
     if ( bossData.teraType != undefined ) {
-        if ( bossData.teraType == "Stellar") {
-            throw "Raid boss can't be Stellar Tera Type";
-        }
         if ( ( bossData.teraType == '???' )|| gen.types.get( toID( bossData.teraType )) == undefined ) {
             throw "Wrong Tera Type";
         }
-    }
-    else {
-        throw "Tera Type required -> Tera Type: [Type]";
     }
 
     // Ability [Optional]
@@ -382,7 +378,13 @@ export function ImportBossData( gen: Generation, bossData : SimplifiedBossData )
 
     UIElements.RaidBoss.BossLevel.value = bossData.level!;
     UIElements.RaidBoss.BossNature.value = bossData.nature!;
-    UIElements.RaidBoss.BossTeraType.value = bossData.teraType!;
+
+    if ( bossData.teraType ) {
+        UIElements.RaidBoss.BossTeraType.value = bossData.teraType;
+    }
+    else {
+        UIElements.RaidBoss.BossTeraType.value = "";
+    }
 
     if ( bossData.ability ) {
         UIElements.RaidBoss.BossAllAbilitiesSelect.value = bossData.ability;

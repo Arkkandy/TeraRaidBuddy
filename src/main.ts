@@ -451,22 +451,32 @@ UIElements.Header.focusTableButton.addEventListener('click', () => {
 UIElements.Header.advancedModeToggle.addEventListener('click', () => {
   if ( UIElements.SearchParams.SearchParamContainer ) {
     UIElements.SearchParams.SearchParamContainer.classList.toggle('collapsed');
+    if ( !UIElements.SearchParams.SearchParamContainer.classList.contains('collapsed') ) {
+      UIElements.SearchParams.SearchParamContainer.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+});
+
+UIElements.HelpSection.UserGuideToggle.addEventListener('click', () => {
+  UIElements.HelpSection.UserGuidePopup.classList.toggle('collapsed');
+  if ( !UIElements.HelpSection.UserGuidePopup.classList.contains('collapsed') ) {
+    UIElements.HelpSection.UserGuidePopup.scrollIntoView({ behavior: 'smooth' });
   }
 });
 
 /*Perform search and apply results*/
 UIElements.Header.calculateButton.addEventListener('click', function handleClick(event) {
-const cooldownEffect = document.getElementById('searchCooldownEffect') as HTMLDivElement;
+  const cooldownEffect = document.getElementById('searchCooldownEffect') as HTMLDivElement;
 
-UIElements.Header.calculateButton.disabled = true;
-cooldownEffect.style.display = 'block';
+  UIElements.Header.calculateButton.disabled = true;
+  cooldownEffect.style.display = 'block';
 
-performRaidSearch();
+  performRaidSearch();
 
-setTimeout(() => {
-  UIElements.Header.calculateButton.disabled = false;
-  cooldownEffect.style.display = 'none';
-}, 3000 );
+  setTimeout(() => {
+    UIElements.Header.calculateButton.disabled = false;
+    cooldownEffect.style.display = 'none';
+  }, 3000 );
 });
 
 
@@ -872,10 +882,6 @@ UIElements.RaidBoss.ExportImportButton.addEventListener( 'click', () => {
     // Close window
     //UIElements.RaidBoss.ExportDataPrompt.classList.add('collapsed');
   }
-});
-
-UIElements.HelpSection.UserGuideToggle.addEventListener('click', () => {
-  UIElements.HelpSection.UserGuidePopup.classList.toggle('collapsed');
 });
 
 // ========================================================================

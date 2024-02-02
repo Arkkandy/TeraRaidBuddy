@@ -14,7 +14,8 @@
         <link rel="stylesheet" type="text/css" href="styles/main.css">
     </head>
     <body>
-
+        <noscript>Your browser does not support JavaScript!</noscript>
+        
         <div class="page-wrapper">
             <header class="header-container">
                 <div class="header-title-container">
@@ -51,16 +52,24 @@
                     <div class="user-guide-answer">Tera Raid Buddy shows you how the best stats match up to any raid boss - whether you take an offensive or supportive build is entirely up to you.</div>
                     <div class="user-guide-answer">Aside from lowest damage, you should consider the secondary effects of the bosses' main moves and abilities and how to effectively counter them. And prepare for the extra actions!</div>
                 </fieldset>
+
+                <fieldset class="inner-fieldset">
+                    <div class="user-guide-ask">What are extra actions?</div>
+
+                    <div class="user-guide-answer">You may have noticed that sometimes the raid boss will perform additional moves, or actions including reseting its own stats or the players', invoking a Tera Shield or taking away one Tera Orb charge from the players. These actions happen outside of the player turns when the boss's HP or Timer passes a certain percentage, and multiple actions could be chained together if their respective conditions are triggered in one go.</div>
+                    <div class="user-guide-answer">That said, most bosses in Tera Raid Buddy have information available on the extra actions which you can use to prepare. If a boss will reset player stats too often, you might prefer using moves that lower the boss's stats instead. Or if the Tera Orb charge is stolen at a certain point you could aim to Terastalize before then.</div>
+                    <div class="user-guide-answer">Some of the information on extra actions could be incomplete or wrong though so if you notice anything unusual please let me know!</div>
+                </fieldset>
                 
                 <fieldset class="inner-fieldset">
                     <div class="user-guide-ask">What are the EV training methods?</div>
                     <div class="user-guide-answer">The final stats of the raid counters are determined by the EV Training Method which you can freely choose. Damage is always compared against the maximum possible damage out of the calculated damage range. The first four methods are self-explanatory but the others will do the following:</div>
                     <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Mixed Defense Simple</span> - Tests 6 possible spreads including the maximum investment combinations between HP, Def and SpD as well as a +Def or a +SpD nature.</div>
-                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Optimal Defensive Balance</span> - Finds the lowest investment EV spread for the best possible balance between physical and special damage taken.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Optimal Defensive Balance</span> - Finds the lowest investment EV spread for the best possible balance between physical and special damage taken. Bosses commonly pick the highest damage move so this method tries to equalize physical and special damage.</div>
                     <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > Defenses</span> - First invest to outspeed the raid boss, if possible, and then invest the remaining EVs in Optimal Defensive Balance.</div>
                     <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Attack > Defenses</span> - Fully invest in Attack/Sp.Attack and then invest the remaining 256 EVs in Optimal Defensive Balance.</div>
-                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > Attack > Defenses</span> - First, invest to outspeed. Second, full investment in Attack/Sp.Attack. Third, with the ramining EVs if any invest in Optimal Defensive Balance.</div>
-                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Best Defense Threshold</span> - Use the EV spread with the minimum investment to reach the best possible defensive threshold with the unallocated EVs.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > Attack > Defenses</span> - First, invest to outspeed. Second, full investment in Attack/Sp.Attack. Third, with the remaining EVs if any invest in Optimal Defensive Balance.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Best Defense Threshold</span> - Find the EV spread with minimum investment to reach the best possible defensive threshold.</div>
                     <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">BDT > Attack</span> - Train for the Best Defensive Threshold and use any remaining EVs offensively.</div>
                     <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > BDT</span> - First invest to outspeed and then train for the Best Defense Threshold. </div>
                     <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > BDT > Attack</span> - First invest to outspeed, then train for the Best Defense Threshold, finally invest the rest of EVs in Attack/Sp.Attack.</div>
@@ -77,20 +86,21 @@
 
                 <fieldset class="inner-fieldset">
                     <div class="user-guide-ask">What does the nature preference do?</div>
-                    <div class="user-guide-answer">Depending on the EV Training Method, the ranking algorithm will select a certain nature for your raid counters. The raised stat will be either a defensive stat, offensive stat or speed stat, as determined by the specific training method you selected.</div>
-                    <div class="user-guide-answer">The hindered stat will be determined by your preference.</div>
-                    <div class="user-guide-answer">For the default setting "Hinder Lowest Of Atk Spa" Pokemon with higher base attack will have physical oriented natures (eg. Adamant, Jolly, Careful, Impish), and higher special attack will have special oriented natures (eg. Modest, Timid, Bold, Calm).</div>
-                    <div class="user-guide-answer user-guide-verticalspace-small">Nature preference for paradox Pokemon is more complex. If you select "Hinder Highest Stat" the algorithm will not hinder Defense or Sp.Defense if they matter against the specific boss.</div>
+                    <div class="user-guide-answer">Depending on the EV Training Method, the ranking algorithm will select a certain nature for your raid counters. The raised stat will be either a defensive stat, offensive stat or speed stat, as determined by the specific training method you selected. The hindered stat will be determined by your preference when applicable.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small">For the default setting "Hinder Lowest Of Atk Spa" Pokemon with higher base attack will have physical oriented natures (eg. Adamant, Jolly, Careful, Impish), and higher special attack will have special oriented natures (eg. Modest, Timid, Bold, Calm).</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small">Nature preference for paradox Pokemon is more complex. If you select "Hinder Highest Stat" the algorithm will hinder the highest stat in order to make it possible for other stats to be selected. The selected nature may hinder Defense or Sp.Defense only if they do not matter against the specific boss.</div>
                 </fieldset>
 
                 <fieldset class="inner-fieldset">
                     <div class="user-guide-ask" style="font-weight:bold">Why is it that some of the raid counters have less than 252 Def or SpD?</div>
                     <div class="user-guide-answer">When using the Optimal Defensive Balance method, or similar methods, the ranking algorithm will find the best spread with least investment. So, having 240 Def or 252 Def, or whatever the specific numbers were, would not change the maximum damage taken.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small">You can always see the damage values for yourself on another tool such as the original Smogon Damage Calculator.</div>
                 </fieldset>
 
                 <fieldset class="inner-fieldset">
-                    <div class="user-guide-ask" style="font-weight:bold">I think I found a bug. Now what?</div>
-                    <div class="user-guide-answer">Please let me know. Either through issues on github, or dm me on reddit. I will work on bug fixes when I have the time to.</div>
+                    <div class="user-guide-ask" style="font-weight:bold">What is the difference between Search Filters and Post Search Filters?</div>
+                    <div class="user-guide-answer">Search Filters are applied directly to the ranking algorithm so the filtered entries are not calculated. With less entries to consider the calculations will run faster.</div>
+                    <div class="user-guide-answer">Post Search Filters are applied on the results generated by the ranking algorithm so you don't have to redo the calculations.</div>
                 </fieldset>
             </div>
 
@@ -147,6 +157,7 @@
                                             <div>
                                                 <label for="pokemonBossTeraType">Tera Type</label>
                                                 <select id="pokemonBossTeraType">
+                                                    <option value="" style="text-align: center;">No Tera</option>
                                                     <option value="Normal" class="normal-type" selected>Normal</option>
                                                     <option value="Fighting" class="fighting-type">Fighting</option>
                                                     <option value="Flying" class="flying-type">Flying</option>
@@ -165,6 +176,7 @@
                                                     <option value="Dragon" class="dragon-type">Dragon</option>
                                                     <option value="Dark" class="dark-type">Dark</option>
                                                     <option value="Fairy" class="fairy-type">Fairy</option>
+                                                    <option value="Stellar" style="text-align: center;">Stellar</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -411,7 +423,7 @@
                             <div class="parameter-spacing">
                                 <label for="parameterDefenderTeraType">Defender Tera Type</label>
                                 <select id="parameterDefenderTeraType">
-                                    <option value="" selected>No Tera</option>
+                                    <option value="" style="text-align: center;" selected>No Tera</option>
                                     <option value="Normal" class="normal-type">Normal</option>
                                     <option value="Fighting" class="fighting-type">Fighting</option>
                                     <option value="Flying" class="flying-type">Flying</option>
@@ -430,7 +442,7 @@
                                     <option value="Dragon" class="dragon-type">Dragon</option>
                                     <option value="Dark" class="dark-type">Dark</option>
                                     <option value="Fairy" class="fairy-type">Fairy</option>
-                                    <option value="Stellar">Stellar</option>
+                                    <option value="Stellar" style="text-align: center;">Stellar</option>
                                 </select>
                             </div>
                         </div>
@@ -600,18 +612,18 @@
                                     <label for="parameterFieldGravity">Gravity</label>
                                     <input type="checkbox" id="parameterFieldGravity">
                                 </div>
-                                <div class="search-parameter-item">
+                                <!--div class="search-parameter-item">
                                     <label for="parameterFieldWonderRoom">Wonder Room</label>
                                     <input type="checkbox" id="parameterFieldWonderRoom" disabled>
-                                </div>
+                                </div-->
                                 <div class="search-parameter-item">
                                     <label for="parameterFieldMagicRoom">Magic Room</label>
                                     <input type="checkbox" id="parameterFieldMagicRoom">
                                 </div>
-                                <div class="search-parameter-item">
+                                <!--div class="search-parameter-item">
                                     <label for="parameterFieldTrickRoom">Trick Room</label>
                                     <input type="checkbox" id="parameterFieldTrickRoom" disabled>
-                                </div>
+                                </div-->
                                 <div class="search-parameter-item">
                                     <label for="parameterFieldTabletsOfRuin">Tablets of Ruin</label>
                                     <input type="checkbox" id="parameterFieldTabletsOfRuin">
@@ -633,18 +645,18 @@
                                 <div class="parameter-section-title">Raid Boss Side</div>
                             </div>
                             <div class="search-parameter-grid">
-                                    <div class="search-parameter-item">
+                                <!--div class="search-parameter-item">
                                     <label for="parameterFieldBossReflect">Reflect</label>
                                     <input type="checkbox" id="parameterFieldBossReflect" disabled>
-                                    </div>
-                                    <div class="search-parameter-item">
+                                </div>
+                                <div class="search-parameter-item">
                                     <label for="parameterFieldBossLightScreen">Light Screen</label>
                                     <input type="checkbox" id="parameterFieldBossLightScreen" disabled>
-                                    </div>
-                                    <div class="search-parameter-item">
+                                </div>
+                                <div class="search-parameter-item">
                                     <label for="parameterFieldBossAuroraVeil">Aurora Veil</label>
                                     <input type="checkbox" id="parameterFieldBossAuroraVeil" disabled>
-                                    </div>
+                                </div-->
                                 <div class="search-parameter-item">
                                     <label for="parameterFieldBossTailwind">Tailwind</label>
                                     <input type="checkbox" id="parameterFieldBossTailwind" disabled>
@@ -985,8 +997,8 @@
                             </div>
                             <div class="search-parameter-grid">
                                 <div class="search-parameter-item">
-                                    <label for="parameterMoveAvalanche">Avalanche 2x</label>
-                                    <input type="checkbox" id="parameterMoveAvalanche" disabled>
+                                    <label for="parameterMoveBoostAvalanche">Avalanche 2x</label>
+                                    <input type="checkbox" id="parameterMoveBoostAvalanche">
                                 </div>
                             </div>
                         </fieldset>
@@ -1064,7 +1076,12 @@
                                     <div class="parameter-sequence-row parameter-centered">
                                         <div class="sprite-container">
                                             <div id="bossSummaryName" class="boss-summary-name">Boss Name</div>
-                                            <img id="bossSummarySprite" class="sprite-raid-boss" src="assets/sprites/_unknown.png" width="128" height="128">
+                                            <div>
+                                                <img id="bossInfoTeraSprite" class="boss-info-tera-sprite" src="assets/tera/ice.png" width="32" height ="32">
+                                                <img id="bossSummarySprite" class="sprite-raid-boss" src="assets/sprites/_unknown.png" width="128" height="128">
+                                            </div>
+                                            <div id="bossSummaryBaseTypes"class="boss-info-basetypes collapsed">
+                                            </div>
                                             <div id="bossSummaryTera" class="boss-info-tera">Tera Type</div>
                                         </div>
                                         <div class="container-flexcolumn">
@@ -1140,28 +1157,28 @@
                             </div>
                         </div>
                         <div id="resultsEffectsAndFilters" class="result-effects-info collapsed">
-                            -
                         </div>
                         <div id="resultsPSFSummary" class="result-filters-info collapsed">
-                            -
                         </div>
                         <div id="resultTablePagination">
-                            <button id="resultPrevButton">Prev</button>
-                            <span>Page:</span>
-                            <select id="resultPageSelect">
-                                <option>1</option>
-                            </select>
-                            <span id="resultTotalPages">/ 1</span>
-                            <button id="resultNextButton">Next</button>
-                            <span>Entries per page:</span>
-                            <select id="resultItemsPerPageSelect">
-                                <option value="10">10</option>
-                                <option value="20" selected>20</option>
-                                <option value="30">30</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                                <option value="999">All</option>
-                            </select>
+                            <div style="width: fit-content; margin-left: auto; margin-right: auto">
+                                <button id="resultPrevButton">Prev</button>
+                                <span>Page:</span>
+                                <select id="resultPageSelect">
+                                    <option>1</option>
+                                </select>
+                                <span id="resultTotalPages">/ 1</span>
+                                <button id="resultNextButton">Next</button>
+                                <span>Entries per page:</span>
+                                <select id="resultItemsPerPageSelect">
+                                    <option value="10">10</option>
+                                    <option value="20" selected>20</option>
+                                    <option value="30">30</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="999">All</option>
+                                </select>
+                            </div>
                         </div>
                         <div id="resultTableContainer">
                             <table id="resultsTable" class="ResultTable">
@@ -1203,10 +1220,14 @@
 
             <footer class="page-footer">
                 <div class="footer-container">
-                    <div>
-                        <p>Tera raid tool made by Arkandy</p>
+                    <div class="vertical-spacing">
+                        <div>Tera raid tool made by Arkandy</div>
+                        <div><a href="https://www.reddit.com/user/AndSLG">u/AndSLG</a> - <a href="https://www.youtube.com/@Arkandy">youtube@Arkandy</a> - <a href="https://www.twitch.tv/arkkandy">twitch.tv/arkkandy</a></div>
+                        <div class="vertical-spacing"></div>
+
+                        <li class="footer-bullets">Damage calc code adapted from <a href="https://github.com/smogon/damage-calc">@smogon/damage-calc</a></li>
+                        <li class="footer-bullets">Sprites from <a href="https://bulbapedia.bulbagarden.net/wiki/Main_Page">Bulbapedia</a>, <a href="https://www.serebii.net/">Serebii</a>, <a href="https://www.reddit.com/r/PokeLeaks/comments/ytt6ve/all_new_hd_sprite_icons_for_scarletviolet_link_in/">r/PokeLeaks</a> and adapted from <a href="https://twitter.com/mattyoukhana_">twitter/mattyoukhana_</a></li>
                     </div>
-                    <p>Damage calc code adapted from @smogon_calc</p>
                 </div>
             </footer>
         </div>

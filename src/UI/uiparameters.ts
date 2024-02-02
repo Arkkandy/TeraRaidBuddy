@@ -148,7 +148,7 @@ export function readFieldParameters() {
     }
   
     let gravity = UIElements.SearchParams.FieldGravity.checked;
-    let wonderRoom = UIElements.SearchParams.FieldWonderRoom.checked;
+    let wonderRoom = false;//UIElements.SearchParams.FieldWonderRoom.checked;
     let magicRoom = UIElements.SearchParams.FieldMagicRoom.checked;
     //let trickRoom = parameterFieldTrickRoom.checked;
   
@@ -179,6 +179,8 @@ export function readFieldParameters() {
     newField.defenderSide.isLightScreen = UIElements.SearchParams.FieldDefenderLightScreen.checked;
     newField.defenderSide.isAuroraVeil = UIElements.SearchParams.FieldDefenderAuroraVeil.checked;
     newField.defenderSide.isTailwind = UIElements.SearchParams.FieldDefenderTailwind.checked;
+    newField.defenderSide.isFriendGuard = UIElements.SearchParams.FieldDefenderFriendGuard.value != "0";
+    newField.defenderSide.numFriendGuard = parseInt( UIElements.SearchParams.FieldDefenderFriendGuard.value );
   
     newField.gameType = 'TeraRaid';
   

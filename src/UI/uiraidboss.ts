@@ -157,6 +157,14 @@ export function reselectPresetDefaults( gen: Generation, currentPresetMode: Raid
     // Fetch moves and place them in the UI
     setBossPresetMoves( raidBoss );
   
+    // Set HP multiplier
+    if ( preset.hpMultiplier != undefined ) {
+      UIElements.RaidBoss.BossHPMultiplier.value = preset.hpMultiplier.toString();
+    }
+    else {
+      UIElements.RaidBoss.BossHPMultiplier.value = "1";
+    }
+
     // Set held item
     if ( preset.item != undefined ) {
       UIElements.RaidBoss.BossHeldItem.value = raidBoss.item!;
@@ -221,14 +229,25 @@ export function readBossMainMoveset(gen: Generation, parameters: RankingParamete
       if ( value == "Shell Side Arm") {
         let moveP = new Move(gen, value+"(P)");
         let moveS = new Move(gen, value+"(S)");
+
+        moveP.isStellarFirstUse = true;
+        moveS.isStellarFirstUse = true;
+
         moves.push(moveP);
         moves.push(moveS);
       }
       else {
         let move = new Move(gen, value );
-  
+
+        move.isStellarFirstUse = true;
+
+        /* Only extra moves will use spread damage reduction */
         if ( useSpread ) {
           move.forceDamageSpread = true;
+        }
+
+        if ( value == 'Avalanche' && UIElements.SearchParams.MoveBoostAvalanche.checked ) {
+          move.doubleAvalanche = true;
         }
   
         // Apply move settings
