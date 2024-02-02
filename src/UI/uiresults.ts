@@ -496,9 +496,11 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
     if ( defenderSide.length > 0 ) {
       infoPanel.textContent += " | Defender: " + defenderSide.join(", ");
     }
+
+    if ( search.rankingData.originalField.defenderSide.numFriendGuard > 0 ) {
+      infoPanel.textContent += ` | Friend Guard: x${search.rankingData.originalField.defenderSide.numFriendGuard}`;
+    }
     UIElements.Results.InfoEffectsAndSettings.classList.remove('collapsed');
-    //if ( search.rankingData.)
-    // EV Method, Focus Energy, Defense Cheer, Reflect, Light Screen, Aurora Veil, Tailwind
   }
 
 
