@@ -22,7 +22,7 @@ module.exports = {
     extensions: ['.ts','.js'],
   },
   output: {
-    filename: 'bundle.js',
+    filename: 'js/bundle.js',
     path: path.resolve(__dirname, 'dist'),
   },
   /* Common plugins to both modes */

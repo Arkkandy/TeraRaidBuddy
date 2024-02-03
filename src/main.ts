@@ -1,3 +1,5 @@
+import '../styles/main.css'
+
 import UIElements from './UI/uielements';
 
 import './UI/uiparameters';
