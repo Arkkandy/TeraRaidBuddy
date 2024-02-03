@@ -245,7 +245,7 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
         cellRank.textContent = result.finalRank.toString();// (rr+1).toString();
         if (rankingParameters.results.showSprites ) {
           let path = getImagePath( result.species );
-          cellSpecies.innerHTML = `<div class=\"table-sprite-div\"><img src=\"${path}\" width=\"32\" height=\"32\">${result.species}</div>`
+          cellSpecies.innerHTML = `<div class=\"table-sprite-div\"><img src=\"${path}\" loading="lazy" width=\"32\" height=\"32\">${result.species}</div>`
         }
         else {
           cellSpecies.textContent = result.species;

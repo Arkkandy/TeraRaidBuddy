@@ -278,6 +278,12 @@ const UIElements = {
         AbilityForceQuarkDrive: getUIElement<HTMLInputElement>('abilityForceQuarkDrive'),
         AbilityForceProtosynthesis: getUIElement<HTMLInputElement>('abilityForceProtosynthesis'),
 
+        AbilityOpportunistAtk: getUIElement<HTMLSelectElement>('parameterOpportunistBoostAtk'),
+        AbilityOpportunistDef: getUIElement<HTMLSelectElement>('parameterOpportunistBoostDef'),
+        AbilityOpportunistSpa: getUIElement<HTMLSelectElement>('parameterOpportunistBoostSpA'),
+        AbilityOpportunistSpd: getUIElement<HTMLSelectElement>('parameterOpportunistBoostSpD'),
+        AbilityOpportunistSpe: getUIElement<HTMLSelectElement>('parameterOpportunistBoostSpe'),
+
         // ========================================================================
         // Item Parameters Section
         ItemDisableBoss: getUIElement<HTMLInputElement>('parameterItemDisableBoss'),
@@ -286,6 +292,12 @@ const UIElements = {
         ItemDefaultSelect: getUIElement<HTMLSelectElement>('parameterItemDefaultSelect'),
         ItemEvioliteToNFE: getUIElement<HTMLInputElement>('parameterItemEvioliteToNFE'),
         ItemBoosterEnergyToPQ: getUIElement<HTMLInputElement>('parameterItemBoosterEnergyToPQ'),
+
+        ItemMirrorHerbAtk: getUIElement<HTMLSelectElement>('parameterMirrorHerbBoostAtk'),
+        ItemMirrorHerbDef: getUIElement<HTMLSelectElement>('parameterMirrorHerbBoostDef'),
+        ItemMirrorHerbSpa: getUIElement<HTMLSelectElement>('parameterMirrorHerbBoostSpA'),
+        ItemMirrorHerbSpd: getUIElement<HTMLSelectElement>('parameterMirrorHerbBoostSpD'),
+        ItemMirrorHerbSpe: getUIElement<HTMLSelectElement>('parameterMirrorHerbBoostSpe'),
 
         // ========================================================================
         // Field Parameters Section
@@ -324,6 +336,8 @@ const UIElements = {
     // RESULTS SECTION
 
     Results: {
+
+        SearchResultSection: getUIElement('searchResultSection'),
 
         InfoEffectsAndSettings: getUIElement('resultsEffectsAndFilters'),
         InfoFilters: getUIElement('resultsPSFSummary'),
@@ -380,12 +394,9 @@ const UIElements = {
         ResultTotalPages: getUIElement<HTMLSelectElement>('resultTotalPages'),
         ResultItemsPerPageSelect: getUIElement<HTMLSelectElement>('resultItemsPerPageSelect'),
 
-        ResultTableContainer: getUIElement('resultTableContainer'), // Unused
-        ResultTableWatermark: getUIElement('resultTableWatermark'), // Unused
-
         FullTable: getUIElement<HTMLDivElement>('resultTableContents'),
 
-        SearchSummary: getUIElement<HTMLHeadingElement>("ResultSummary"),
+        SearchSummary: getUIElement<HTMLElement>("ResultSummary"),
         ResultsTable: getUIElement<HTMLTableElement>('resultsTable')
     }
 

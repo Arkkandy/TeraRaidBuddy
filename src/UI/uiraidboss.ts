@@ -10,7 +10,17 @@ import { Move, Pokemon, Stats, toID } from "../smogon-calc";
 import { getModifiedStat } from "../smogon-calc/mechanics/util";
 
 
+
+let debounceTimer : NodeJS.Timeout;
+// Defer image loading until a few moments after the user decides
+function lazyBossPresentationImageLoader( newImgURL : string ) {
   
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      UIElements.RaidBoss.BossSprite.src = newImgURL;
+    }, 300);
+}
+
 export function updateBossImage(presetMode: RaidPresetMode) {
     let bossName : string = "_unknown";
   
@@ -23,7 +33,8 @@ export function updateBossImage(presetMode: RaidPresetMode) {
     }
   
     let fullPath = getImagePath( bossName );
-    UIElements.RaidBoss.BossSprite.src = fullPath;
+    //UIElements.RaidBoss.BossSprite.src = fullPath;
+    lazyBossPresentationImageLoader( fullPath );
 }
 
 export function reselectAbility( currentPresetMode: RaidPresetMode) {

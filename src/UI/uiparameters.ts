@@ -103,6 +103,12 @@ export function readSearchParameters() {
     parameters.ability.forceTriggerMarvelScale = UIElements.SearchParams.AbilityForceMarvelScale.value;
     parameters.ability.forceTriggerQuarkDrive = UIElements.SearchParams.AbilityForceQuarkDrive.checked;
     parameters.ability.forceTriggerProtosynthesis = UIElements.SearchParams.AbilityForceProtosynthesis.checked;
+
+    parameters.ability.opportunistBoosts[0] = parseInt(UIElements.SearchParams.AbilityOpportunistAtk.value );
+    parameters.ability.opportunistBoosts[1] = parseInt(UIElements.SearchParams.AbilityOpportunistDef.value );
+    parameters.ability.opportunistBoosts[2] = parseInt(UIElements.SearchParams.AbilityOpportunistSpa.value );
+    parameters.ability.opportunistBoosts[3] = parseInt(UIElements.SearchParams.AbilityOpportunistSpd.value );
+    parameters.ability.opportunistBoosts[4] = parseInt(UIElements.SearchParams.AbilityOpportunistSpe.value );
   
     // Item Parameters
     parameters.items.disableBossItem = UIElements.SearchParams.ItemDisableBoss.checked;
@@ -110,6 +116,12 @@ export function readSearchParameters() {
     parameters.items.giveEvioliteToNFE = UIElements.SearchParams.ItemEvioliteToNFE.checked;
     parameters.items.defaultAttackerItem = UIElements.SearchParams.ItemDefaultSelect.value;
     parameters.items.giveBoosterEnergytoPQ = UIElements.SearchParams.ItemBoosterEnergyToPQ.checked;
+
+    parameters.items.mirrorHerbBoosts[0] = parseInt(UIElements.SearchParams.ItemMirrorHerbAtk.value );
+    parameters.items.mirrorHerbBoosts[1] = parseInt(UIElements.SearchParams.ItemMirrorHerbDef.value );
+    parameters.items.mirrorHerbBoosts[2] = parseInt(UIElements.SearchParams.ItemMirrorHerbSpa.value );
+    parameters.items.mirrorHerbBoosts[3] = parseInt(UIElements.SearchParams.ItemMirrorHerbSpd.value );
+    parameters.items.mirrorHerbBoosts[4] = parseInt(UIElements.SearchParams.ItemMirrorHerbSpe.value );
   
     // Misc Parameters    
     parameters.misc.lockWeather = UIElements.SearchParams.FieldLockWeather.checked;

@@ -568,6 +568,8 @@ export function selectSpeedNaturePreference( pokemon: Pokemon, pref: DefensiveNa
     return getNatureFromStats( raisedStat, loweredStat );
 }
 
+//export function applyBoostIfExists( boost: number,)
+
 //function calcStatValue( base: number, iv: number, ev: number,  )
 
 

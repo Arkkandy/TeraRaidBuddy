@@ -16,8 +16,14 @@ export class SearchResult {
     public currentPage: number = 1;
   
     public maxColspan: number = 1;
+
+    public execTime : number = 0;
   
     constructor( rankingData: RankingResult ) {
       this.rankingData = rankingData;
+    }
+
+    getExecSummary() {
+      return `Execution Time: ${this.execTime.toFixed(3)}s<br>Entries analyzed: ${this.rankingData.entriesAnalyzed} | Entries filtered: ${this.rankingData.entriesSkipped}<br>Viewing: ${this.filteredData.length} | PSF: ${this.rankingData.originalData.length-this.filteredData.length}`;
     }
   }

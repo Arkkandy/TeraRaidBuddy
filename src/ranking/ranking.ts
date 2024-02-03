@@ -337,20 +337,24 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
 
             let modifiedField = field.clone();
             let defaultStatus: '' | StatusName = '';
-            let statStages = {atk:0,def:0,spa:0,spd:0,spe:0};
+            let initialBoosts = {atk:0,def:0,spa:0,spd:0,spe:0};
+            
+            let usedMirrorHerb = false;
+            let usedOpportunist = false;
+
             if ( heldItem == 'Mirror Herb' ) {
-                if ( raidBoss.boosts.atk > 0 ) {statStages.atk = statStages.atk + raidBoss.boosts.atk;}
-                if ( raidBoss.boosts.def > 0 ) {statStages.def = statStages.def + raidBoss.boosts.def;}
-                if ( raidBoss.boosts.spa > 0 ) {statStages.spa = statStages.spa + raidBoss.boosts.spa;}
-                if ( raidBoss.boosts.spd > 0 ) {statStages.spd = statStages.spd + raidBoss.boosts.spd;}
-                if ( raidBoss.boosts.spe > 0 ) {statStages.spe = statStages.spe + raidBoss.boosts.spe;}
+                if ( parameters.items.mirrorHerbBoosts[0] > 0 ) {usedMirrorHerb = true; initialBoosts.atk = Math.min(6,initialBoosts.atk + parameters.items.mirrorHerbBoosts[0]);}
+                if ( parameters.items.mirrorHerbBoosts[1] > 0 ) {usedMirrorHerb = true; initialBoosts.def = Math.min(6,initialBoosts.def + parameters.items.mirrorHerbBoosts[1]);}
+                if ( parameters.items.mirrorHerbBoosts[2] > 0 ) {usedMirrorHerb = true; initialBoosts.spa = Math.min(6,initialBoosts.spa + parameters.items.mirrorHerbBoosts[2]);}
+                if ( parameters.items.mirrorHerbBoosts[3] > 0 ) {usedMirrorHerb = true; initialBoosts.spd = Math.min(6,initialBoosts.spd + parameters.items.mirrorHerbBoosts[3]);}
+                if ( parameters.items.mirrorHerbBoosts[4] > 0 ) {usedMirrorHerb = true; initialBoosts.spe = Math.min(6,initialBoosts.spe + parameters.items.mirrorHerbBoosts[4]);}
             }
             if ( prospectAbility == 'Opportunist') {
-                if ( raidBoss.boosts.atk > 0 ) {statStages.atk = statStages.atk + raidBoss.boosts.atk;}
-                if ( raidBoss.boosts.def > 0 ) {statStages.def = statStages.def + raidBoss.boosts.def;}
-                if ( raidBoss.boosts.spa > 0 ) {statStages.spa = statStages.spa + raidBoss.boosts.spa;}
-                if ( raidBoss.boosts.spd > 0 ) {statStages.spd = statStages.spd + raidBoss.boosts.spd;}
-                if ( raidBoss.boosts.spe > 0 ) {statStages.spe = statStages.spe + raidBoss.boosts.spe;}
+                if ( parameters.ability.opportunistBoosts[0] > 0 ) {usedOpportunist = true; initialBoosts.atk = Math.min(6,initialBoosts.atk + parameters.ability.opportunistBoosts[0]);}
+                if ( parameters.ability.opportunistBoosts[1] > 0 ) {usedOpportunist = true; initialBoosts.def = Math.min(6,initialBoosts.def + parameters.ability.opportunistBoosts[1]);}
+                if ( parameters.ability.opportunistBoosts[2] > 0 ) {usedOpportunist = true; initialBoosts.spa = Math.min(6,initialBoosts.spa + parameters.ability.opportunistBoosts[2]);}
+                if ( parameters.ability.opportunistBoosts[3] > 0 ) {usedOpportunist = true; initialBoosts.spd = Math.min(6,initialBoosts.spd + parameters.ability.opportunistBoosts[3]);}
+                if ( parameters.ability.opportunistBoosts[4] > 0 ) {usedOpportunist = true; initialBoosts.spe = Math.min(6,initialBoosts.spe + parameters.ability.opportunistBoosts[4]);}
             }
 
             setAbilityTerrain( prospectAbility as string, modifiedField, parameters );
@@ -432,6 +436,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                 //defenderEVs = {hp:0, atk:0, def:0, spa:0, spd:0, spe:0};
                 let dummyDefender = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
                     ability: prospectAbility,
@@ -450,6 +455,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
 
                 let dummyDefender = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     nature: initialSpread.nature,
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
@@ -467,6 +473,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
             else if ( parameters.mainparams.rankingType == SearchRankingType.OutspeedIntoOptimalDef ) {
                 let neutralDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     nature: 'Hardy',
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
@@ -477,6 +484,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                 let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.mainparams.defNaturePreferenceNonPQ );
                 let positiveDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     nature: prefNature,
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
@@ -510,6 +518,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
             else if ( parameters.mainparams.rankingType == SearchRankingType.OutspeedIAttackIDefense ) {
                 let neutralDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     nature: 'Hardy',
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
@@ -520,6 +529,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                 let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.mainparams.defNaturePreferenceNonPQ );
                 let positiveDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     nature: prefNature,
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
@@ -557,6 +567,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                 //defenderEVs = {hp:0, atk:0, def:0, spa:0, spd:0, spe:0};
                 let dummyDefender = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
                     ability: prospectAbility,
@@ -575,6 +586,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                 //defenderEVs = {hp:0, atk:0, def:0, spa:0, spd:0, spe:0};
                 let dummyDefender = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     nature: "Hardy",
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
@@ -593,6 +605,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
             else if ( parameters.mainparams.rankingType == SearchRankingType.OutspeedIntoBDT ) {
                 let neutralDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     nature: 'Hardy',
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
@@ -603,6 +616,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                 let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.mainparams.defNaturePreferenceNonPQ );
                 let positiveDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     nature: prefNature,
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
@@ -637,6 +651,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
             else if ( parameters.mainparams.rankingType == SearchRankingType.OutspeedIntoBDTIntoAttack ) {
                 let neutralDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     nature: 'Hardy',
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
@@ -647,6 +662,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                 let prefNature = selectSpeedNaturePreference( neutralDummy, parameters.mainparams.defNaturePreferenceNonPQ );
                 let positiveDummy = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     nature: prefNature,
                     item: heldItem,
                     ivs: {hp:31,atk:31,def:31,spa:31,spd:31,spe:31},
@@ -691,6 +707,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                 // Generate raid defender data for the current species
                 let raidDefender = new Smogon.Pokemon( gen, data.name, {
                     teraType: defenderTeraType,
+                    boosts: initialBoosts,
                     nature: prospectSpread.nature,
                     evs: prospectSpread.EVs,
                     item: heldItem,
@@ -733,6 +750,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     if ( damageResult.rawDesc.defenderAbility ) {
                         rankingResult.addModifier( damageResult.rawDesc.defenderAbility );
                     }
+
                     // Fairly difficult ability to track in damage calc. #TODO: Think up a good way to account for it like the other abilties
                     else if ( prospectAbility == "Neutralizing Gas") {
                         rankingResult.addModifier( "Neutralizing Gas");
@@ -740,6 +758,7 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
                     if ( damageResult.rawDesc.defenderItem )  {
                         rankingResult.addModifier( damageResult.rawDesc.defenderItem );
                     }
+
                     // Factor in terrain & weather
                     if ( damageResult.rawDesc.terrain ) {
                         rankingResult.addModifier( damageResult.rawDesc.terrain );

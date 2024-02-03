@@ -75,9 +75,9 @@ function performRaidSearch() {
   // Read the extra moves
   const extraMoves : Move[] = UIRaidBoss.readBossExtraMoves( gen, rankingParameters );
 
-  UIElements.Results.SearchSummary.textContent = '';
+  UIElements.Results.SearchSummary.innerHTML = "";
 
-  // Prepare data (#TODO: Read all data from webpage inputs)
+  // Prepare data
   const raidBoss = UIRaidBoss.readRaidBossParameters(gen,currentPresetMode,abilityMode);
   let field = UIParameters.readFieldParameters();
 
@@ -91,42 +91,35 @@ function performRaidSearch() {
   currentSearchResult.currentPage = 1;
   UIResults.updatePaging( currentSearchResult );
   
-  // Build table from results
-  if ( UIElements.Results.ResultsTable ) {
-    // Populate table head
+  // ======= BUILD TABLE AND RESULTS =======
+  // Create table head with info
+  UIResults.createResultTableHead( currentSearchResult );
 
-    // Create table head with info
-    UIResults.createResultTableHead( currentSearchResult );
+  // Create table head with currently viewable entries
+  UIResults.createResultTableEntries( currentSearchResult, 1 );
 
-    // Create table head with currently viewable entries
-    UIResults.createResultTableEntries( currentSearchResult, 1 );
+  // Show notable settings and effects
+  UIResults.updateEffectsInfo( currentSearchResult );
+  UIResults.hidePSFInfo();
 
-    // Show notable settings and effects
-    UIResults.updateEffectsInfo( currentSearchResult );
-    UIResults.hidePSFInfo();
+  // Boss Summary
+  UIResults.createBossInfoSummary( gen, currentSearchResult, getPresetModeString( currentPresetMode ), UIRaidBoss.getSelectedBossPreset( currentPresetMode ) );
 
-    // Boss Summary
-    UIResults.createBossInfoSummary( gen, currentSearchResult, getPresetModeString( currentPresetMode ), UIRaidBoss.getSelectedBossPreset( currentPresetMode ) );
+  // Unhide PSF Container (Hidden when the website first opens)
+  UIElements.Results.PSFContainer.classList.remove('collapsed');
 
-    // Unhide PSF Container (Hidden when the website first opens)
-    UIElements.Results.PSFContainer.classList.remove('collapsed');
+  // Determine time elapsed since beginning of ranking operation
+  const elapsed = ( (new Date().getTime())-startTime ) / 1000;
+  currentSearchResult.execTime = elapsed;
 
-    // Summarize search into heading
-    try {
-      //searchSummary.textContent = raidBoss.name + " (Lv. " + raidBoss.level + ") Ability: " +  raidBoss.ability + " Nature: " + raidBoss.nature + " | TERA: " + raidBoss.teraType + ' | Raid Boss   VS   Generation 9';
+  UIElements.Results.SearchSummary.innerHTML = currentSearchResult.getExecSummary();
 
-      // Determine time elapsed since beginning of ranking operation
-      const elapsed = (new Date().getTime())-startTime;
-      UIElements.Results.SearchSummary.textContent += 'Execution time: ' + (elapsed/1000).toFixed(3) + "s" + " | Calculated: " + rankResultData.entriesAnalyzed.toString() + " | Skipped: " + rankResultData.entriesSkipped.toString();
-    }
-    catch(e: any) {
-      UIElements.Results.SearchSummary.textContent = "Exception";
-    }
+  // Reveal results section
+  UIElements.Results.SearchResultSection.classList.remove('collapsed');
 
-    // Automatically scroll to the table
-    if ( UIElements.Results.FullTable ) {
-      UIElements.Results.FullTable.scrollIntoView({ behavior: 'smooth' });
-    }
+  // Automatically scroll to the table
+  if ( UIElements.Results.FullTable ) {
+    UIElements.Results.FullTable.scrollIntoView({ behavior: 'smooth' });
   }
 }
 
@@ -141,12 +134,16 @@ function clearPostSearchFilters() {
     UIResults.createResultTableEntries( currentSearchResult, 1 );
 
     UIResults.hidePSFInfo();
+
+    UIElements.Results.SearchSummary.innerHTML = currentSearchResult.getExecSummary();
   }
 }
 
 function applyPostSearchFilters() {
   if ( currentSearchResult ) {
     UIResults.applyPostSearchFilters( gen, currentSearchResult );
+
+    UIElements.Results.SearchSummary.innerHTML = currentSearchResult.getExecSummary();
   }
 }
 
@@ -592,6 +589,22 @@ UIElements.RaidBoss.BossAddMoveDefaultButton.addEventListener('click', () => {
     UIElements.RaidBoss.BossAddMove3.value = "(No Move)";
     UIElements.RaidBoss.BossAddMove4.value = "(No Move)";
   }
+});
+UIElements.RaidBoss.BossMoveClearButton.addEventListener('click', () => {
+
+  UIElements.RaidBoss.BossMove1.value = "(No Move)";
+  UIElements.RaidBoss.BossMove2.value = "(No Move)";
+  UIElements.RaidBoss.BossMove3.value = "(No Move)";
+  UIElements.RaidBoss.BossMove4.value = "(No Move)";
+
+});
+UIElements.RaidBoss.BossAddMoveClearButton.addEventListener('click', () => {
+
+  UIElements.RaidBoss.BossAddMove1.value = "(No Move)";
+  UIElements.RaidBoss.BossAddMove2.value = "(No Move)";
+  UIElements.RaidBoss.BossAddMove3.value = "(No Move)";
+  UIElements.RaidBoss.BossAddMove4.value = "(No Move)";
+
 });
 
 /*UIElements.RaidBoss.BossTeraType.addEventListener( 'change', () => {

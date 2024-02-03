@@ -63,16 +63,16 @@ export function getReadableRankingString( srt:SearchRankingType ) {
         case SearchRankingType.FullSpD: return "Full Sp.Defense"
         case SearchRankingType.SimpleOffense: return "252 HP / 252 Atk or SpA";
         case SearchRankingType.MixedDefSimple: return "Simple Mixed Defense"
-        case SearchRankingType.MixedDefOptimal: return "Balanced Defenses";
-        case SearchRankingType.OutspeedIntoOptimalDef: return "Speed & Balanced";
-        case SearchRankingType.AttackIntoOptimalDef: return "Max Atk & Balanced";
-        case SearchRankingType.OutspeedIAttackIDefense: return "Speed & Max Atk & Balanced";
+        case SearchRankingType.MixedDefOptimal: return "Optimal Defense Balance";
+        case SearchRankingType.OutspeedIntoOptimalDef: return "Speed > Optimal Defense";
+        case SearchRankingType.AttackIntoOptimalDef: return "Max Atk > Optimal Defense";
+        case SearchRankingType.OutspeedIAttackIDefense: return "Speed > Max Atk > Defense";
         case SearchRankingType.BestDefenseThreshold: return "Best Defense Threshold";
         case SearchRankingType.BestDefenseThresholdIntoAttack: return "BDT > Attack";
         case SearchRankingType.OutspeedIntoBDT: return "Speed > BDT";
         case SearchRankingType.OutspeedIntoBDTIntoAttack: return "Speed > BDT > Attack";
     }
-    return "Unknown";
+    return "?";
 }
 
 class MainParameters {
@@ -204,6 +204,8 @@ class AbilityParameters {
     public forceTriggerMarvelScale: string = "";
     public forceTriggerQuarkDrive: boolean = false;
     public forceTriggerProtosynthesis: boolean = false;
+
+    public opportunistBoosts : number[] = [0,0,0,0,0];
 }
 
 class ItemParameters {
@@ -212,7 +214,7 @@ class ItemParameters {
     public defaultAttackerItem: string = "";
     public giveBoosterEnergytoPQ: boolean = false;
     public giveEvioliteToNFE: boolean = false;
-    public enableMirrorHerbStatCopy: boolean = false;
+    public mirrorHerbBoosts : number[] = [0,0,0,0,0];
 
 }
 

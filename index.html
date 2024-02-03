@@ -43,14 +43,15 @@
 
                 <fieldset class="inner-fieldset">
                     <div class="user-guide-ask">How do I get started?</div>
-                    <div class="user-guide-answer">Select the boss preset you're about to face, press Calculate at the top of the page, let the browser scroll down to the results and now pick one of the best counters! The lowest damage is not necessarily the best answer always as there are many factors to consider, but it will help you stay alive longer in raids which leads to more victories!</div>
+                    <div class="user-guide-answer">Select the boss preset you're about to face, press Calculate at the top of the page, let the browser scroll down to the results and now pick one of the best counters! You can also use the Post-Search Filters to help you make a decision. The lowest damage is not necessarily the best answer always as there are many factors to consider, but it will help you stay alive longer in raids which leads to more victories!</div>
                 </fieldset>
 
                 <fieldset class="inner-fieldset">
                     <div class="user-guide-ask">What counter should I pick?</div>
 
                     <div class="user-guide-answer">Tera Raid Buddy shows you how the best stats match up to any raid boss - whether you take an offensive or supportive build is entirely up to you.</div>
-                    <div class="user-guide-answer">Aside from lowest damage, you should consider the secondary effects of the bosses' main moves and abilities and how to effectively counter them. And prepare for the extra actions!</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small">Aside from lowest damage, you should consider the secondary effects of the bosses' main moves and possible abilities and how to effectively counter them. And be prepared for the extra actions!</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small">In particular pay attention to the ability noted in Info & Details for the raid counters. Some top rankings rely on key immunities granted by abilities, and if your pokemon does not have that ability it could be taking massive damage. </div>
                 </fieldset>
 
                 <fieldset class="inner-fieldset">
@@ -64,11 +65,13 @@
                 <fieldset class="inner-fieldset">
                     <div class="user-guide-ask">What are the EV training methods?</div>
                     <div class="user-guide-answer">The final stats of the raid counters are determined by the EV Training Method which you can freely choose. Damage is always compared against the maximum possible damage out of the calculated damage range. The first four methods are self-explanatory but the others will do the following:</div>
-                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Mixed Defense Simple</span> - Tests 6 possible spreads including the maximum investment combinations between HP, Def and SpD as well as a +Def or a +SpD nature.</div>
-                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Optimal Defensive Balance</span> - Finds the lowest investment EV spread for the best possible balance between physical and special damage taken. Bosses commonly pick the highest damage move so this method tries to equalize physical and special damage.</div>
-                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > Defenses</span> - First invest to outspeed the raid boss, if possible, and then invest the remaining EVs in Optimal Defensive Balance.</div>
-                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Attack > Defenses</span> - Fully invest in Attack/Sp.Attack and then invest the remaining 256 EVs in Optimal Defensive Balance.</div>
-                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > Attack > Defenses</span> - First, invest to outspeed. Second, full investment in Attack/Sp.Attack. Third, with the remaining EVs if any invest in Optimal Defensive Balance.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Mixed Defense Simple</span> - The best out of 6 possible spreads including the maximum investment combinations between HP, Def and SpD as well as a +Def or a +SpD nature. For those who don't care about meticulous EV training.</div>
+                    <div class="user-guide-answer">(+Def Nature, 252 HP, 252 Def, 4 SpD)    (+Def Nature, 252 HP, 4 Def, 252 SpD)    (+Def Nature, 4 HP, 252 Def, 252 SpD)</div>
+                    <div class="user-guide-answer">(+SpD Nature, 252 HP, 252 Def, 4 SpD)    (+SpD Nature, 252 HP, 4 Def, 252 SpD)    (+SpD Nature, 4 HP, 252 Def, 252 SpD)</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Optimal Defense Balance</span> - Finds the lowest investment EV spread for the best possible balance between physical and special damage taken. Bosses commonly pick the highest damage move so this method tries to equalize physical and special damage.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > Optimal Defense</span> - First invest to outspeed the raid boss, if possible, and then invest the remaining EVs in Optimal Defensive Balance.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Max Atk > Optimal Defense</span> - Fully invest in Attack/Sp.Attack and then invest the remaining 256 EVs in Optimal Defensive Balance.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > Max Atk > Defenses</span> - First, invest to outspeed. Second, full investment in Attack/Sp.Attack. Third, with the remaining EVs if any invest in Optimal Defensive Balance.</div>
                     <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Best Defense Threshold</span> - Find the EV spread with minimum investment to reach the best possible defensive threshold.</div>
                     <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">BDT > Attack</span> - Train for the Best Defensive Threshold and use any remaining EVs offensively.</div>
                     <div class="user-guide-answer user-guide-verticalspace-small"><span style="font-weight:bold">Speed > BDT</span> - First invest to outspeed and then train for the Best Defense Threshold. </div>
@@ -77,11 +80,9 @@
 
                 <fieldset class="inner-fieldset">
                     <div class="user-guide-ask">So.. what exactly is the Best Defense Threshold?</div>
-                    <div class="user-guide-answer">In the context of my ranking algorithm, the threshold is the number of turns a Pokémon will survive. Taking 100% or more damage is a 1 shot. Taking less than 100% damage requires at least 2 turns to KO. Less than 50% damage at least 3 turns. And so on.</div>
-                    <div class="user-guide-answer user-guide-verticalspace-small">As an example, one particular Pokemon could have a minimum survival threshold of 2 turns with zero EV investment. And with full investment perhaps it could reach a threshold of 4 turns by taking less than 33% damage.</div>
-                    <div class="user-guide-answer">What the Best Defense Threshold algorithm does is it calculates the EV spread that lies on the border of the highest threshold achievable - the minium investment to ensure this Pokémon survives 4 turns.</div>
-                    <div class="user-guide-answer">This is why the results you see in the table will be percentage values just below 50% or 33% or 25%, etc.</div>
-                    <div class="user-guide-answer user-guide-verticalspace-small">Some Pokémon will have exactly those values probably because it was not possible to invest any higher.</div>
+                    <div class="user-guide-answer">In the ranking algorithm, the threshold is the number of turns a Pokémon will survive. Taking 100% or more damage is a 1 shot. Taking less than 100% damage requires at least 2 turns to KO. Less than 50% damage at least 3 turns. And so on.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small">As an example, one particular Pokemon could have a minimum survival threshold of 2 turns with zero EV investment. And with full investment perhaps it could reach a threshold of 4 turns by taking less than 33% damage. What the Best Defense Threshold algorithm does is it calculates the EV spread that lies on the border of the highest threshold achievable - the minium investment to ensure this Pokémon survives 4 turns. Any additional defense training will not change that, so you could allocate the remaining EVs elsewhere.</div>
+                    <div class="user-guide-answer user-guide-verticalspace-small">This is why the results you see in the table will be percentage values just below 50% or 33% or 25%, etc. Some Pokémon will have exactly those values probably because it was not possible to invest any higher. Keep in mind that Tera Raid Buddy uses the maximum possible damage in its ranking which means the percentages you see are the worst case scenario in damage, and that in practice you're likely to take less damage.</div>
                 </fieldset>
 
                 <fieldset class="inner-fieldset">
@@ -152,7 +153,7 @@
                                                 </div>
                                             </div>
                                             <div>
-                                                <img id="pokemonBossSprite" src="assets/sprites/_unknown.png" class="sprite-raid-boss" width="128" height="128"> <!---->
+                                                <img id="pokemonBossSprite" src="assets/sprites/_unknown.png" loading="lazy" class="sprite-raid-boss" width="128" height="128"> <!---->
                                             </div>
                                             <div>
                                                 <label for="pokemonBossTeraType">Tera Type</label>
@@ -364,21 +365,21 @@
                                 <label for="searchtype">EV Training Method</label>
                                 <select id="searchtype">
                                     <option value="NoInvestment">No Investment</option>
-                                    <option value="FullDef">Full Def (252 HP/252 Def)</option>
-                                    <option value="FullSpD">Full SpD (252 HP/252 SpD)</option>
-                                    <option value="SimpleOffense">Simple Offense (252 HP, 252 Atk/SpA)</option>
-                                    <option value="MixedDefSimple">Mixed Defense Simple</option>
-                                    <option value="MixedDefOptimal" selected>Optimal Defensive Balance</option>
-                                    <option value="OutspeedIntoOptimalDef">Outspeed > Defenses</option>
-                                    <option value="AttackIntoOptimalDef">Attack > Defenses</option>
-                                    <option value="OutspeedIAttackIDefense">Outspeed > Attack > Defenses</option>
+                                    <option value="FullDef">Full Defense</option>
+                                    <option value="FullSpD">Full Special Defense</option>
+                                    <option value="SimpleOffense">252 HP / 252 Atk or SpA</option>
+                                    <option value="MixedDefSimple">Simple Mixed Defense</option>
+                                    <option value="MixedDefOptimal" selected>Optimal Defense Balance</option>
+                                    <option value="OutspeedIntoOptimalDef">Speed > Optimal Defense</option>
+                                    <option value="AttackIntoOptimalDef">Max Atk > Optimal Defense</option>
+                                    <option value="OutspeedIAttackIDefense">Speed > Max Atk > Defense</option>
                                     <option value="BestDefenseThreshold">Best Defense Threshold</option>
-                                    <option value="BestDefenseThresholdIntoAttack">Best Defense Threshold > Attack</option>
-                                    <option value="OutspeedIntoBDT">Outspeed > BDT</option>
-                                    <option value="OutspeedIntoBDTIntoAttack">Outspeed > BDT > Attack</option>
+                                    <option value="BestDefenseThresholdIntoAttack">BDT > Attack</option>
+                                    <option value="OutspeedIntoBDT">Speed > BDT</option>
+                                    <option value="OutspeedIntoBDTIntoAttack">Speed > BDT > Attack</option>
                                 </select>
                                 <div class="tooltip-text">
-                                    How stats are calculated for your raid counters.
+                                    How stats are calculated for your raid counters. See User Guide for more info.
                                 </div>
                             </div>
                             <div class="parameter-spacing custom-tooltip">
@@ -466,8 +467,10 @@
                                     <option value="0">Show normal and critical damage</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="parameter-sequence-row-even">
                             <div class="parameter-spacing">
-                                <label for="parameterResultShowSprites">Show sprites</label>
+                                <label for="parameterResultShowSprites">Show Sprites</label>
                                 <input id="parameterResultShowSprites" type="checkbox">
                             </div>
                             <div class="parameter-spacing">
@@ -578,9 +581,12 @@
                             <legend class="fieldset-inner-legend">Field Parameters</legend>
                             <div class="parameter-sequence-row-even">
                                 <div class="checkbox-combo">
-                                    <div class="checkbox-combo-row">
+                                    <div class="checkbox-combo-row custom-tooltip">
                                         <label for="parameterFieldLockTerrain">Lock Terrain</label>
                                         <input type="checkbox" id="parameterFieldLockTerrain">
+                                        <div class="tooltip-text">
+                                            Locked will prevent abilities and other parameters from modifying the terrain.
+                                        </div>
                                     </div>
                                     <select id="parameterFieldTerrainSelect" class="checkbox-combo-select">
                                         <option value="" selected>No terrain</option>
@@ -591,9 +597,12 @@
                                     </select>
                                 </div>
                                 <div class="checkbox-combo">
-                                    <div class="checkbox-combo-row">
+                                    <div class="checkbox-combo-row custom-tooltip">
                                         <label for="parameterFieldLockWeather">Lock Weather</label>
                                         <input type="checkbox" id="parameterFieldLockWeather">
+                                        <div class="tooltip-text">
+                                            Locked will prevent abilities and other parameters from modifying the weather. Abilites that ignore weather will still be in effect.
+                                        </div>
                                     </div>
                                     <select id="parameterFieldWeatherSelect" class="checkbox-combo-select">
                                         <option value="" selected>No weather</option>
@@ -909,6 +918,71 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="parameter-sequence-row top-line-border">
+                                <div class="parameter-section-title">Opportunist Stat Boosts</div>
+                            </div>
+                            <div class="parameter-sequence-row">
+                                <div class="stat-boost-parameter parameter-spacing">
+                                    <label for="parameterOpportunistBoostAtk">Atk</label>
+                                    <select id="parameterOpportunistBoostAtk">
+                                        <option value="0" selected>0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                    </select>
+                                </div>
+                                <div class="stat-boost-parameter parameter-spacing">
+                                    <label for="parameterOpportunistBoostDef">Def</label>
+                                    <select id="parameterOpportunistBoostDef">
+                                        <option value="0" selected>0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                    </select>
+                                </div>
+                                <div class="stat-boost-parameter parameter-spacing">
+                                    <label for="parameterOpportunistBoostSpA">SpA</label>
+                                    <select id="parameterOpportunistBoostSpA">
+                                        <option value="0" selected>0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                    </select>
+                                </div>
+                                <div class="stat-boost-parameter parameter-spacing">
+                                    <label for="parameterOpportunistBoostSpD">SpD</label>
+                                    <select id="parameterOpportunistBoostSpD">
+                                        <option value="0" selected>0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                    </select>
+                                </div>
+                                <div class="stat-boost-parameter parameter-spacing">
+                                    <label for="parameterOpportunistBoostSpe">Spe</label>
+                                    <select id="parameterOpportunistBoostSpe">
+                                        <option value="0" selected>0</option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                    </select>
+                                </div>
+                            </div>
                         </fieldset>
                         <!-- END OF ABILITY PARAMETERS SECTION -->
 
@@ -937,11 +1011,70 @@
                             <div class="parameter-sequence-row top-line-border">
                                 <div class="parameter-section-title">Mirror Herb Stats Boosts</div>
                             </div>
-                            <div class="search-parameter-grid">
-                                <div class="search-parameter-item">
-                                    <label for="parameterItemEnableMirrorHerb">Mirror Herb</label>
-                                    <input type="checkbox" id="parameterItemEnableMirrorHerb" disabled>
-                                </div>
+                            <div class="parameter-sequence-row">
+                                <!--div class="search-parameter-item parameter-spacing"-->
+                                    <!--input type="checkbox" id="parameterItemEnableMirrorHerb" disabled-->
+
+                                        <div class="stat-boost-parameter parameter-spacing">
+                                            <label for="parameterMirrorHerbBoostAtk">Atk</label>
+                                            <select id="parameterMirrorHerbBoostAtk">
+                                                <option value="0" selected>0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                            </select>
+                                        </div>
+                                        <div class="stat-boost-parameter parameter-spacing">
+                                            <label for="parameterMirrorHerbBoostDef">Def</label>
+                                            <select id="parameterMirrorHerbBoostDef">
+                                                <option value="0" selected>0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                            </select>
+                                        </div>
+                                        <div class="stat-boost-parameter parameter-spacing">
+                                            <label for="parameterMirrorHerbBoostSpA">SpA</label>
+                                            <select id="parameterMirrorHerbBoostSpA">
+                                                <option value="0" selected>0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                            </select>
+                                        </div>
+                                        <div class="stat-boost-parameter parameter-spacing">
+                                            <label for="parameterMirrorHerbBoostSpD">SpD</label>
+                                            <select id="parameterMirrorHerbBoostSpD">
+                                                <option value="0" selected>0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                            </select>
+                                        </div>
+                                        <div class="stat-boost-parameter parameter-spacing">
+                                            <label for="parameterMirrorHerbBoostSpe">Spe</label>
+                                            <select id="parameterMirrorHerbBoostSpe">
+                                                <option value="0" selected>0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                            </select>
+                                        </div>
                             </div>
                             <div class="parameter-sequence-row top-line-border">
                                 <div class="parameter-section-title">Give Held Items</div>
@@ -1012,7 +1145,7 @@
 
 
                 <!-- START OF SEARCH RESULTS SECTION -->
-                <div class="search-result-section fieldset-toplevel-highlight">
+                <div id="searchResultSection" class="search-result-section fieldset-toplevel-highlight collapsed">
                     <h2>Results Table</h2>
 
                     <!-- START OF POST SEARCH FILTERS SECTION -->
@@ -1066,7 +1199,7 @@
 
 
                     <div class="parameter-sequence-row-even">
-                        <h3 id="ResultSummary" class="parameter-centered"></h3>
+                        <div id="ResultSummary" class="result-search-performance parameter-centered"></div>
                     </div>
                     <div id="resultTableContents" class="full-table-style">
                         <div id="bossInfoSummary" class="boss-summary collapsed">
@@ -1077,8 +1210,8 @@
                                         <div class="sprite-container">
                                             <div id="bossSummaryName" class="boss-summary-name">Boss Name</div>
                                             <div>
-                                                <img id="bossInfoTeraSprite" class="boss-info-tera-sprite" src="assets/tera/ice.png" width="32" height ="32">
-                                                <img id="bossSummarySprite" class="sprite-raid-boss" src="assets/sprites/_unknown.png" width="128" height="128">
+                                                <img id="bossInfoTeraSprite" class="boss-info-tera-sprite" src="assets/tera/ice.png" loading="lazy" width="32" height ="32">
+                                                <img id="bossSummarySprite" class="sprite-raid-boss" src="assets/sprites/_unknown.png" loading="lazy" width="128" height="128">
                                             </div>
                                             <div id="bossSummaryBaseTypes"class="boss-info-basetypes collapsed">
                                             </div>
@@ -1221,12 +1354,12 @@
             <footer class="page-footer">
                 <div class="footer-container">
                     <div class="vertical-spacing">
-                        <div>Tera raid tool made by Arkandy</div>
+                        <div>Tera raid tool made by Arkandy (hosted on <a href="https://github.com/Arkkandy/TeraRaidBuddy">Github</a>)</div>
                         <div><a href="https://www.reddit.com/user/AndSLG">u/AndSLG</a> - <a href="https://www.youtube.com/@Arkandy">youtube@Arkandy</a> - <a href="https://www.twitch.tv/arkkandy">twitch.tv/arkkandy</a></div>
                         <div class="vertical-spacing"></div>
 
                         <li class="footer-bullets">Damage calc code adapted from <a href="https://github.com/smogon/damage-calc">@smogon/damage-calc</a></li>
-                        <li class="footer-bullets">Sprites from <a href="https://bulbapedia.bulbagarden.net/wiki/Main_Page">Bulbapedia</a>, <a href="https://www.serebii.net/">Serebii</a>, <a href="https://www.reddit.com/r/PokeLeaks/comments/ytt6ve/all_new_hd_sprite_icons_for_scarletviolet_link_in/">r/PokeLeaks</a> and adapted from <a href="https://twitter.com/mattyoukhana_">twitter/mattyoukhana_</a></li>
+                        <li class="footer-bullets">Learnset look-up adapted from <a href="https://github.com/pkmn/ps">@pkmn/ps</a></li>
                     </div>
                 </div>
             </footer>
