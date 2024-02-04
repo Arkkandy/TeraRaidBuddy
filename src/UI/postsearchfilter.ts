@@ -1,8 +1,3 @@
-import { moveLearnsetDictionary } from "../ranking/movelearnset";
-import { SearchResult } from "./searchresult";
-import UIElements from "./uielements";
-
-
 export class PostSearchFilter {
     public learnMoveList : string[] = [];
     public checkStab : boolean = false;

@@ -1,5 +1,5 @@
 import { RaidBossPreset } from "../presets/raidpreset";
-import { moveLearnsetDictionary } from "../ranking/movelearnset";
+import LearnsetModule from "../data/movelearnset";
 import { PrintVisibleDamage, getReadableRankingString } from "../ranking/searchparameters";
 import { EVSpread } from "../ranking/util";
 import { toID } from "../smogon-calc";
@@ -584,8 +584,10 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
     }
   }
   
-export function applyPostSearchFilters( gen: Generation, search : SearchResult ) {
+export async function applyPostSearchFilters( gen: Generation, search : SearchResult ) {
   let psf = readPSFData();
+
+  let moveLearnsetDictionary = await LearnsetModule.GetData();
 
   // Reset filtered data
   search.filteredData = search.rankingData.originalData;

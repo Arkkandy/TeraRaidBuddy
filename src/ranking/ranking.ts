@@ -17,7 +17,7 @@ import {AbilityName, Generation, NatureName, Specie, StatusName, TypeName } from
 import { getFinalSpeed, getMoveEffectiveness, isQPActive } from '../smogon-calc/mechanics/util';
 import { recalculateFinalDamage } from './fastdamage';
 
-import {FilterDataEntry, RarityFlag, filteringData} from './filteringdata'
+import {FilterDataEntry, RarityFlag, SearchDataModule } from '../data/filteringdata'
 import getOptimalDefensiveSpread from './optimalspreadcalc';
 import getOptimalDefensiveSpread_PQ from './optimalspreadpqcalc';
 import getOptimalDefensiveThresholdSpread from './optimalthresholdcalc';
@@ -133,7 +133,7 @@ export class RankingResultEntry {
     }
 }
 
-export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, mainMoves: Smogon.Move[], extraMoves: Smogon.Move[], field: Smogon.Field, parameters: RankingParameters = new RankingParameters() ) {
+export async function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, mainMoves: Smogon.Move[], extraMoves: Smogon.Move[], field: Smogon.Field, parameters: RankingParameters = new RankingParameters() ) {
 
     /* SANITY CHECKS */
     console.log("-----------------------------")
@@ -224,17 +224,19 @@ export function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, m
         useDefenderTeraType = true;
     }
 
-    let localFilteringData = filteringData;
+    // Get searchable data specific to Gen 9
+    let searchableData = await SearchDataModule.GetData();
+
     // If the whitelist contains at least 1 element
     if ( parameters.filters.whiteListIDs.length > 0 ) {
         // We'll reduce the filtering data to only the entries whitelisted
-        localFilteringData = localFilteringData.filter( (item) => parameters.filters.whiteListIDs.includes( item.name ) );
+        searchableData = searchableData.filter( (item) => parameters.filters.whiteListIDs.includes( item.name ) );
     }
 
     let finalResult: RankingResult = new RankingResult( parameters, moves, eMoves, raidBoss, raidBossTypeMatchup, field );
 
     // Perform damage checks against all filterable species
-    for ( const data of localFilteringData ) {
+    for ( const data of searchableData ) {
 
         let speciesEntry = gen.species.get(Smogon.toID(data.name))!;
         //console.log('........................'); console.log('Analyzing: %s', data.name);

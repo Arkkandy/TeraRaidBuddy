@@ -4,30 +4,25 @@ import UIElements from './UI/uielements';
 
 import './UI/uiparameters';
 
-import html2canvas from 'html2canvas';
-
 import { SearchResult } from './UI/searchresult';
 import {RaidPresetMode, AbilitySelectionMode, getPresetModeString} from './UI/uilogic'
-import { setDamageBackgroundColor, setTypeColor, setValidBackgroundColor, stringFromEVSpread, populateDropdown, clearTypeColoring, getImagePath } from './UI/util';
+import {populateDropdown } from './UI/util';
 
-import {calculate,Generations,Pokemon,Move, toID, Field, Stats, Side} from './smogon-calc'
-import { StatsTable } from './smogon-calc';
-import { NatureName, Specie, Terrain, TypeName, Weather } from './smogon-calc/data/interface';
-import { getModifiedStat } from './smogon-calc/mechanics/util';
-
+import {Generations,Move } from './smogon-calc'
 
 import * as Ranking from './ranking/ranking'
-import { EVSpread } from './ranking/util'
-import * as FilteringData from './ranking/filteringdata'
-import { DefensiveNaturePreference, PrintVisibleDamage, RankingParameters, SearchRankingType } from './ranking/searchparameters';
+
+import {SearchDataModule} from './data/filteringdata'
+
 import { ExtraAction, RaidBossPreset,
         T5Raids_IndigoDisk, T5Raids_Paldea, T5Raids_TealMask,
         T6Raids_IndigoDisk, T6Raids_Paldea, T6Raids_TealMask,
-        tier5EventRaidBossPresets, tier5RaidBossPresets, tier6RaidBossPresets, tier7EventRaidBossPresets } from './presets/raidpreset';
-import { moveLearnsetDictionary, fullLearnset } from './ranking/movelearnset';
+        tier5EventRaidBossPresets, tier7EventRaidBossPresets } from './presets/raidpreset';
+import LearnsetModule from './data/movelearnset';
+
 import * as UIParameters from './UI/uiparameters';
 import * as UIResults from './UI/uiresults';
-import { showExtraActions } from './UI/extractiontable';
+
 import * as UIRaidBoss from './UI/uiraidboss';
 import * as PokeImport from './UI/pokeimport';
 
@@ -48,6 +43,7 @@ let abilityMode : AbilitySelectionMode = AbilitySelectionMode.NaturalAbilities;
 // Search Result Cache (Stores the results from the last search which is currently shown in the table)
 let currentSearchResult: SearchResult | undefined = undefined;
 
+let isFirstSearch = true;
 
 // ========================================================================
 // ========================================================================
@@ -57,7 +53,7 @@ let currentSearchResult: SearchResult | undefined = undefined;
 // ========================================================================
 // FUNCTIONS
 
-function performRaidSearch() {
+async function performRaidSearch() {
   // Time elapsed profiling
   const startTime = new Date().getTime();
 
@@ -84,7 +80,7 @@ function performRaidSearch() {
   let field = UIParameters.readFieldParameters();
 
   // Send data into the raid ranking function
-  const rankResultData = Ranking.raidDefenderRanking( gen, raidBoss, mainMoves, extraMoves, field, rankingParameters);
+  const rankResultData = await Ranking.raidDefenderRanking( gen, raidBoss, mainMoves, extraMoves, field, rankingParameters);
 
   currentSearchResult = new SearchResult( rankResultData );
   currentSearchResult.filteredData = currentSearchResult.rankingData.originalData;
@@ -107,17 +103,24 @@ function performRaidSearch() {
   // Boss Summary
   UIResults.createBossInfoSummary( gen, currentSearchResult, getPresetModeString( currentPresetMode ), UIRaidBoss.getSelectedBossPreset( currentPresetMode ) );
 
-  // Unhide PSF Container (Hidden when the website first opens)
-  UIElements.Results.PSFContainer.classList.remove('collapsed');
-
   // Determine time elapsed since beginning of ranking operation
   const elapsed = ( (new Date().getTime())-startTime ) / 1000;
   currentSearchResult.execTime = elapsed;
 
   UIElements.Results.SearchSummary.innerHTML = currentSearchResult.getExecSummary();
 
-  // Reveal results section
-  UIElements.Results.SearchResultSection.classList.remove('collapsed');
+  if ( isFirstSearch ) {
+    await initializePSFSelect();
+
+    // Unhide PSF Container (Hidden when the website first opens)
+    UIElements.Results.PSFContainer.classList.remove('collapsed');
+
+      // Reveal results section
+    UIElements.Results.SearchResultSection.classList.remove('collapsed');
+
+    isFirstSearch = false;
+  }
+
 
   // Automatically scroll to the table
   if ( UIElements.Results.FullTable ) {
@@ -141,9 +144,10 @@ function clearPostSearchFilters() {
   }
 }
 
-function applyPostSearchFilters() {
+async function applyPostSearchFilters() {
   if ( currentSearchResult ) {
-    UIResults.applyPostSearchFilters( gen, currentSearchResult );
+
+    await UIResults.applyPostSearchFilters( gen, currentSearchResult );
 
     UIElements.Results.SearchSummary.innerHTML = currentSearchResult.getExecSummary();
   }
@@ -216,9 +220,9 @@ function onPresetChange( newPreset : RaidPresetMode ) : void {
   updateBossSelection( currentPresetMode );
 }
 
-function updateBossSelection( presetMode: RaidPresetMode ) {
+async function updateBossSelection( presetMode: RaidPresetMode ) {
   UIRaidBoss.updateBossImage( presetMode );
-  UIRaidBoss.reselectAbility( presetMode );
+  await UIRaidBoss.reselectAbility( presetMode );
   UIRaidBoss.reselectPresetDefaults( gen, presetMode );
   UIRaidBoss.overwriteStats( gen, presetMode );
 }
@@ -268,6 +272,25 @@ function updateAllStats() {
   UIRaidBoss.updateSpeStat(gen);
 }
 
+/* Hide unnecessary elements, show transparent overlay */
+function enableScreenshotMode() {
+    // Show overlay element
+    let temporaryOverlay = createScreenshotOverlay();
+
+    // Temporarily hide pagination
+    let pagination = document.getElementById('resultTablePagination') as HTMLDivElement;
+    pagination.hidden = true;
+
+    // Temporarily unsticky thead
+    let thead = UIElements.Results.ResultsTable.tHead;
+    thead?.classList.remove('Sticky');
+}
+
+/* Hide overlay, unhide elements */
+function disableScreenshotMode() {
+
+}
+
 // ========================================================================
 // ========================================================================
 // ========================================================================
@@ -276,19 +299,23 @@ function updateAllStats() {
 // ========================================================================
 // POPULATE INTERFACE ELEMENTS WITH DATA
 
-// Populate the custom preset select & whitelist select with all available Pokemon in Gen 9
-if ( UIElements.RaidBoss.CustomSelect && UIElements.SearchParams.FilterWhitelistSelect ) {
-  // Obtain species names from data
-  let partialSpeciesFilter: string[] = FilteringData.filteringData.map(
-    item => item.name
-  );
-  partialSpeciesFilter.sort( (a,b) => {
-    return a < b ? -1 : 1;
-  });
+async function intializeInterfaceElements() {
+  // Populate the custom preset select & whitelist select with all available Pokemon in Gen 9
+  if ( UIElements.RaidBoss.CustomSelect && UIElements.SearchParams.FilterWhitelistSelect ) {
+    // Obtain species names from data
+    let partialSpeciesFilter: string[] = (await SearchDataModule.GetData()).map(
+      item => item.name
+    );
+    partialSpeciesFilter.sort( (a,b) => {
+      return a < b ? -1 : 1;
+    });
 
-  populateDropdown( UIElements.RaidBoss.CustomSelect, partialSpeciesFilter );
-  populateDropdown( UIElements.SearchParams.FilterWhitelistSelect, partialSpeciesFilter );
+    populateDropdown( UIElements.RaidBoss.CustomSelect, partialSpeciesFilter );
+    populateDropdown( UIElements.SearchParams.FilterWhitelistSelect, partialSpeciesFilter );
+  }
 }
+intializeInterfaceElements();
+
 // Populate 5 star raid boss select
 if ( UIElements.RaidBoss.R5Select ) {
 
@@ -410,13 +437,15 @@ if ( UIElements.RaidBoss.BossMove1 && UIElements.RaidBoss.BossMove2 &&
 }
 
 // Populate move select for Post Search Filters
-if ( UIElements.Results.PSFLearnMoveSelect ) {
+async function initializePSFSelect() {
+  let fullLearnset = await LearnsetModule.GetData();
+
   let partialMoveData : string[] = [];
 
   // Add all keys to an array
-  for ( let e in fullLearnset ) {
-    let item = fullLearnset[e];
-    partialMoveData.push( item.move );
+  for ( let key of fullLearnset.keys() ) {
+    console.log(key);
+    partialMoveData.push( key );
   }
 
   // Sort keys
@@ -464,13 +493,13 @@ UIElements.HelpSection.UserGuideToggle.addEventListener('click', () => {
 });
 
 /*Perform search and apply results*/
-UIElements.Header.calculateButton.addEventListener('click', function handleClick(event) {
+UIElements.Header.calculateButton.addEventListener('click', async function handleClick(event) {
   const cooldownEffect = document.getElementById('searchCooldownEffect') as HTMLDivElement;
 
   UIElements.Header.calculateButton.disabled = true;
   cooldownEffect.style.display = 'block';
 
-  performRaidSearch();
+  await performRaidSearch();
 
   setTimeout(() => {
     UIElements.Header.calculateButton.disabled = false;
@@ -560,11 +589,11 @@ UIElements.RaidBoss.R7EPresetButton.addEventListener( 'click',  () => {
 });
 
 
-UIElements.RaidBoss.CustomSelect.addEventListener( 'change', () => { updateBossSelection(currentPresetMode); } );
-UIElements.RaidBoss.R5Select.addEventListener( 'change', () => { updateBossSelection(currentPresetMode); } );
-UIElements.RaidBoss.R5ESelect.addEventListener( 'change', () => { updateBossSelection(currentPresetMode); } );
-UIElements.RaidBoss.R6Select.addEventListener( 'change', () => { updateBossSelection(currentPresetMode); } );
-UIElements.RaidBoss.R7ESelect.addEventListener( 'change', () => { updateBossSelection(currentPresetMode); });
+UIElements.RaidBoss.CustomSelect.addEventListener( 'change', async () => { await updateBossSelection(currentPresetMode); } );
+UIElements.RaidBoss.R5Select.addEventListener( 'change', async () => { await updateBossSelection(currentPresetMode); } );
+UIElements.RaidBoss.R5ESelect.addEventListener( 'change', async () => { await updateBossSelection(currentPresetMode); } );
+UIElements.RaidBoss.R6Select.addEventListener( 'change', async () => { await updateBossSelection(currentPresetMode); } );
+UIElements.RaidBoss.R7ESelect.addEventListener( 'change', async () => { await updateBossSelection(currentPresetMode); });
 
 
 /*Refresh/Clear moves */
@@ -709,28 +738,53 @@ UIElements.Header.ssTestButton.addEventListener('click', function() {
     // Capture all contents of the table
     let fullTable = document.getElementById('resultTableContents') as HTMLDivElement;
 
-    setTimeout(function() {
-      // Render simplified table
-      html2canvas(fullTable).then(function(canvas) {
+      setTimeout(async () => {
+        try {
+          const html2canvasModule = (await import('html2canvas')).default;
 
-        // Render element into screenshot
-        var link = document.createElement('a');
-        link.href = canvas.toDataURL();
-        link.download = filename;
+          const html2canvas: (element: HTMLElement) => Promise<HTMLCanvasElement> =
+          (html2canvasModule as any).default || html2canvasModule;
 
-        // Download screenshot
-        link.click();
+          // Render simplified table
+          html2canvas(fullTable).then( canvas => {
 
-        // Remove overlay from the interface
-        temporaryOverlay.remove();
-  
-        // Re-sticky thead
-        thead?.classList.add('Sticky');
+            try {
+              // Render element into screenshot
+              var link = document.createElement('a');
+              link.href = canvas.toDataURL();
+              link.download = filename;
 
-        // Show pagination again
-        pagination.hidden = false;
-      });
-    }, 1 );
+              // Download screenshot
+              link.click();
+            }
+            catch(error) {
+              alert(error);
+            }
+            finally {
+              // Remove overlay from the interface
+              temporaryOverlay.remove();
+
+              // Re-sticky thead
+              thead?.classList.add('Sticky');
+
+              // Show pagination again
+              pagination.hidden = false;
+            }
+          });
+        }
+        catch(error) {
+          alert(error);
+          // Remove overlay from the interface
+          temporaryOverlay.remove();
+
+          // Re-sticky thead
+          thead?.classList.add('Sticky');
+
+          // Show pagination again
+          pagination.hidden = false;
+        }
+      }, 1 );
+
   }
   // Otherwise, show an alert popup
   else {
@@ -802,10 +856,10 @@ UIElements.Results.PSFLearnMoveAdd.addEventListener('click', () => {
 
       // Add click event listener to remove button
       const removeButton = listItem.querySelector('.llistRemoveButton') as HTMLButtonElement;
-      removeButton.addEventListener('click', () => {
+      removeButton.addEventListener('click', async () => {
         UIElements.Results.PSFLearnMoveList.removeChild(listItem);
         if ( UIElements.Results.PSFFilterLearnMove.checked ) {
-          applyPostSearchFilters();
+          await applyPostSearchFilters();
         }
       });
     }
@@ -858,13 +912,13 @@ UIElements.RaidBoss.ExportReturnButton.addEventListener( 'click', () => {
   UIElements.RaidBoss.ExportDataPrompt.classList.add('collapsed');
 });
 
-UIElements.RaidBoss.ExportImportButton.addEventListener( 'click', () => {
+UIElements.RaidBoss.ExportImportButton.addEventListener( 'click', async () => {
 
   if ( UIElements.RaidBoss.ExportTextContent.value ) {
     let data = PokeImport.ReadBossData( UIElements.RaidBoss.ExportTextContent.value );
 
     try {
-      PokeImport.VerifyBossData( gen, data );
+      await PokeImport.VerifyBossData( gen, data );
     }
     catch ( error: any ) {
       if ( error instanceof Error ) {
@@ -887,7 +941,7 @@ UIElements.RaidBoss.ExportImportButton.addEventListener( 'click', () => {
     changeAbilityMode(AbilitySelectionMode.AnyAbilities);
 
     // Read data proper
-    PokeImport.ImportBossData(gen, data );
+    await PokeImport.ImportBossData(gen, data );
     
     updateAllStats();
 

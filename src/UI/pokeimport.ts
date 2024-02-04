@@ -1,4 +1,4 @@
-import { FilterDataEntry, filteringData } from "../ranking/filteringdata";
+import { FilterDataEntry, SearchDataModule } from "../data/filteringdata";
 import { toID } from "../smogon-calc";
 import { Generation } from "../smogon-calc/data/interface";
 import UIElements from "./uielements";
@@ -240,13 +240,13 @@ export function ReadBossData( bossData : string ) : SimplifiedBossData {
     return data;
 }
 
-export function VerifyBossData( gen: Generation, bossData : SimplifiedBossData ) : boolean {
+export async function VerifyBossData( gen: Generation, bossData : SimplifiedBossData ) : Promise<boolean> {
     // Check if given boss name is valid
     let dataEntry : FilterDataEntry | undefined = undefined;
    
     // Read boss name
     if ( bossData.bossName != undefined ) {
-        dataEntry = filteringData.find( (entry) => {
+        dataEntry = (await SearchDataModule.GetData()).find( (entry) => {
             return entry.name == bossData.bossName;
         });
     }
@@ -364,9 +364,9 @@ export function VerifyBossData( gen: Generation, bossData : SimplifiedBossData )
     return true;
 }
 
-export function ImportBossData( gen: Generation, bossData : SimplifiedBossData ) {
+export async function ImportBossData( gen: Generation, bossData : SimplifiedBossData ) {
     // Get boss entry
-    let dataEntry = filteringData.find( (entry) => {
+    let dataEntry = (await SearchDataModule.GetData()).find( (entry) => {
         entry.name == bossData.bossName;
     })!;
 

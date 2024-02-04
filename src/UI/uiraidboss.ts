@@ -1,6 +1,6 @@
 import UIElements from "./uielements";
 import { AbilitySelectionMode, RaidPresetMode } from "./uilogic";
-import * as FilteringData from '../ranking/filteringdata'
+import { SearchDataModule } from '../data/filteringdata'
 import { RaidBossPreset, tier5EventRaidBossPresets, tier5RaidBossPresets, tier6RaidBossPresets, tier7EventRaidBossPresets } from "../presets/raidpreset";
 import { RankingParameters } from "../ranking/searchparameters";
 import { Generation, NatureName, StatsTable, TypeName } from "../smogon-calc/data/interface";
@@ -37,7 +37,7 @@ export function updateBossImage(presetMode: RaidPresetMode) {
     lazyBossPresentationImageLoader( fullPath );
 }
 
-export function reselectAbility( currentPresetMode: RaidPresetMode) {
+export async function reselectAbility( currentPresetMode: RaidPresetMode) {
     let activeSelect : HTMLSelectElement | undefined = undefined;
   
     switch ( currentPresetMode ) {
@@ -48,7 +48,9 @@ export function reselectAbility( currentPresetMode: RaidPresetMode) {
       case RaidPresetMode.SevenStarEvent: activeSelect = UIElements.RaidBoss.R7ESelect; break;
     }
   
-    let pokeIndex = FilteringData.filteringData.findIndex( item => item.name == ( activeSelect as HTMLSelectElement ).value );
+
+    let filteringData = await SearchDataModule.GetData();
+    let pokeIndex = filteringData.findIndex( item => item.name == ( activeSelect as HTMLSelectElement ).value );
   
     /* Remake the natural ability select */ 
     // Remove children
@@ -56,34 +58,34 @@ export function reselectAbility( currentPresetMode: RaidPresetMode) {
   
     // Add ability slot 1 (Always exists)
     const newOption1 = document.createElement('option');
-    newOption1.value = FilteringData.filteringData[pokeIndex].abilities.slot1;
-    newOption1.text = "1:" + FilteringData.filteringData[pokeIndex].abilities.slot1;
+    newOption1.value = filteringData[pokeIndex].abilities.slot1;
+    newOption1.text = "1:" + filteringData[pokeIndex].abilities.slot1;
     UIElements.RaidBoss.BossNaturalAbilitySelect.add(newOption1);
   
     // Add ability 2 if applicable
-    if ( FilteringData.filteringData[pokeIndex].abilities.slot2 ) {
+    if ( filteringData[pokeIndex].abilities.slot2 ) {
       const newOption2 = document.createElement('option');
-      newOption2.value = FilteringData.filteringData[pokeIndex].abilities.slot2 as string;
-      newOption2.text = "2:" + FilteringData.filteringData[pokeIndex].abilities.slot2 as string;
+      newOption2.value = filteringData[pokeIndex].abilities.slot2 as string;
+      newOption2.text = "2:" + filteringData[pokeIndex].abilities.slot2 as string;
       UIElements.RaidBoss.BossNaturalAbilitySelect.add(newOption2);
     }
     // Add hidden ability if applicable
-    if ( FilteringData.filteringData[pokeIndex].abilities.h ) {
+    if ( filteringData[pokeIndex].abilities.h ) {
       const newOptionH = document.createElement('option');
-      newOptionH.value = FilteringData.filteringData[pokeIndex].abilities.h as string;
-      newOptionH.text = "H:" + FilteringData.filteringData[pokeIndex].abilities.h as string;
+      newOptionH.value = filteringData[pokeIndex].abilities.h as string;
+      newOptionH.text = "H:" + filteringData[pokeIndex].abilities.h as string;
       UIElements.RaidBoss.BossNaturalAbilitySelect.add(newOptionH);
     }
   
     /* Special ability checks:
-    #TODO include this as part of the dataset and not hardcoded */
-    if ( FilteringData.filteringData[pokeIndex].name == "Greninja") {
+    #TODO include this as part of the dataset and not hardcoded? */
+    if ( filteringData[pokeIndex].name == "Greninja") {
       const newOptionS = document.createElement('option');
       newOptionS.value = "Battle Bond";
       newOptionS.text = "S:" + "Battle Bond";
       UIElements.RaidBoss.BossNaturalAbilitySelect.add(newOptionS);
     }
-    if ( FilteringData.filteringData[pokeIndex].name == "Rockruff") {
+    if ( filteringData[pokeIndex].name == "Rockruff") {
       const newOptionS = document.createElement('option');
       newOptionS.value = "Own Tempo";
       newOptionS.text = "S:" + "Own Tempo";

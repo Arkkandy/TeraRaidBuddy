@@ -14,6 +14,7 @@
   "author": "Arkandy",
   "license": "MIT",
   "devDependencies": {
+    "@types/html2canvas": "^1.0.0",
     "@types/jest": "^29.5.11",
     "css-loader": "^6.10.0",
     "css-minimizer-webpack-plugin": "^6.0.0",

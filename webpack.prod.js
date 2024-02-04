@@ -1,19 +1,18 @@
 const { merge } = require('webpack-merge');
 const common = require('./webpack.config.js');
 const TerserPlugin = require('terser-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 
 module.exports = merge(common, {
   mode: 'production',
-  module: {
+  /*module: {
     rules: [
       {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
     ],
-  },
+  },*/
   //devtool: 'source-map',
   /*module: {
     rules: [
@@ -38,9 +37,9 @@ module.exports = merge(common, {
       new TerserPlugin()
     ],
   },
-  plugins: [
+  /*plugins: [
     new MiniCssExtractPlugin({
       filename: 'css/[name].[contenthash].css',
     }),
-  ],
+  ],*/
 });
