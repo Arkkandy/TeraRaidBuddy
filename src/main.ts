@@ -93,12 +93,8 @@ async function performRaidSearch() {
   // Create table head with info
   UIResults.createResultTableHead( currentSearchResult );
 
-  // Create table head with currently viewable entries
-  UIResults.createResultTableEntries( currentSearchResult, 1 );
-
   // Show notable settings and effects
   UIResults.updateEffectsInfo( currentSearchResult );
-  UIResults.hidePSFInfo();
 
   // Boss Summary
   UIResults.createBossInfoSummary( gen, currentSearchResult, getPresetModeString( currentPresetMode ), UIRaidBoss.getSelectedBossPreset( currentPresetMode ) );
@@ -121,6 +117,8 @@ async function performRaidSearch() {
     isFirstSearch = false;
   }
 
+  // Create table head with currently viewable entries & automatically apply post search filters if any were selected previously
+  await applyPostSearchFilters();
 
   // Automatically scroll to the table
   if ( UIElements.Results.FullTable ) {
@@ -444,7 +442,6 @@ async function initializePSFSelect() {
 
   // Add all keys to an array
   for ( let key of fullLearnset.keys() ) {
-    console.log(key);
     partialMoveData.push( key );
   }
 

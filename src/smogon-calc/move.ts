@@ -48,6 +48,7 @@ export class Move implements State.Move {
   forceDamageSpread: boolean;
   highBaseCrit?: boolean;
   guaranteedCrit?: boolean;
+  assumeItemPoltergeist?: boolean;
 
   constructor(
     gen: I.Generation,
@@ -201,6 +202,7 @@ export class Move implements State.Move {
     // Retain custom data for Tera Raid Buddy
     newMove.doubleAvalanche = this.doubleAvalanche;
     newMove.forceDamageSpread = this.forceDamageSpread;
+    newMove.assumeItemPoltergeist = this.assumeItemPoltergeist;
     return newMove;
   }
 }

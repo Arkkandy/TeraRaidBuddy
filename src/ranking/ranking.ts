@@ -136,7 +136,7 @@ export class RankingResultEntry {
 export async function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Pokemon, mainMoves: Smogon.Move[], extraMoves: Smogon.Move[], field: Smogon.Field, parameters: RankingParameters = new RankingParameters() ) {
 
     /* SANITY CHECKS */
-    console.log("-----------------------------")
+    /*console.log("-----------------------------")
     console.log("Boss: %s", raidBoss.name);
     console.log("Boss main moveset: ");
     mainMoves.forEach( move => {
@@ -150,7 +150,7 @@ export async function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Poke
     console.log(evsToStringShowAll("Stages", raidBoss.boosts ));
     console.log("Field data");
     console.log("  -> Terrain: %s", field.terrain);
-    console.log("  -> Weather: %s", field.weather);
+    console.log("  -> Weather: %s", field.weather);*/
     /*-----------------------------*/ 
 
     /* Setup Main Moveset */

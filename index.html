@@ -11,7 +11,7 @@
         <link rel="manifest" href="assets/site.webmanifest">
 
 
-        <link rel="stylesheet" type="text/css" href="styles/main.css">
+        <!--link rel="stylesheet" type="text/css" href="styles/main.css"-->
     </head>
     <body>
         <noscript>Your browser does not support JavaScript!</noscript>
@@ -1133,6 +1133,13 @@
                                     <label for="parameterMoveBoostAvalanche">Avalanche 2x</label>
                                     <input type="checkbox" id="parameterMoveBoostAvalanche">
                                 </div>
+                                <div class="search-parameter-item custom-tooltip">
+                                    <label for="parameterMoveBoostPoltergeist">Poltergeist Item</label>
+                                    <input type="checkbox" id="parameterMoveBoostPoltergeist" checked>
+                                    <div class="tooltip-text">
+                                        Assume that raid counter has a held item for Poltergeist calc. Unchecking will grant immunity when no item is held except for Booster Energy.
+                                    </div>
+                                </div>
                             </div>
                         </fieldset>
                         <!-- END OF MOVE PARAMETERS SECTION -->
@@ -1210,8 +1217,8 @@
                                         <div class="sprite-container">
                                             <div id="bossSummaryName" class="boss-summary-name">Boss Name</div>
                                             <div>
-                                                <img id="bossInfoTeraSprite" class="boss-info-tera-sprite" src="assets/tera/ice.png" loading="lazy" width="32" height ="32">
-                                                <img id="bossSummarySprite" class="sprite-raid-boss" src="assets/sprites/_unknown.png" loading="lazy" width="128" height="128">
+                                                <img id="bossInfoTeraSprite" class="boss-info-tera-sprite" src="" loading="lazy" width="32" height ="32">
+                                                <img id="bossSummarySprite" class="sprite-raid-boss" src="" loading="lazy" width="128" height="128">
                                             </div>
                                             <div id="bossSummaryBaseTypes"class="boss-info-basetypes collapsed">
                                             </div>
@@ -1383,5 +1390,5 @@
             </div>
         </div>
 
-        <script type="module" src="./dist/bundle.js"></script>
+        <!--script type="module" src="./dist/bundle.js"></script-->
     </body>

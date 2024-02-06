@@ -229,6 +229,7 @@ const UIElements = {
         MoveMultiStrikePopulationBomb: getUIElement<HTMLSelectElement>('parameterMoveMultiStrikePopBomb'),
 
         MoveBoostAvalanche: getUIElement<HTMLInputElement>('parameterMoveBoostAvalanche'),
+        MoveBoostPoltergeist: getUIElement<HTMLInputElement>('parameterMoveBoostPoltergeist'),
 
         // Ability Parameters Section
         AbilityDisableBoss: getUIElement<HTMLInputElement>('abilityDisableBoss'),

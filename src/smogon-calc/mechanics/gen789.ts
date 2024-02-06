@@ -377,6 +377,8 @@ export function calculateSMSSSV(
     return result;
   }
 
+  // Modified for Tera Raid Buddy
+  // The old condition for Poltergeist was causing issues with PQ damage calcs, where PQ were basically granting immunity with no regard to item
   if ((move.named('Sky Drop') &&
         (defender.hasType('Flying') || defender.weightkg >= 200 || field.isGravity)) ||
       (move.named('Synchronoise') && !defender.hasType(attacker.types[0]) &&
@@ -384,7 +386,7 @@ export function calculateSMSSSV(
       (move.named('Dream Eater') &&
         (!(defender.hasStatus('slp') || defender.hasAbility('Comatose')))) ||
       (move.named('Steel Roller') && !field.terrain) ||
-      (move.named('Poltergeist') && (!defender.item || isQPActive(defender, field)))
+      (move.named('Poltergeist') && !move.assumeItemPoltergeist && (!defender.item || defender.item == 'Booster Energy') )
   ) {
     return result;
   }

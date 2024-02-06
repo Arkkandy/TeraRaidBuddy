@@ -262,6 +262,9 @@ export function readBossMainMoveset(gen: Generation, parameters: RankingParamete
         if ( value == 'Avalanche' && UIElements.SearchParams.MoveBoostAvalanche.checked ) {
           move.doubleAvalanche = true;
         }
+        else if ( value == 'Poltergeist' && UIElements.SearchParams.MoveBoostPoltergeist.checked ) {
+          move.assumeItemPoltergeist = true;
+        }
   
         // Apply move settings
         if ( move.hits > 1 ) {
