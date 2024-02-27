@@ -8,7 +8,7 @@ import { showExtraActions } from "./extractiontable";
 import { PostSearchFilter } from "./postsearchfilter";
 import { SearchResult } from "./searchresult";
 import UIElements from "./uielements";
-import { clearTypeBackground, clearTypeColoring, colorBossInfoMove, createTableBodyCell, createTableHeadCell, getImagePath, setDamageBackgroundColor, setTypeBackgroundColor, setTypeColor, setValidBackgroundColor, stringFromEVSpread } from "./util";
+import { clearTypeBackground, clearTypeColoring, colorBossInfoMove, createTableBodyCell, createTableHeadCell, getImagePath, getLookupLinkA, setDamageBackgroundColor, setTypeBackgroundColor, setTypeColor, setValidBackgroundColor, stringFromEVSpread } from "./util";
 
 
 
@@ -248,7 +248,9 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
           cellSpecies.innerHTML = `<div class=\"table-sprite-div\"><img src=\"${path}\" loading="lazy" width=\"32\" height=\"32\">${result.species}</div>`
         }
         else {
-          cellSpecies.textContent = result.species;
+          // Hyperlink
+          let hyperLink = getLookupLinkA( result.species );
+          cellSpecies.innerHTML =  hyperLink;
         }
   
         const cellEvSpread = row.insertCell(); // EV Spread (Leftover)

@@ -3,6 +3,23 @@
 import { Move, Pokemon, StatsTable } from "../smogon-calc";
 import { NatureName } from "../smogon-calc/data/interface";
 
+/* Return hiperlink type A for species data lookup.
+   Hyperlink is returned as a HTML element in string format.
+*/
+export function getLookupLinkA( species : string ) {
+    // Hyperlink
+    let speciesName : string = "";
+    if ( species == 'Ho-Oh' || species == 'Ting-Lu' || species == 'Chien-Pao' || species == 'Chi-Yu' || species == 'Wo-Chien' || species == 'Porygon-Z' ||
+    species == "Jangmo-o" || species == "Hakamo-o" || species == "Kommo-o") {
+        speciesName = species;
+    }
+    else {
+        speciesName = species.split('-')[0];
+    }    
+    return `<a href="https://bulbapedia.bulbagarden.net/wiki/${speciesName}_(Pokémon)">${species}</a>`;
+}
+
+
 // Populate various <select> dropdown elements
 export function populateDropdown( select: HTMLSelectElement, options: string[] ) : void {
     options.forEach(element => {
