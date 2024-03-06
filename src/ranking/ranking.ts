@@ -702,7 +702,8 @@ export async function raidDefenderRanking( gen:Generation, raidBoss: Smogon.Poke
             }
             else {
                 evSpreadProspects.push( new EVSpread( 'Bashful', {hp:0, atk:0, def:0, spa:0, spd:0, spe:0} ));
-            }           
+            }
+
             // Calculate damage results for each prospect EV spread
             evSpreadProspects.forEach( prospectSpread => {
 
