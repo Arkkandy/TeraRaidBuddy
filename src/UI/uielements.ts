@@ -352,6 +352,8 @@ const UIElements = {
         PSFLearnMoveClear: getUIElement<HTMLButtonElement>('psfLearnMoveClear'),
         PSFLearnMoveList: getUIElement<HTMLUListElement>('psfLearnMoveList'),
         PSFBaseSTAB: getUIElement<HTMLInputElement>('psfBaseSTAB'),
+        PSFTypeFilterCheck: getUIElement<HTMLInputElement>('psfTypeFilterCheck'),
+        PSFTypeFilterSelect: getUIElement<HTMLSelectElement>('psfTypeFilterSelect'),
         PSFApplyButton: getUIElement<HTMLButtonElement>('psfApplyButton'),
         PSFClearButton: getUIElement<HTMLButtonElement>('psfClearButton'),
 

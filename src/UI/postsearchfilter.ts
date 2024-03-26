@@ -1,6 +1,8 @@
 export class PostSearchFilter {
     public learnMoveList : string[] = [];
     public checkStab : boolean = false;
+    public checkType : boolean = false;
+    public typeFilter : string = "";
     
     isDefault() {
         if ( this.learnMoveList.length > 0) {
@@ -8,6 +10,10 @@ export class PostSearchFilter {
         }
 
         if ( this.checkStab ) {
+            return false;
+        }
+
+        if ( this.checkType ) {
             return false;
         }
 
@@ -25,6 +31,26 @@ export class PostSearchFilter {
             }
         }
 
-        return this.checkStab == psf.checkStab;
+        // Check if stab setting is equal
+        if ( this.checkStab != psf.checkStab ) {
+            return false;            
+        }
+
+        // If the type filter settings match
+        if ( this.checkType != psf.checkType ) {
+            return false;
+        }
+        else if ( this.checkType == psf.checkType ) {
+            // If both are true, check if type is the same
+            if ( this.checkType ) {
+                if ( this.typeFilter != psf.typeFilter ) {
+                    return false;
+                }
+            }
+            // Otherwise, if both are false then the type is irrelevant
+        }
+
+        // If all previous conditions match then both PSF are effectively equal
+        return true;
     }
 }

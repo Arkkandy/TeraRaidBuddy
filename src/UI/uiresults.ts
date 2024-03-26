@@ -547,6 +547,12 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
     // Read STAB check
     newPSFProfile.checkStab = UIElements.Results.PSFBaseSTAB.checked;
 
+    // Read Type Filter
+    newPSFProfile.checkType = UIElements.Results.PSFTypeFilterCheck.checked;
+    if ( newPSFProfile.checkType ) {
+      newPSFProfile.typeFilter = UIElements.Results.PSFTypeFilterSelect.value;
+    }
+
     return newPSFProfile;
 }
 
@@ -581,6 +587,10 @@ export function createResultTableEntries( search: SearchResult, page: number ) {
         contents += " ⬤ STAB Only"
       }
 
+      if ( psf.checkType ) {
+        contents += ` ⬤ Base <span class=\"${psf.typeFilter.toLowerCase()}-type\">${psf.typeFilter} Type</span>`;
+      }
+
       UIElements.Results.InfoFilters.innerHTML = contents;
       showPSFInfo();
     }
@@ -608,10 +618,16 @@ export async function applyPostSearchFilters( gen: Generation, search : SearchRe
   });
 
     // STAB filter
-    let teraType = search.rankingData.raidBoss.teraType!;
-    if ( UIElements.Results.PSFBaseSTAB.checked ) {
+    if ( psf.checkStab ) {
       search.filteredData = search.filteredData.filter( (val) => {
         return search.rankingData.bossMatchup.checkAtLeastOneSTAB( val.type1, val.type2); 
+      });
+    }
+
+    // Type Filter
+    if ( psf.checkType ) {
+      search.filteredData = search.filteredData.filter( (val) => {
+        return val.type1 == psf.typeFilter || val.type2 == psf.typeFilter;
       });
     }
 

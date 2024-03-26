@@ -885,8 +885,25 @@ UIElements.Results.PSFFilterLearnMove.addEventListener( 'change', () => {
   applyPostSearchFilters();
 } );
 UIElements.Results.PSFBaseSTAB.addEventListener( 'change', () => {
+  // Mutually exclusive with type filter
+  if ( UIElements.Results.PSFBaseSTAB.checked ) {
+    UIElements.Results.PSFTypeFilterCheck.checked = false;
+  }
+  
   applyPostSearchFilters();
 } );
+UIElements.Results.PSFTypeFilterCheck.addEventListener( 'change', () => {
+  // Mutually exclusive with base stab filter
+  if ( UIElements.Results.PSFTypeFilterCheck.checked ) {
+    UIElements.Results.PSFBaseSTAB.checked = false;
+  }
+  applyPostSearchFilters();
+});
+UIElements.Results.PSFTypeFilterSelect.addEventListener( 'change', () => {
+  if ( UIElements.Results.PSFTypeFilterCheck.checked ) {
+    applyPostSearchFilters();
+  }
+});
 
 UIElements.Results.PSFApplyButton.addEventListener( 'click', () => {
   applyPostSearchFilters();
