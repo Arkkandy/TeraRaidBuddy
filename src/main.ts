@@ -975,8 +975,8 @@ UIElements.RaidBoss.ExportImportButton.addEventListener( 'click', async () => {
 // ========================================================================
 // Set UI initial state (see index.html also)
 
-UIElements.RaidBoss.R5ESelect.value = "Iron Thorns";
-onPresetChange( RaidPresetMode.FiveStarEvent );
+UIElements.RaidBoss.R7ESelect.value = "Swampert";
+onPresetChange( RaidPresetMode.SevenStarEvent );
 
 
 // REFORMAT POKEMON NAMES IN TEXT
