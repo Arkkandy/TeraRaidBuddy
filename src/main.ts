@@ -886,17 +886,17 @@ UIElements.Results.PSFFilterLearnMove.addEventListener( 'change', () => {
 } );
 UIElements.Results.PSFBaseSTAB.addEventListener( 'change', () => {
   // Mutually exclusive with type filter
-  if ( UIElements.Results.PSFBaseSTAB.checked ) {
+  /*if ( UIElements.Results.PSFBaseSTAB.checked ) {
     UIElements.Results.PSFTypeFilterCheck.checked = false;
-  }
+  }*/
   
   applyPostSearchFilters();
 } );
 UIElements.Results.PSFTypeFilterCheck.addEventListener( 'change', () => {
   // Mutually exclusive with base stab filter
-  if ( UIElements.Results.PSFTypeFilterCheck.checked ) {
+  /*if ( UIElements.Results.PSFTypeFilterCheck.checked ) {
     UIElements.Results.PSFBaseSTAB.checked = false;
-  }
+  }*/
   applyPostSearchFilters();
 });
 UIElements.Results.PSFTypeFilterSelect.addEventListener( 'change', () => {
