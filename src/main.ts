@@ -975,7 +975,7 @@ UIElements.RaidBoss.ExportImportButton.addEventListener( 'click', async () => {
 // ========================================================================
 // Set UI initial state (see index.html also)
 
-UIElements.RaidBoss.R7ESelect.value = "Emboar";
+UIElements.RaidBoss.R7ESelect.value = "Sceptile";
 onPresetChange( RaidPresetMode.SevenStarEvent );
 
 
