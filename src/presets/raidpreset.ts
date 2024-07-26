@@ -46,7 +46,7 @@ export let tier7EventRaidBossPresets: RaidBossPreset[] = [
     // Upcoming Raid Template
     //{ speciesName: "Upcoming", level: 100, ability: "None", mainMoves: ["Move1", "Move2", "Move3", "Move4"], addMoves: [ "AMove1", "AMove2" ], teraType:"Normal", nature: "Quirky", hpMultiplier: 30, extraActions: [{description: "Prediction Set"}, {description: "Event Dates"}, {description: "Round 1" }, {description: "Jun 14 - Jun 16"}, {description: "Round 2" }, {description: "Jun 21 - Jun 23"} ]},
 
-    { speciesName: "Pikachu", level: 100, ability: "Lightning Rod", mainMoves: ["Thunder", "Surf", "Play Rough", "Iron Tail"], addMoves: ["Rain Dance", "Surf"], teraType: "Water", nature: "Quiet", item: 'Light Ball', hpMultiplier: 50, extraActions: [ {description: "Tera Shield", hp: 99, time: 99}, {description:"Move: Rain Dance", time:99}, {description:"Move: Surf", time:98}, {description:"Steal Tera Charge", time:80}, {description:"Boss Stat Reset", time:80}, {description:"Steal Tera Charge", time:65}, {description:"Boss Stat Reset", hp:65}] },
+    { speciesName: "Dondozo", level: 100, ability: "Unaware", mainMoves: ["Wave Crash", "Order Up", "Earthquake", "Avalanche"], addMoves: ["Yawn", "Curse", "Wave Crash"], teraType: "Water", nature: "Adamant", hpMultiplier: 30, extraActions: [ {description:"Move: Yawn", time:95}, {description: "Steal Tera Charge", time:90}, {description: "Tera Shield", hp: 70, time: 70}, {description: "Player Stat Reset", time:70 }, {description: "Boss Stat Reset", hp:70 }, {description:"Move: Curse", hp:50}, {description:"Move: Wave Crash", hp:30}] },
 
     { speciesName: "Sceptile", level: 100, ability: "Unburden", mainMoves: [ "Leaf Blade", "Breaking Swipe", "Thunder Punch", "Dragon Dance"], addMoves: [ "Leaf Storm", "Earthquake" ], teraType:"Dragon", nature: "Hasty", hpMultiplier: 35, extraActions: [ {description: "Move: Leaf Storm", time: 99}, {description:"Player Stat Reset", time:85}, {description:"Move: Breaking Swipe", hp:85}, {description:"Steal Tera Charge", time:80}, {description:"Tera Shield", hp:70, time:75}, {description:"Boss Stat Reset", time:65}, {description:"Move: Earthquake", hp:30}]},
 
@@ -71,7 +71,7 @@ export let tier7EventRaidBossPresets: RaidBossPreset[] = [
     // Typhlosion
     { speciesName: "Samurott", level: 100, ability: "Shell Armor", mainMoves: ["Aqua Cutter", "Megahorn", "Night Slash", "Drill Run"], addMoves: ["Focus Energy", "Swords Dance", "Bulldoze"], teraType: "Bug", nature: "Lonely", hpMultiplier: 35 },
     // Decidueye
-    //{ speciesName: "Pikachu", level: 100, ability: "Lightning Rod", mainMoves: ["Thunder", "Surf", "Play Rough", "Iron Tail"], addMoves: ["Rain Dance"], teraType: "Water", nature: "Quiet", item: 'Light Ball', hpMultiplier: 50 },
+    { speciesName: "Pikachu", level: 100, ability: "Lightning Rod", mainMoves: ["Thunder", "Surf", "Play Rough", "Iron Tail"], addMoves: ["Rain Dance"], teraType: "Water", nature: "Quiet", item: 'Light Ball', hpMultiplier: 50 },
     // Greninja
     { speciesName: "Greninja", level: 100, ability: "Protean", mainMoves: ["Gunk Shot", "Night Slash", "Hydro Pump", "Ice Beam"], addMoves: ["Toxic Spikes", "Double Team"], teraType: "Poison", nature: "Sassy", hpMultiplier: 30, extraActions: [ {description:"Move: Toxic Spikes", time:99}, {description:"Move: Double Team", time:99}, {description:"Player Stat Reset", time:85}, {description:"Tera Shield", hp: 65, time:75}, {description:"Boss Stat Reset", time:65}, {description:"Move: Double Team", hp:50}, {description:"Move: Double Team", time:40} ] },
     // Cinderace
